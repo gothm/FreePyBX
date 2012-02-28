@@ -1,0 +1,115 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <div style="width: 80%; margin-left: 40px;">
+            <h1> Welcome To Your New PBX </h1>
+            <hr style="height: 4px; color: #c0c0c0; background-color: #c0c0c0;" />
+            <p>
+                Congratulations on your new IP phone system! This guide will help you get your newly provisioned PBX up and running quickly, and show you some ways you can utilize features and functionality previously unavailable in a traditional telephony system at a fraction of the cost. There are many new concepts to understand, but this document will help you capitalize on everything from unified communications, to harnessing the full power of your hosted PBX phone system. You can then apply the concepts learned here to help you create a customized system that truly fits your business needs.
+            </p>
+            <p>
+                This document assumes that you have read about VoIP and device settings in the previous section, and your devices are configured and registered to our servers.
+            </p>
+            <p>
+                <strong>Recordings</strong>
+                <br />
+                There are two ways to setup interactive voice response (IVR) also known as automated attendants. One way is to create a text to speech (TTS) script that will be read by the servers TTS engine to the caller. The caller  will be given a chance to respond to the system by pressing digits from their telephone that will result in commands to the system to perform tasks such as, route calls to extensions, route calls to groups of people, or even route calls  to another interactive voice response (IVR) tree menu. The second way is to play actual voice recordings of people that are bascially the same scripts that require the same responses to be interpreted as commands for the system. We will now look at both ways of accomplishing this.
+                <br />
+                <br />
+                1) Creating your first TTS script
+                <br />
+            </p>
+            <p>
+                Under your PBX tab toward the bottom of the PBX Menu, click &quot;Text to Speech.&quot; At the top of the content screeen in the toolbar menu, you will find a plus icon that says &quot;Add TTS Script.&quot; Click this now. You will be presented with two text boxes that allow you to, create a meaningful name to allow you to identify it later, and a text area that will grow and allow you to enter an adequate amount of text for the TTS engine to play back to your callers. Let's for an example call it &quot;Main&quot; and use the following text in the second box labeled &quot;Text&quot;:
+            </p>
+            <p>
+                Thank you for calling Acme Widgets. for sales, please press 1. For support, please press 2. For Billing, please press 3. Or, if you know your party's extension, you may dial it at any time.
+            </p>
+            <p>
+                Now click the &quot;Add Now&quot; button.
+            </p>
+            <p>
+                2) Now assuming you have extensions 101, 102, 103, 104, 105, 106, 107 , and 108 (yours may vary) let's create some groups for our newly created TTS menu by clicking &quot;Group Management&quot; from the PBX Menu. Choose &quot;Add Group&quot; from the toolbar menu. Type: Sales for the Group Name, then for the group members type the following:
+            </p>
+            <p>
+                101,102,103
+            </p>
+            <p>
+                Now click the &quot;Add Now&quot; button.
+            </p>
+            <p>
+                Repeat step 2 and add a Support group and use 104,105,106
+            </p>
+            <p>
+                Now click the &quot;Add Now&quot; button.
+            </p>
+            <p>
+                Repeat step 2 one more time adding a Billing group with 107,108 and click &quot;Add Now&quot;
+            </p>
+            <p>
+                3) Adding the Virtual Receptionist and IVR
+            </p>
+            <p>
+                Click the Virtual Receptionist link at the bottom of the PBX Menu and click &quot;Automated Attendant.&quot; Now from the content screen click &quot;Add IVR&quot; from the toolbar menu. Type: Acme in the Name text box and choose the newly created TTS called Main in the drop down list called &quot;Audio.&quot; Select Group: Sales for option 1, select Group: Support for option 2 and select Group: Billing for option 3. Now for the operator choose any available extension you wish. For menu timeout, make it 4 seconds. The Direct Dial Extensions checkbox is checked by default, but this merely let's users dial by extension when they are inside of the IVR menu, so we will leave this checked. For this IVR, we will default to our sales staff by selecting Group: Sales for our timeout destination.
+            </p>
+            <p>
+                Click &quot;Add Now&quot;
+            </p>
+            <p>
+                You have just completed your first TTS IVR. Now let's make it live to one of your inbound numbers.
+                <br />
+            </p>
+            <p>
+                From the PBX Menu under the PBX tab, please choose &quot;Inbound Numbers&quot;
+            </p>
+            <p>
+                You will notice your inbound numbers are under the &quot;DID&quot; column. Under &quot;Route Name&quot; will be a grid cell, and it may or may not be assigned, but it becomes a drop down list when we double click it. Please to this now and choose the newly created IVR Menu callled &quot;Acme&quot; Click the anywhere outside of the cell to unselect the dropdown list. Now click the save button from the toolbar menu. You will notice a blue notification on the successful editing of the grid cell data.When you are completed, go ahead and dial your inbound number from a cell phone or an outside phone line to test your new configuration.
+            </p>
+            <p>
+                <strong>Changing your TTS Script to an actual Voice Recording
+                <br />
+                </strong>
+                <br />
+                From your extension handset dial *99. You will be prompted to enter a number. This number is an arbitrary number to help you identify the recording when selecting it from a list in the IVR menu. This new recording will be in the format 101-1-recording.wav (extension-XX.recording) under the System Recordings. XX will be the arbitrary number keyed-in when prompted while making this recording. You may now go back to the Virtual Receptionist section, select the IVR Named Acme, Then edit the IVR and select your new recording in the same list where you previously had chosen the TTS called Main.
+            </p>
+            <p>
+                &nbsp;
+            </p>
+            <p>
+                &nbsp;
+            </p>
+            <p>
+                &nbsp;
+            </p>
+            <p>
+        </div>
+    </body>
+</html>

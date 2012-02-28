@@ -1,0 +1,28 @@
+<div>
+    <div class="pbxTitle"><h1>${title}</h1></div>
+    <div class="pbxContent">
+        <div class="pbxFormOuter">
+            <div class="pbxFormHeader">
+                <h1 data-dojo-attach-point="headingNode">${heading}</h1>
+                <span class="help_link" data-dojo-attach-point="helpNode"><a onclick="showHelp('${helpCategory}');" href="#">Help</a></span>
+            </div>
+            <div class="${noticeClass}" data-dojo-attach-point="formNoticeNode">${formNotice}</div>
+            <form dojoType="dijit.form.Form" data-dojo-attach-point="formNameNode" id="${formName}">
+                <div class="pbxFormContent">
+                    <fieldset class="pbxFormFs">
+                        <legend data-dojo-attach-point="legendNode">${legend}</legend>
+                        <div data-dojo-attach-point="containerNode"></div>
+                    </fieldset>
+                    <div class="pbxFormFooter" data-dojo-attach-point="footerNode">
+                        <input style="float: left; ${delStyle};" type="button" value=" Delete " label=" Delete " dojoType="dijit.form.Button"
+                               data-dojo-attach-point="delNode" onclick="${delFunc}"/>
+                        <input style="float: right; ${saveStyle}}" type="button" value=" Save " label=" Save " dojoType="dojox.form.BusyButton"
+                               busyLabel="Saving..." timeout="2000" data-dojo-attach-point="submitNode" onclick="${submitFunc}"/>
+                        &nbsp;
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

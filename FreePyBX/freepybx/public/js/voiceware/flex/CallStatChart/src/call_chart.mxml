@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+This Source Code Form is subject to the terms of the Mozilla Public 
+License, v. 2.0. If a copy of the MPL was not distributed with this 
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+The Original Code is FreePyBX/VoiceWARE.
+
+The Initial Developer of the Original Code is Noel Morgan, 
+Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+http://www.vwci.com/ 
+
+You may not remove or alter the substance of any license notices (including
+copyright notices, patent notices, disclaimers of warranty, or limitations 
+of liability) contained within the Source Code Form of the Covered Software, 
+except that You may alter any license notices to the extent required to 
+remedy known factual inaccuracies.  
+
+-->
+<charting:CallStatChart xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:charting="com.vwci.charting.*"
+			   width="800" height="400" minWidth="955" minHeight="600">
+	<mx:ColumnChart id="agentChart" width="689" height="384" dataProvider="{agents}" 
+					showDataTips="false" type="clustered">
+		<mx:horizontalAxis>
+			<mx:CategoryAxis id="categoryAxis" categoryField="agent_name"/>			
+		</mx:horizontalAxis>
+		<mx:series>
+			<mx:ColumnSeries id="columnSeries" displayName="Call Volume" yField="volume"/>
+			<mx:ColumnSeries id="columnSeries2" displayName="Talk time" yField="talk_time"/>
+		</mx:series>
+	</mx:ColumnChart>
+	<mx:Legend x="707" y="6" dataProvider="{agentChart}"/>
+</charting:CallStatChart>
+
+

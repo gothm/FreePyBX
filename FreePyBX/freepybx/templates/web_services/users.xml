@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <users xmlns:py="http://genshi.edgewall.org/">        
+        <py:for each="user in c.users">
+            <user>
+                <user_id>${user.id}</user_id>
+                <company_id>${user.company_id}</company_id>
+                <context>${user.context}</context>
+                <username>${user.username}</username>
+                <name>${user.first_name} ${user.last_name}</name>
+                <first_name>${user.first_name}</first_name>
+                <last_name>${user.last_name}</last_name>
+                <extension>${user.crm_extension}</extension>
+                <tel>${user.tel}</tel>
+                <mobile>${user.mobile}</mobile>
+                <uuid>${user.uuid}</uuid>
+            </user>
+         </py:for>      
+    </users>

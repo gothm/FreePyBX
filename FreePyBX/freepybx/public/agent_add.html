@@ -1,0 +1,141 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public 
+    License, v. 2.0. If a copy of the MPL was not distributed with this 
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan, 
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+    
+    http://www.vwci.com/ 
+    
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations 
+    of liability) contained within the Source Code Form of the Covered Software, 
+    except that You may alter any license notices to the extent required to 
+    remedy known factual inaccuracies.    
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    
+    function agentHandler() {
+        if(dijit.byId("agent_add_form").validate()) { 
+            dojo.xhrPost({
+                url: "/call_center/agent_add",
+                handleAs: "text",
+                form: dojo.byId("agent_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("callCenterContent").set("href", "/agent_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }
+</script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="ccRouteStore" url="/pbx/routes"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="agentAvailStore" url="/call_center/agent_avail_endpoints"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="ccAudioStore" url="/call_center/agent_audio"></div>
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Agent',legend:'Agent Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'agent_add_form',helpCategory:'edit_profile', submitFunc:'agentHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="agent_extension">Extension</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="agentAvailStore" value="" id="agent_extension" searchAttr="extension" name="extension">
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="agent_timeout">Timeout</label>
+            <input type="text" id="agent_timeout" name="timeout" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="30"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="agent_max_no_answer">Max No Answer</label>
+            <input type="text" id="agent_max_no_answer" name="max_no_answer" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="3"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="agent_wrap_up_time">Wrap Up Time</label>
+            <input type="text" id="agent_wrap_up_time" name="wrap_up_time" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="30"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="agent_reject_delay_time">Reject Delay Time</label>
+            <input type="text" id="agent_reject_delay_time" name="reject_delay_time" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="20"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="agent_busy_delay_time">Busy Delay Time</label>
+            <input type="text" id="agent_busy_delay_time" name="busy_delay_time" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="30"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="agent_no_answer_delay_time">No Answer Delay Time</label>
+            <input type="text" id="agent_no_answer_delay_time" name="no_answer_delay_time" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="30"
+                   required="true"
+                   regExp="\b[0-9]{1,6}\b"
+                   promptMessage="Please enter a valid number value."
+                   invalidMessage="Invalid, must be an integer."
+                   trim="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="record_calls">Record Calls</label>
+            <input id="record_calls" name="record_calls" dojoType="dijit.form.CheckBox" value="1" checked="false"/>
+        </li>
+    </ul>
+</div>

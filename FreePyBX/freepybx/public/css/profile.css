@@ -1,0 +1,82 @@
+        #metarating {
+            position: absolute;
+            margin-left: 700px;
+            z-index: 30;
+            text-align: center;
+            background-color: #ececec;
+            padding: 10px;
+
+        }
+
+        #rank {
+            font-weight: bold;
+            font-size: 18px;
+            marin-bottom: 5px;
+        }
+
+        #metarated {
+            width: 150px;
+            font-size: 40px;
+            font-weight: bold;
+            padding-top: 10px;
+
+        }
+
+        #tabs
+        {
+            margin-left: 30px;
+            margin-right: 30px;
+            width: 900px;
+            min-height: 200px;
+            margin-bottom: 30px;
+            margin-top: -60px;
+
+        }
+
+        #msg_center
+        {
+            padding: 10px;
+        }
+
+        #message_headers
+        {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #41577c;
+
+        }
+
+        #message_headers th
+        {
+            background-color: #41577c;
+            color: #8db400;
+            text-align: left;
+            padding: 4px;
+        }
+
+        .msg_odd_seen
+        {
+            background-color: #e0ffff;
+            padding: 4px;
+        }
+
+        .msg_even_seen
+        {
+            background-color: #add8e6;
+            padding: 4px;
+        }
+
+        .msg_odd_unseen
+        {
+            background-color: #e0ffff;
+            padding: 4px;
+            font-weight: bold;
+        }
+
+        .msg_even_unseen
+        {
+            background-color: #add8e6;
+            padding: 4px;
+            font-weight: bold;
+        }

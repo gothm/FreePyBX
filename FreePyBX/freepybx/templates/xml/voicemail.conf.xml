@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name="voicemail.conf" description="Voicemail">
+            <settings></settings>
+            <profiles>
+                <py:for each="sipprofile in c.pbx_profiles">
+                    <profile name="${sipprofile.name}">
+                        <param name="odbc-dsn" value="${c.odbc_credentials}"/>
+                        <param name="file-extension" value="mp3"/>
+                        <param name="terminator-key" value="#"/>
+                        <param name="max-login-attempts" value="3"/>
+                        <param name="digit-timeout" value="10000"/>
+                        <param name="min-record-len" value="3"/>
+                        <param name="max-record-len" value="300"/>
+                        <param name="max-retries" value="3"/>
+                        <param name="tone-spec" value="%(1000, 0, 640)"/>
+                        <param name="callback-dialplan" value="XML"/>
+                        <param name="callback-context" value="$${context}"/>
+                        <param name="play-new-messages-key" value="1"/>
+                        <param name="play-saved-messages-key" value="2"/>
+                        <param name="login-keys" value="0"/>
+                        <param name="main-menu-key" value="0"/>
+                        <param name="config-menu-key" value="5"/>
+                        <param name="record-greeting-key" value="1"/>
+                        <param name="choose-greeting-key" value="2"/>
+                        <param name="change-pass-key" value="6"/>
+                        <param name="record-name-key" value="3"/>
+                        <param name="record-file-key" value="3"/>
+                        <param name="listen-file-key" value="1"/>
+                        <param name="save-file-key" value="2"/>
+                        <param name="delete-file-key" value="7"/>
+                        <param name="undelete-file-key" value="8"/>
+                        <param name="email-key" value="4"/>
+                        <param name="pause-key" value="0"/>
+                        <param name="restart-key" value="1"/>
+                        <param name="ff-key" value="6"/>
+                        <param name="rew-key" value="4"/>
+                        <param name="skip-greet-key" value="#"/>
+                        <param name="previous-message-key" value="1"/>
+                        <param name="next-message-key" value="3"/>
+                        <param name="skip-info-key" value="*"/>
+                        <param name="repeat-message-key" value="0"/>
+                        <param name="record-silence-threshold" value="200"/>
+                        <param name="record-silence-hits" value="2"/>
+                        <param name="operator-extension" value="411 XML $${context}"/>
+                        <param name="operator-key" value="9"/>
+                        <param name="vmain-extension" value="411 XML $${context}"/>
+                        <param name="vmain-key" value="*"/>
+                        <email>
+                            <param name="template-file" value="voicemail.tpl"/>
+                            <param name="notify-template-file" value="notify-voicemail.tpl"/>
+                            <param name="date-fmt" value="%A, %B %d %Y, %I %M %p"/>
+                            <param name="email-from" value="voicemail@$${context}"/>
+                        </email>
+                        <param name="storage-dir" value="/usr/local/freeswitch/htdocs/vm"/>
+                        <param name="record-title" value="VoiceMail"/>
+                    </profile>
+                </py:for>
+            </profiles>
+        </configuration>
+    </section>
+</document>

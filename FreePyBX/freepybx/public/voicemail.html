@@ -1,0 +1,123 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript" charset="UTF-8">
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Textarea");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+    dojo.require("dijit.layout.TabContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.EnhancedGrid");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");  
+    
+    
+    function VM (data,name) {
+        vm = dijit.byId("vmDlg");
+        vm.set("title","VoiceMail from "+name);
+        document.getElementById("vmDiv").innerHTML = '<embed type="application/x-shockwave-flash" id="player" flashvars="audioUrl='+data+'" src="http://www.google.com/reader/ui/3523697345-audio-player.swf" width="400" height="27" quality="best"></embed>';
+        vm.show();
+    }            
+    
+    
+    function deleteVoiceMail(data) {
+        dojo.xhrPost({
+            url: "/pbx/delete_voicemail?data="+data,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("voicemailContainer").set("href", "/voicemail.html");
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+             }
+        });    
+    }    
+            
+    
+</script>
+<div dojoType="dijit.layout.BorderContainer" gutters="false">
+    <div dojoType="dijit.Toolbar" region="top" style="width: 100%">
+        <button id="delvmBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            &nbsp;Delete
+            <script type="dojo/method" event="onClick">
+                    var items = vmGrid.selection.getSelected();
+                    if (items.length) {
+                        dojo.forEach(items, function(selectedItem) {
+                            if (selectedItem !== null) {
+                                    deleteVoiceMail(vmGrid.store.getValues(selectedItem, "path"));
+                            } 
+                        }); 
+                    } 
+            </script>
+        </button>
+    </div>
+    <div dojoType="dojo.data.ItemFileWriteStore" jsId="vmStore" id="vmStore" url="/pbx/voicemail"></div>
+    <table dojoType="dojox.grid.EnhancedGrid" editable="true"
+        plugins="{dnd: {copyOnly: true, dndConfig: {out:{ row: true, cell: false}} }, indirectSelection: true}"
+        region="center" minSize="20"
+        jsId="vmGrid"
+        id="vmGrid"
+        store="vmStore"
+        query="{}"
+        style="min-height: 10px;width: 100%">
+        <thead>
+            <tr>
+                <th field="name" width="50%">From</th>
+                <th field="received" width="30%">Received</th>
+                <th field="size" width="20%">Length (Seconds)</th>
+            </tr>
+        </thead>
+        <script type="dojo/connect" event="onRowDblClick" args="e">
+            // <!--
+            //<![CDATA[      
+
+               VM(dijit.byId("vmGrid")._getItemAttr(e.rowIndex, 'path'),dijit.byId("vmGrid")._getItemAttr(e.rowIndex, 'name'));
+
+            // ]]>
+            // -->
+        </script>
+    </table>
+    <div id="play_voicemail"></div>
+
+</div>
+
+
+<div dojoType="dijit.Dialog" id="vmDlg" >
+    <div id="vmDiv" style="text-align:center">
+    </div>
+</div>
+

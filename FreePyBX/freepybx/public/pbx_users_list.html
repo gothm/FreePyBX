@@ -1,0 +1,144 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<style>
+    .dojoxGrid-header {
+        display: none;
+    }
+
+    #user_list {
+        display: none;
+    }
+
+    #dg_users .dojoxGridHeader {
+        display: none;
+    }
+
+    .dijitTextarea[rows]
+    {
+        height:200px;
+    }
+
+</style>
+<script>
+
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.form.RadioButton");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Textarea");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+
+
+    function msg_user(row) {
+        var ul = dijit.byId("dg_users");
+        var item = ul.getItem(row.rowIndex);
+
+        //if(uid==item.id){return;} // in case we forget...
+
+        im = dijit.byId("imMsg");
+        dijit.byId("msg_out").value = '';
+        uaObj.recipient = parseInt(item.id);
+
+        document.getElementById("msg_to").innerHTML = "Message to " + item.name;
+        im.show();
+
+        console.log('To name: ' + item.name);
+        ul.render();
+    }
+
+    function sendData(data) {
+        uaObj.type = 1;
+        uaObj.data = document.getElementById("msg_out").value;
+        s.send(dojo.toJson(uaObj));
+        document.getElementById("msg_out").value='';
+
+    }
+</script>
+
+
+
+
+<link rel="stylesheet" href="/js/dijit/themes/claro/claro.css" media="screen"/>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="fs" url="/api/get_user_list" id="fs">
+</div>
+<table dojoType="dojox.grid.DataGrid"
+       store="fs" id="dg_users"
+       onRowClick="msg_user"
+       style="width: 100%; height: 90%; margin: 0px;"
+       rowSelector="1px">
+    <thead id="user_list" class="dojoxGrid-header">
+    <tr>
+        <th class="dojoxGrid-header" width="auto" field="name" editable="true">Name</th>
+    </tr>
+    </thead>
+</table>
+
+<style>
+    #chatWnd {
+        width: 450px;
+        height: 200px;
+        border: 1px solid gray;
+        overflow: auto;
+    }
+</style>
+
+<div dojoType="dijit.Dialog" id="imMsg" jsId="imMsg" style="height: 380px;" title="Instant Message"
+     execute="console.log(dojo.toJson(arguments[0]));">
+    <table>
+        <tr>
+            <td valign="top" colspan="2">
+                <div id="msg_to"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" valign="top">
+                <div id="chatWnd"></div>
+                <input type="hidden" id="recipient" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" valign="top">
+                <input dojoType="dijit.form.TextBox" id="msg_out" name="msg_out"
+                          style="width:auto;"></input>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right" colspan="2">
+                <button dojoType="dijit.form.Button" type="submit" onClick="sendData(arguments[0])">
+                    OK
+                </button>
+                <button dojoType="dijit.form.Button" type="button" onClick="im.hide()">
+                    Cancel
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+

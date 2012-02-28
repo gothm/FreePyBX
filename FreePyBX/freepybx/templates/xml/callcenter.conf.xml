@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name="callcenter.conf" description="CallCenter">
+            <settings>
+                <param name="odbc-dsn" value="${c.odbc_credentials}"/>
+            </settings>
+            <queues>
+                <py:for each="queue in c.call_center_queues">
+                    <queue name="${queue.name}@${queue.domain}">
+                        <param name="strategy" value="${queue.strategy}"/>
+                        <param name="moh-sound" value="${queue.moh_sound}"/>
+                        <param py:if="queue.record_calls" name="record-template" value="$${base_dir}/htdocs/vm/${queue.domain}/queue-recordings/${queue.name}/$${strftime(%Y-%m-%d-%H-%M-%S)}.$${destination_number}.$${uuid}.mp3"/>
+                        <param name="time-base-score" value="${queue.time_base_score}"/>
+                        <param name="max-wait-time" value="${queue.max_wait_time}"/>
+                        <param name="max-wait-time-with-no-agent" value="${queue.max_wait_time_with_no_agent}"/>
+                        <param name="max-wait-time-with-no-agent-time-reached" value="${queue.max_wait_time_with_no_agent_reached}"/>
+                        <param name="tier-rules-apply" value="${queue.tier_rules_apply}"/>
+                        <param name="tier-rule-wait-second" value="${queue.tier_rule_wait_second}"/>
+                        <param name="tier-rule-wait-multiply-level" value="${queue.tier_rule_wait_multiply_level}"/>
+                        <param name="tier-rule-no-agent-no-wait" value="${queue.tier_rule_agent_no_wait}"/>
+                        <param name="discard-abandoned-after" value="${queue.discard_abandoned_after}"/>
+                        <param name="abandoned-resume-allowed" value="${queue.abandoned_resume_allowed}"/>
+                        <param py:if="queue.announce_sound" name="announce-sound" value="/usr/local/freeswitch/htdocs/vm/${queue.domain}/recordings/${queue.announce_sound}"/>
+                        <param py:if="queue.announce_frequency" name="announce-frequency" value="${queue.announce_frequency}"/>
+                    </queue>
+                </py:for>
+            </queues>
+            <agents>
+                <py:for each="agent in c.call_center_agents">
+                    <agent name="${agent.extension}@${agent.domain}" type="${agent.type}" contact="[call_timeout=${agent.timeout}]user/${agent.extension}@${agent.domain}" status="Available" max-no-answer="${agent.max_no_answer}" wrap-up-time="${agent.wrap_up_time}" reject-delay-time="${agent.reject_delay_time}" busy-delay-time="${agent.busy_delay_time}" />
+                </py:for>
+            </agents>
+            <tiers>
+                <py:for each="tier in c.call_center_tiers">
+                    <tier agent="${tier.agent}" queue="${tier.queue}" level="${tier.level}" position="${tier.position}"/>
+                </py:for>
+            </tiers>
+        </configuration>
+    </section>
+</document>

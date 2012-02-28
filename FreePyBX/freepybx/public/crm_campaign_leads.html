@@ -1,0 +1,262 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript" charset="UTF-8">
+    
+    var crmAccountGrid;
+    var crmAccountStore = new dojo.data.ItemFileWriteStore({url: '/crm/accounts_by_campaign/'+tmpObj});
+        
+    var plugins = {
+        pagination: true,
+        indirectSelection: false,
+    };           
+    
+    function callCrmAccount(e) {
+        if(e.cellNode.innerHTML.length==10 && !isNaN(e.cellNode.innerHTML)) {            
+            callNumber(e.cellNode.innerHTML);
+            var item = crmAccountGrid.selection.getSelected();
+            tmpObj = item[0];
+            dijit.byId("crmContent").set("href", "/crm_account_edit.html")
+        } else {
+            return false;
+        }
+    }     
+    
+    crmAccountStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = crmAccountStore._pending;
+        var changes = {};
+        changes.modified = [];
+        
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (crmAccountStore._itemsByIdentity) {
+                item = crmAccountStore._itemsByIdentity[i];
+            } else {
+                item = crmAccountStore._arrayOfAllItems[i];
+            }
+                changes.modified.push(itemToJS(crmAccountStore, item));
+            }
+
+            if (changes.modified.length==0) {
+                alert("Nothing to save. Make sure you are not still in edit mode by clicking under the grid, then re-save.");
+                saveComplete();
+                return;
+            }
+            update_accounts_grid(dojo.toJson(changes, true));
+            console.log(dojo.toJson(changes, true));            
+            saveComplete();
+    };       
+    
+    function editAccountData() {
+        var item = crmAccountGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("crmContent").set("href", "/crm_account_edit.html");
+    }
+    
+    crm_accounts_grid = function (dbObj) {      
+        var accountLayout = [{        
+            name: 'Name',
+            field: 'name',
+            editable: 'true',
+            width: 'auto'
+        },{
+            name: 'Address',
+            field: 'address',
+            width: 'auto'
+        },{            
+            name: 'City',
+            field: 'city',
+            width: 'auto'
+        },{
+            name: 'State',
+            field: 'state',
+            width: 'auto'
+        },{
+            name: 'Phone',
+            field: 'tel',
+            width: 'auto'
+        },{
+            name: 'Mobile',
+            field: 'mobile',
+            width: 'auto'
+        },{
+            name: 'Email',
+            field: 'email',
+            width: 'auto',
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(dat.length)
+                {
+                    return "<a href='mailto:"+dat+"'>"+dat+"</a>";
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+           }              
+        },{
+            name: 'Campaign',
+            field: 'crm_campaign_id',
+            width: 'auto',
+            options: dbObj.names,         
+            values: dbObj.ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+           }              
+            
+        }];            
+                
+        crmAccountGrid = new dojox.grid.EnhancedGrid({
+            id: 'crmAccountGrid',
+            jsid: 'crmAccountGrid',
+            query: {id: '*'},
+            selectionMode: 'single',
+            store: crmAccountStore,
+            structure: accountLayout,
+            region: "center",
+            autoHeight: true,
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            onRowDblClick: callCrmAccount,
+        },document.createElement('div'));
+                
+        dojo.byId("crmCampaignAccountGridDiv").appendChild(crmAccountGrid.domNode);
+        crmAccountGrid.startup();
+    }    
+    
+    function update_accounts_grid(obj) {
+        dojo.xhrGet({
+            url: "/crm/update_accounts_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }    
+    
+    function delete_crm_account() {
+        var del_crm_account = crmAccountGrid.selection.getSelected()[0];
+        dojo.xhrGet({
+            url: "/crm/del_crm_account?id="+del_crm_account.id,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("mainContent").set("href", "/crm_accounts.html")
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }        
+    
+    function get_help() {
+        dojo.xhrGet({
+            url: "/pbx/help/1",
+            handleAs: "json",
+            load: function(res) {
+                console.log(dojo.toJson(res, true));    
+                document.getElementById("mini_help").innerHTML = res.help;
+                return res;
+            },
+            error: function(err, ioArgs) {
+                return err;
+            }
+        });            
+    } 
+    
+    dojo.addOnLoad(function() {   
+        dojo.xhrGet({
+            url:"/crm/campaigns_ids",
+            handleAs:"json",
+            load: function(data) {
+                crm_accounts_grid(data);
+            }
+        });
+    });
+           
+</script>
+
+<div style="border: 1px solid #c0c0c0;">
+    <div dojoType="dijit.Toolbar" region="top">
+        <button dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add Account
+            <script type="dojo/method" event="onClick">
+                    dijit.byId("crmContent").set("href", "/crm_account_add.html")
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit Account
+            <script type="dojo/method" event="onClick">
+                if (crmAccountGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select a user to edit!");
+                    return false;
+                }
+                editAccountData();
+            </script>
+        </button>            
+        <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
+            Save
+            <script type="dojo/method" event="onClick">
+                crmAccountStore.save();
+            </script>
+        </button>            
+        <button dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            Delete
+            <script type="dojo/method" event="onClick">
+                delete_crm_account();
+            </script>
+        </button>
+    </div>
+    <div id="crmCampaignAccountGridDiv" style="width:100%;height:100%"></div>
+</div>
+

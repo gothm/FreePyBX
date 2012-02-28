@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name='sofia.conf' description='sofia endpoint'>
+            <global_settings>
+                <param name="log-level" value="0"/>
+                <param name="auto-restart" value="true"/>
+                <param name="debug-presence" value="0"/>
+                <param name='accept-blind-reg' value='false'/>
+                <param name="sip-trace" value="no"/>
+                <param name="sip-capture" value="no"/>
+                <param name="auth-calls" value="true"/>
+                <param name="dtmf-type" value="rfc2833"/>
+            </global_settings>
+            <profiles>
+                <py:for each="sipprofile in c.pbx_profiles">
+                    <profile name='${sipprofile.name}'>
+                        <domains>
+                            <py:for each="domain in c.domains">
+                                <domain name="${domain}" alias="false" parse="false"/>
+                            </py:for>
+                        </domains>
+                        <settings>
+                            <param name="odbc-dsn" value="${c.odbc_credentials}"/>
+                            <param name="manage-presence" value="${str(sipprofile.manage_presence).lower()}"/>
+                            <param name="dbname" value="${sipprofile.presence_db_name}"/>
+                            <param name="presence-hosts" value="${sipprofile.presence_hosts}"/>
+                            <param name="send-presence-on-register" value="${str(sipprofile.send_presence_on_register).lower()}"/>
+                            <param name="delete-subs-on-register" value="${str(sipprofile.delete_subs_on_register).lower()}"/>
+                            <param name="caller-id-type" value="${sipprofile.caller_id_type}"/>
+                            <param name="auto-jitterbuffer-msec" value="${sipprofile.auto_jitterbuffer_msec}"/>
+                            <param name="user-agent-string" value="FreePyBX"/>
+                            <param name="apply-inbound-acl" value="gateways"/>
+                            <param name='dialplan' value='XML,enum'/>
+                            <param name="ext-rtp-ip" value="${sipprofile.ext_rtp_ip}"/>
+                            <param name="ext-sip-ip" value="${sipprofile.ext_sip_ip}"/>
+                            <param name='rtp-ip' value='${sipprofile.rtp_ip}'/>
+                            <param name='sip-ip' value='${sipprofile.sip_ip}'/>
+                            <param name='sip-port' value='${sipprofile.sip_port}'/>
+                            <param name='nonce-ttl' value='${sipprofile.nonce_ttl}'/>
+                            <param name='use-rtp-timer' value='${str(sipprofile.use_rtp_timer).lower()}'/>
+                            <param name='rtp-timer-name' value='${sipprofile.rtp_timer_name}'/>
+                            <param name='codec-prefs' value='${sipprofile.codec_prefs}'/>
+                            <param name="inbound-codec-negotiation" value="${sipprofile.inbound_codec_negotiation}"/>
+                            <param name="rtp-timeout-sec" value="${sipprofile.rtp_timeout_sec}"/>
+                            <param name="rtp-hold-timeout-sec" value="${sipprofile.rtp_hold_timeout_sec}"/>
+                            <param name='rfc2833-pt' value='${sipprofile.rfc2833_pt}'/>
+                            <param name='dtmf-duration' value='${sipprofile.dtmf_duration}'/>
+                            <param name="dtmf-type" value="${sipprofile.dtmf_type}"/>
+                            <param name="session-timeout" value="${sipprofile.session_timeout}"/>
+                            <param name='codec-ms' value='${sipprofile.codec_ms}'/>
+                            <param name='accept-blind-reg' value='${str(sipprofile.accept_blind_reg).lower()}'/>
+                            <param name='auth-calls' value='${str(sipprofile.auth_calls).lower()}'/>
+                            <param name="enable-100rel" value="true"/>
+                            <param name="multiple-registrations" value="${sipprofile.multiple_registrations}"/>
+                            <param name="minimum-session-expires" value="${sipprofile.minimum_session_expires}"/>
+                            <param name="mailer-app" value="/usr/local/freeswitch/script/emailvm.py"/>
+                            <param name="mailer-app-args" value="-i -d -f ${sipprofile.vm_from_email}.org.com -t"/>
+                            <param name='accept-blind-reg' value='${str(sipprofile.accept_blind_reg).lower()}'/>
+                            <param name='disable-register' value='${str(sipprofile.disable_register).lower()}'/>
+                            <param name='log-auth-failures' value='${str(sipprofile.log_auth_failures).lower()}'/>
+                            <param name='auth-all-packets' value='${str(sipprofile.auth_all_packets).lower()}'/>
+                        </settings>
+                        <gateways>
+                            <py:for each="gateway in sipprofile.get_gateways()">
+                                <gateway name='${gateway.name}'>
+                                    <variables>
+                                        <variable name="both_var_name" data="gw=${gateway.name}"/>
+                                    </variables>
+                                    <param name='username' value='${gateway.username}'/>
+                                    <param name='password' value='${gateway.password}'/>
+                                    <param py:if="gateway.realm" name="realm" value="${gateway.realm}"/>
+                                    <param py:if="gateway.from_user" name="from-user" value="${gateway.from_user}"/>
+                                    <param py:if="gateway.from_domain" name="from-domain"
+                                           value="${gateway.from_domain}"/>
+                                    <param py:if="gateway.extension" name="extension" value="${gateway.extension}"/>
+                                    <param py:if="gateway.proxy" name="proxy" value="${gateway.proxy}"/>
+                                    <param py:if="gateway.register_proxy" name="register-proxy"
+                                           value="${gateway.register_proxy}"/>
+                                    <param py:if="gateway.expire_seconds" name="expire-seconds"
+                                           value="${gateway.expire_seconds}"/>
+                                    <param name='register' value='${str(gateway.register).lower()}'/>
+                                    <param py:if="gateway.register_transport" name="register-transport"
+                                           value="${gateway.register_transport}"/>
+                                    <param name='retry-seconds' value='${gateway.retry_seconds}'/>
+                                    <param py:if="gateway.caller_id_in_from" name="register-caller-id-in-from"
+                                           value="${gateway.caller_id_in_from}"/>
+                                    <param py:if="gateway.contact_params" name="contact-params"
+                                           value="${gateway.contact_params}"/>
+                                    <param name="rfc5626" value="${str(gateway.rfc5626).lower()}"/>
+                                    <param name="ping" value="${gateway.ping}"/>
+                                </gateway>
+                            </py:for>
+                        </gateways>
+                    </profile>
+                </py:for>
+            </profiles>
+        </configuration>
+    </section>
+</document>

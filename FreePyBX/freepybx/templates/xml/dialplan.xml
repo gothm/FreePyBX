@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="dialplan">
+        <context name="default">
+            <extension name="unloop">
+                <condition field="$${unroll_loops}" expression="^true$$"/>
+                <condition field="$${sip_looped_call}" expression="^true$$">
+                    <action application="deflect" data="$${destination_number}"/>
+                </condition>
+            </extension>                           
+        <py:for each="did in c.dids">                 
+            <extension name="${did.did}">
+              <condition field="destination_number" expression="^(${did.did})$">
+                <action application="export" data="context=${did.context}"/>
+                <action application="export" data="domain=${did.domain}"/>
+                <action application="export" data="domain_name=${did.domain}"/>
+                <action application="export" data="is_inbound=true"/>
+                <action application="export" data="accountcode=${did.did}"/>
+                <action application="export" data="force_transfer_context=${did.context}"/>
+                <action application="lua" data="route.lua" />
+              </condition>
+            </extension>                     
+        </py:for>
+        <extension name="9723872806">
+              <condition field="destination_number" expression="^(9723872806)$">
+                <action application="bridge" data="sofia/gateway/voipinnovations/9724990448" />
+              </condition>
+            </extension>
+            <extension name="8003715248">
+              <condition field="destination_number" expression="^(8003715248)$">
+                  <action application="bridge" data="sofia/gateway/voipinnovations/9724990448" />
+              </condition>
+            </extension>
+        </context>
+        <py:for each="account in c.contexts">
+            <context name="${account.domain}">
+                <extension name="PrintVars" continue="true">
+                    <condition field="destination_number" expression="^[0-9]">
+                        <action application="info"/>
+                        <action application="ring_ready" />
+                    </condition>
+                </extension>
+                <extension name="unloop">
+                    <condition field="$${unroll_loops}" expression="^true$$"/>
+                    <condition field="$${sip_looped_call}" expression="^true$$">
+                        <action application="deflect" data="$${destination_number}"/>
+                    </condition>
+                </extension>
+                <action application="set" data="eavesdrop_indicate_failed=/sounds/failed.wav"/>
+                <action application="set" data="eavesdrop_indicate_new=/sounds/new_chan_announce.wav"/>
+                <action application="set" data="eavesdrop_indicate_idle=/sounds/idle.wav"/>
+                <action application="set" data="eavesdrop_enable_dtmf=true"/>
+                <extension name="global" continue="true">
+                    <condition>
+                        <action application="info"/>
+                        <action application="db" data="insert/spymap/$${caller_id_number}/$${uuid}"/>
+                        <action application="db" data="insert/last_dial/$${caller_id_number}/$${destination_number}"/>
+                        <action application="db" data="insert/last_dial/global/$${uuid}"/>
+                    </condition>
+                </extension>                                   
+                <py:for each="conf in account.conference_bridges">
+                <extension name="conference-${conf.extension}">                                                                                                     
+                    <condition field="destination_number" expression="^(${conf.extension})$$">                  
+                        <action application="lua" data="conference.lua" />
+                    </condition>                                                                                                                                                
+                </extension>              
+                </py:for>          
+                <py:for each="vm in account.voicemailboxes">
+                <extension name="leave-${vm.extension}">
+                    <condition field="destination_number" expression="^(${vm.extension})$$">
+                        <action application="set" data="skip_greeting=${str(vm.skip_greeting).lower()}"/>
+                        <action application="answer"/>
+                        <action application="voicemail" data="${c.profile} ${account.domain} ${vm.extension}"/>
+                        <action application="hangup"/>
+                    </condition>                                                                                                                                                
+                </extension>              
+                </py:for>     
+                <py:for each="fax in account.faxes">
+                   <extension name="fax_receive-${fax.extension}">
+                     <condition field="destination_number" expression="^(${fax.extension})$$">
+                       <action application="set" data="api_hangup_hook=system $${base_dir}/script/fax_convert.py $${base_dir}/htdocs/vm/${account.domain}/faxes/$${uuid}_${fax.extension}.tiff /usr/local/freeswitch/htdocs/vm/${account.domain}/faxes/$${uuid}_${fax.extension}.png"/>    
+                       <action application="answer" />
+                       <action application="playback" data="silence_stream://2000"/>
+                       <action application="set" data="fax_enable_t38_request=true"/>
+                       <action application="set" data="fax_enable_t38=true"/>
+                       <action application="rxfax" data="$${base_dir}/htdocs/vm/${account.domain}/faxes/$${uuid}_${fax.extension}.tiff"/>
+                       <action application="hangup"/>
+                     </condition>
+                   </extension>          
+                </py:for>                          
+                <py:for each="vm in account.voicemailboxes">
+                <extension name="retrieve-${vm.extension}">                                                                                                     
+                    <condition field="destination_number" expression="^\*(${vm.extension})$$">                  
+                        <action application="answer"/>
+                        <action application="sleep" data="1000"/>
+                        <action application="set" data="voicemail_authorized=$${sip_authorized}"/>
+                        <action application="voicemail" data="check auth ${c.profile} ${account.domain} ${vm.extension}"/>
+                    </condition>                                                                                                                                                
+                </extension> 
+                </py:for>                             
+                <py:for each="route in account.routes">
+                    <extension name="${route.name}" continue="${route.continue_route}">
+                        <action application="set" data="extension=${route.name}"/>
+                        <py:for each="condition in route.conditions">
+                            <condition field="${condition.field}" expression="${condition.expression}">
+                                <action py:if="route.record_inbound_calls" application="record_session" data="$${base_dir}/htdocs/vm/${account.domain}/extension-recordings/$${destination_number}_$${uuid}_inbound_/$${strftime(%Y-%m-%d-%H-%M-%S)}.mp3"/>
+                                <py:for each="action in condition.actions">
+                                    <action application="${action.application}" data="${action.data}"/>
+                                </py:for>
+                                <py:if test="route.voicemail_enabled">
+                                    <action application="answer"/>
+                                    <action application="voicemail" data="${c.profile} ${account.domain} ${route.voicemail_ext}"/>
+                                    <action application="hangup"/>
+                                </py:if>
+                            </condition>
+                        </py:for>
+                    </extension>
+                </py:for>
+                <extension name="outbound" continue="true">
+                    <condition field="$${sip_authorized}" expression="true">
+                        <anti-action application="hangup" />
+                    </condition>
+                    <condition field="destination_number" expression="^(\d{10})$$">
+                        <action application="export" data="is_outbound=true"/>
+                         <action application="lua" data="route.lua" />
+                    </condition>
+                </extension>
+                <extension name="directory" continue="true">
+                    <condition field="destination_number" expression="^(411)">
+                         <action application="python" data="directory" />
+                    </condition>
+                </extension>
+                <extension name="recording">
+                    <condition field="destination_number" expression="^\*(99)$$">
+                        <action application="answer"/>
+                        <action application="sleep" data="1000"/>
+                        <action application="python" data="record"/>
+                    </condition>
+                </extension>
+                <extension name="intercept-ext">
+                  <condition field="destination_number" expression="^\*\*(\d+)$$">
+                    <action application="answer"/>
+                    <action application="intercept" data="$${hash(select/${account.domain}-last_dial_ext/$$1)}"/>
+                    <action application="sleep" data="2000"/>
+                  </condition>
+                </extension>
+                <extension name="valet_parking_dest_ext">
+                  <condition field="destination_number" expression="^(60\d[1-9])$">
+                    <action application="answer"/>
+                    <action application="valet_park" data="valet_lot $1"/>
+                  </condition>
+                </extension>
+                <extension name="eavesdrop">
+                    <condition field="destination_number" expression="^88(.*)$$|^\*0(.*)$$">
+                        <action application="answer"/>
+                        <action application="eavesdrop" data="$${db(select/spymap/$$1$$2)}"/>
+                    </condition>
+                </extension>
+                <extension name="extension-intercom">
+                  <condition field="destination_number" expression="^8(.*)$">
+                    <action application="set" data="dialed_extension=$1"/>
+                    <action application="export" data="sip_auto_answer=true"/>
+                    <action application="bridge" data="user/$${dialed_extension}@${account.domain}"/>
+                  </condition>
+                </extension>
+                <extension name="voicemail">
+                    <condition field="destination_number" expression="^\*97$$|^\*98$$">
+                        <action application="answer"/>
+                        <action application="sleep" data="1000"/>
+                        <action application="set" data="voicemail_authorized=$${sip_authorized}"/>
+                        <action application="voicemail" data="check auth ${c.profile} ${account.domain} $${username}"/>
+                    </condition>
+                </extension>
+            </context>
+        </py:for>
+    </section>
+</document>

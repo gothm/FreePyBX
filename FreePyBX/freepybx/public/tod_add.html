@@ -1,0 +1,169 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+
+    
+    function todLabel(item, store) {
+        var label = store.getValue(item, 'name');
+        return label;
+    }    
+
+    function todAddFormHandler() {
+        if(dijit.byId("tod_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/pbx/tod_route_add",
+                handleAs: "text",
+                form: dojo.byId("tod_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: "Time of Day Route successfully created."});
+                        dijit.byId("mainContent").set("href", "/tod_route_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+    
+    dojo.addOnLoad(function() {
+        var routeStore = new dojo.data.ItemFileReadStore({url: "/pbx/routes"});
+        var filteringSelect = new dijit.form.FilteringSelect({
+            id: "matchSelect",
+            name: "match_route_id",
+            value: "",
+            store: routeStore,
+            searchAttr: "name"
+         },
+         "matchSelectInput");
+        var filteringSelect = new dijit.form.FilteringSelect({
+            id: "noMatchSelect",
+            name: "nomatch_route_id",
+            value: "",
+            store: routeStore,
+            searchAttr: "name"
+         },
+         "noMatchSelectInput");    
+    });
+</script>
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Time of Day Route',legend:'Time of Day Route Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'tod_add_form',helpCategory:'edit_profile', submitFunc:'todAddFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Route Friendly Name</label>
+            <input type="text" id="name" name="name" size="30" placeholder="e.g. Business Hours"
+                   dojoType="dijit.form.ValidationTextBox"
+                   required="true"
+                   promptMessage="Please enter a name for this route."
+                   trim="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Day of Week Start</label>
+            <select name="day_start" dojoType="dijit.form.Select">
+                <option value="0">
+                    Sunday
+                </option>
+                <option value="1" selected="selected">
+                    Monday
+                </option>
+                <option value="2">
+                    Tuesday
+                </option>
+                <option value="3">
+                    Wednesday
+                </option>
+                <option value="4">
+                    Thursday
+                </option>
+                <option value="6">
+                    Friday
+                </option>
+                <option value="5">
+                    Saturday
+                </option>
+            </select>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Day of Week End</label>
+            <select name="day_end" dojoType="dijit.form.Select">
+                <option value="0">
+                    Sunday
+                </option>
+                <option value="1">
+                    Monday
+                </option>
+                <option value="2">
+                    Tuesday
+                </option>
+                <option value="3">
+                    Wednesday
+                </option>
+                <option value="4">
+                    Thursday
+                </option>
+                <option value="5" selected="selected">
+                    Friday
+                </option>
+                <option value="6">
+                    Saturday
+                </option>
+            </select>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Time Start</label>
+            <input type="text" name="time_start" id="time_start" value="T08:00:00" dojoType="dijit.form.TimeTextBox" required="true" />
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Time End</label>
+            <input type="text" name="time_end" id="time_end" value="T17:00:00" dojoType="dijit.form.TimeTextBox" required="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Route If Time Matches</label>
+            <input id="matchSelectInput">
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Route If Time No Match</label>
+            <input id="noMatchSelectInput">
+        </li>
+    </ul>
+</div>

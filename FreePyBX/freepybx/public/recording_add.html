@@ -1,0 +1,62 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dojox.form.Uploader");
+    dojo.require("dojox.form.uploader.FileList");
+    dojo.require("dojox.embed.Flash");
+    
+    if(dojox.embed.Flash.available){
+      dojo.require("dojox.form.uploader.plugins.Flash");
+    }else{
+      dojo.require("dojox.form.uploader.plugins.IFrame");
+    }
+
+</script>
+
+<div>
+    <div class="pbxTitle"><h1>Add Recording</h1></div>
+    <div class="pbxContent">
+        <div class="pbxFormOuter">
+            <div class="pbxFormHeader">
+                <span class="help_link"><a onclick="showHelp('edit_company');" href="#">Help</a></span>
+            </div>
+            <form method="post" action="/pbx/upload_recording" id="recording_add_form" enctype="multipart/form-data">
+                <div class="pbxFormContent">
+                    <fieldset class="pbxFormFs">
+                        <legend>
+                            Recording Information
+                        </legend>
+                        <input class="browseButton" name="uploadedfile" multiple="false" type="file" dojoType="dojox.form.Uploader" label="Select Recording" id="uploader">
+                        <br/>
+                        <div id="files" dojoType="dojox.form.uploader.FileList" uploaderId="uploader"></div>  <br/><br/>
+                        <input type="submit" label="Submit" dojoType="dijit.form.Button" />
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

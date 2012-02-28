@@ -1,0 +1,25 @@
+<div>
+    <div class="pyFormOuter">
+        <div class="pyFormHeader">
+            <h1 data-dojo-attach-point="headingNode">${heading}</h1>
+            <span class="help_link" data-dojo-attach-point="helpNode"><a onclick="showHelp('${helpCategory}');" href="#">Help</a></span>
+        </div>
+        <div class="${noticeClass}" data-dojo-attach-point="formNoticeNode">${formNotice}</div>
+        <form dojoType="dijit.form.Form" data-dojo-attach-point="formNameNode" id="${formName}">
+            <div class="pyFormContent">
+                <fieldset class="pyFormFs">
+                    <legend data-dojo-attach-point="legendNode">${legend}</legend>
+                    <div data-dojo-attach-point="containerNode"></div>
+                </fieldset>
+            </div>
+            <div class="pyFormFooter" data-dojo-attach-point="footerNode">
+                <input style="float: left; ${delStyle};" type="submit" value=" Delete " label=" Delete " dojoType="dijit.form.Button"
+                       data-dojo-attach-point="delNode" onclick="${delFunc}"/>
+                <input style="float: right; ${saveStyle}}" type="submit" value=" Save " label=" Save " dojoType="dojox.form.BusyButton"
+                       busyLabel="Saving..." timeout="2000" data-dojo-attach-point="submitNode" onclick="${submitFunc}"/>
+                &nbsp;
+            </div>
+        </form>
+    </div>
+</div>
+

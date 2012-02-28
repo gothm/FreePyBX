@@ -1,0 +1,101 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base"); 
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    
+
+    function cidFormHandler() {
+        if(dijit.byId("cid_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/pbx/cid_add",
+                handleAs: "text",
+                form: dojo.byId("cid_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: "Caller ID Route successfully created."});
+                        dijit.byId("mainContent").set("href", "/callerid_route_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                        dijit.byId("mainContent").set("href", "/callerid_add.html");
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }    
+
+    dojo.addOnLoad(function() {
+        var routeStore = new dojo.data.ItemFileReadStore({url: "/pbx/routes"});
+        var filteringSelect = new dijit.form.FilteringSelect({
+            id: "cid_sip_route_id",
+            name: "sip_route_id",
+            value: "",
+            store: routeStore,
+            searchAttr: "name"
+         },
+         "matchSelectInput");
+    });
+    
+</script>
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Caller ID Route',legend:'Route Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'cid_add_form',helpCategory:'add_caller_id', submitFunc:'cidFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="">Caller ID Number</label>
+            <input type="text" name="cid_number" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  placeholder="Exactly 10 Digits"
+                   required="true"
+                   regExp="\b[0-9]{10}\b"
+                   promptMessage="Please add a Caller ID Number."
+                   invalidMessage="Invalid number."
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="">Routes To</label>
+            <input id="matchSelectInput">
+        </li>
+    </ul>
+</div>
+
+
+

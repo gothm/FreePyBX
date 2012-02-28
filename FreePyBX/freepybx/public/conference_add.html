@@ -1,0 +1,94 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    
+
+    function confFormHandler() {
+        if(dijit.byId("conf_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/pbx/conf_add",
+                handleAs: "text",
+                form: dojo.byId("conf_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: "Conference successfully created."});
+                        dijit.byId("mainContent").set("href", "/conference_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                        dijit.byId("mainContent").set("href", "/conference_add.html");
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }    
+
+</script>
+
+
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Conference Bridge',legend:'Conference Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'conf_add_form',helpCategory:'edit_profile', submitFunc:'confFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Conference Extension</label>
+            <input type="text" name="extension" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  placeholder="3 or 4 Digits"
+                   required="true"
+                   regExp="\b[0-9]{3,4}\b"
+                   promptMessage="Please add an extension."
+                   invalidMessage="Invalid extension."
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">PIN Passcode</label>
+            <input type="text" name="pin" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  placeholder="e.g. 1234"
+                   required="true"
+                   regExp="\b[0-9]{4}\b"
+                   promptMessage="Please add a passcode pin number."
+                   invalidMessage="Invalid passcode. Must be 4 digits."
+                   trim="true"/>
+        </li>
+    </ul>
+</div>

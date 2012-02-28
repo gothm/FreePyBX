@@ -1,0 +1,4628 @@
+.dijitReset {
+    margin : 0;
+    border : 0;
+    padding : 0;
+    line-height : normal;
+    font : inherit;
+    color : inherit;
+}
+.dijit_a11y .dijitReset {
+    -moz-appearance : none;
+}
+.dijitInline {
+    display : inline-block;
+    #zoom : 1;
+    #display : inline;
+    border : 0;
+    padding : 0;
+    vertical-align : middle;
+    #vertical-align : auto;
+}
+.dijitHidden {
+    display : none !important;
+}
+.dijitVisible {
+    display : block !important;
+    position : relative;
+}
+.dijitInputContainer {
+    #zoom : 1;
+    overflow : hidden;
+    float : none !important;
+    position : relative;
+}
+.dj_ie INPUT.dijitTextBox, .dj_ie .dijitTextBox INPUT {
+    font-size : 100%;
+}
+.dijitTextBox .dijitSpinnerButtonContainer, .dijitTextBox .dijitArrowButtonContainer, .dijitTextBox .dijitValidationContainer {
+    float : right;
+    text-align : center;
+}
+.dijitTextBox INPUT.dijitInputField {
+    padding-left : 0 !important;
+    padding-right : 0 !important;
+}
+.dijitTextBox .dijitValidationContainer {
+    display : none;
+}
+.dijitInlineTable {
+    display : inline-table;
+    display : inline-block;
+    #zoom : 1;
+    #display : inline;
+    box-sizing : content-box;
+    -moz-box-sizing : content-box;
+    border : 0;
+    padding : 0;
+}
+.dijitTeeny {
+    font-size : 1px;
+    line-height : 1px;
+}
+.dijitOffScreen {
+    position : absolute;
+    visibility : hidden;
+    left : 50%;
+    top : -10000px;
+}
+.dijitPopup {
+    position : absolute;
+    background-color : transparent;
+    margin : 0;
+    border : 0;
+    padding : 0;
+}
+.dijit_a11y .dijitPopup, .dijit_ally .dijitPopup DIV, .dijit_a11y .dijitPopup TABLE, .dijit_a11y .dijitTooltipContainer {
+    background-color : white !important;
+}
+.dijitPositionOnly {
+    padding : 0 !important;
+    border : 0 !important;
+    background-color : transparent !important;
+    background-image : none !important;
+    height : auto !important;
+    width : auto !important;
+}
+.dijitNonPositionOnly {
+    float : none !important;
+    position : static !important;
+    margin : 0 0 0 0 !important;
+    vertical-align : middle !important;
+}
+.dijitBackgroundIframe {
+    position : absolute;
+    left : 0;
+    top : 0;
+    width : 100%;
+    height : 100%;
+    z-index : -1;
+    border : 0;
+    padding : 0;
+    margin : 0;
+}
+.dijitDisplayNone {
+    display : none !important;
+}
+.dijitContainer {
+    overflow : hidden;
+}
+.dijit_a11y * {
+    background-image : none !important;
+}
+.dijit_a11y .dijitIcon, .dijit_a11y DIV.dijitArrowButtonInner, .dijit_a11y SPAN.dijitArrowButtonInner, .dijit_a11y IMG.dijitArrowButtonInner, .dijit_a11y .dijitCalendarIncrementControl {
+    display : none;
+}
+.dijitSpinner DIV.dijitArrowButtonInner {
+    display : block;
+}
+.dijit_a11y .dijitA11ySideArrow {
+    display : inline !important;
+    cursor : pointer;
+}
+.dijit_a11y .dijitCalendarDateLabel {
+    padding : 1px;
+}
+.dijit_a11y .dijitCalendarSelectedDate .dijitCalendarDateLabel {
+    border-style : dotted !important;
+    border-width : 1px;
+    padding : 0px;
+}
+.dijit_a11y .dijitCalendarDateTemplate {
+    padding-bottom : 0.1em !important;
+}
+.dijit_a11y .dijit * {
+    background : white !important;
+    color : black !important;
+}
+.dijit_a11y .dijitButtonNode {
+    border-color : black!important;
+    border-style : outset!important;
+    border-width : medium!important;
+}
+.dijit_a11y .dijitTextBoxReadOnly .dijitInputField, .dijit_a11y .dijitTextBoxReadOnly .dijitButtonNode {
+    border-style : outset!important;
+    border-width : medium!important;
+    border-color : #999 !important;
+    color : #999 !important;
+}
+.dijitButtonNode * {
+    vertical-align : middle;
+}
+.dijitButtonNode .dijitArrowButtonInner {
+    background : no-repeat center;
+    width : 12px;
+    height : 12px;
+    direction : ltr;
+}
+.dijitLeft {
+    background-position : left top;
+    background-repeat : no-repeat;
+}
+.dijitStretch {
+    white-space : nowrap;
+    background-repeat : repeat-x;
+}
+.dijitRight {
+    #display : inline;
+    background-position : right top;
+    background-repeat : no-repeat;
+}
+.dijitToggleButton, .dijitButton, .dijitDropDownButton, .dijitComboButton {
+    margin : 0.2em;
+}
+.dijitButtonContents {
+    display : block;
+}
+td.dijitButtonContents {
+    display : table-cell;
+}
+.dijitButtonNode IMG {
+    vertical-align : middle;
+}
+TABLE.dijitComboButton {
+    border-collapse : collapse;
+    border : 0;
+    padding : 0;
+    margin : 0;
+}
+.dijitToolbar .dijitComboButton {
+    border-collapse : separate;
+}
+.dijitToolbar .dijitToggleButton, .dijitToolbar .dijitButton, .dijitToolbar .dijitDropDownButton, .dijitToolbar .dijitComboButton {
+    margin : 0;
+}
+.dijitToolbar .dijitButtonContents {
+    padding : 1px 2px;
+}
+.dj_ie .dijitComboButton {
+    margin-bottom : -3px;
+}
+.dj_webkit .dijitToolbar .dijitDropDownButton {
+    padding-left : 0.3em;
+}
+.dj_gecko .dijitToolbar .dijitButtonNode::-moz-focus-inner {
+    padding : 0;
+}
+.dijitButtonNode {
+    border : 1px solid gray;
+    margin : 0;
+    line-height : normal;
+    vertical-align : middle;
+    #vertical-align : auto;
+    text-align : center;
+    white-space : nowrap;
+}
+.dj_webkit .dijitSpinner .dijitSpinnerButtonContainer {
+    line-height : inherit;
+}
+.dijitTextBox .dijitButtonNode {
+    border-width : 0;
+}
+.dijitButtonNode, .dijitButtonNode * {
+    cursor : pointer;
+}
+.dj_ie .dijitButtonNode {
+    zoom : 1;
+}
+.dj_ie .dijitButtonNode button {
+    overflow : visible;
+}
+DIV.dijitArrowButton {
+    float : right;
+}
+.dijitTextBox {
+    border : solid black 1px;
+    #overflow : hidden;
+    width : 15em;
+    vertical-align : middle;
+    #vertical-align : auto;
+}
+.dijitTextBoxReadOnly, .dijitTextBoxDisabled {
+    color : gray;
+}
+.dj_webkit .dijitTextBoxDisabled INPUT {
+    color : #eee;
+}
+.dj_webkit TEXTAREA.dijitTextAreaDisabled {
+    color : #333;
+}
+.dj_gecko .dijitTextBoxReadOnly INPUT, .dj_gecko .dijitTextBoxDisabled INPUT {
+    -moz-user-input : none;
+}
+.dijitPlaceHolder {
+    color : #AAAAAA;
+    font-style : italic;
+    position : absolute;
+    top : 0;
+    left : 0;
+    #filter : "";
+}
+.dijitTimeTextBox {
+    width : 8em;
+}
+.dijitTextBox INPUT:focus {
+    outline : none;
+}
+.dijitTextBoxFocused {
+    outline : auto 5px -webkit-focus-ring-color;
+}
+.dijitTextBox INPUT {
+    float : left;
+}
+.dijitInputInner {
+    border : 0 !important;
+    vertical-align : middle !important;
+    background-color : transparent !important;
+    width : 100% !important;
+    padding-left : 0 !important;
+    padding-right : 0 !important;
+    margin-left : 0 !important;
+    margin-right : 0 !important;
+}
+.dijit_a11y .dijitTextBox INPUT {
+    margin : 0 !important;
+}
+.dijitTextBoxError INPUT.dijitValidationInner, .dijitTextBox INPUT.dijitArrowButtonInner {
+    text-indent : -1em !important;
+    direction : ltr !important;
+    text-align : left !important;
+    height : auto !important;
+    #text-indent : 0 !important;
+    #letter-spacing : -5em !important;
+    #text-align : right !important;
+}
+.dj_ie .dijitTextBox INPUT, .dj_ie INPUT.dijitTextBox {
+    overflow-y : visible;
+    line-height : normal;
+}
+.dj_ie7 .dijitTextBox INPUT.dijitValidationInner, .dj_ie7 .dijitTextBox INPUT.dijitArrowButtonInner {
+    line-height : 86%;
+}
+.dj_ie6 .dijitTextBox INPUT, .dj_ie6 INPUT.dijitTextBox, .dj_iequirks .dijitTextBox INPUT.dijitValidationInner, .dj_iequirks .dijitTextBox INPUT.dijitArrowButtonInner, .dj_iequirks .dijitTextBox INPUT.dijitSpinnerButtonInner, .dj_iequirks .dijitTextBox INPUT.dijitInputInner, .dj_iequirks INPUT.dijitTextBox {
+    line-height : 100%;
+}
+.dijit_a11y INPUT.dijitValidationInner, .dijit_a11y INPUT.dijitArrowButtonInner {
+    text-indent : 0 !important;
+    width : 1em !important;
+    #text-align : left !important;
+}
+.dijitTextBoxError .dijitValidationContainer {
+    display : inline;
+    cursor : default;
+}
+.dijitSpinner .dijitSpinnerButtonContainer, .dijitComboBox .dijitArrowButtonContainer {
+    border-width : 0 0 0 1px !important;
+}
+.dijitSpinner .dijitSpinnerButtonContainer .dijitButtonNode {
+    border-width : 0;
+}
+.dj_ie .dijit_a11y .dijitSpinner .dijitSpinnerButtonContainer .dijitButtonNode {
+    clear : both;
+}
+.dijit_a11y .dijitTextBox .dijitValidationContainer, .dijit_a11y .dijitTextBox .dijitSpinnerButtonContainer, .dijit_a11y .dijitComboBox .dijitArrowButtonContainer {
+    border : solid black !important;
+    border-width : 0 0 0 1px !important;
+}
+.dj_ie .dijitToolbar .dijitComboBox {
+    vertical-align : middle;
+}
+.dijitTextBox .dijitSpinnerButtonContainer {
+    width : 1em;
+    position : relative !important;
+    overflow : hidden;
+}
+.dijitSpinner .dijitSpinnerButtonInner {
+    width : 1em;
+    visibility : hidden !important;
+    overflow-x : hidden;
+}
+.dijitComboBox .dijitButtonNode, .dijitSpinnerButtonContainer .dijitButtonNode {
+    border-width : 0;
+}
+.dijit_a11y .dijitSpinnerButtonContainer .dijitButtonNode {
+    border : 0 none !important;
+}
+.dijit_a11y .dijitTextBox .dijitSpinnerButtonContainer, .dijit_a11y .dijitSpinner .dijitArrowButtonInner, .dijit_a11y .dijitSpinnerButtonContainer INPUT {
+    width : 1em !important;
+}
+.dijit_a11y .dijitSpinner .dijitArrowButtonInner {
+    margin : 0 auto !important;
+}
+.dj_ie .dijit_a11y .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    padding-left : 0.3em !important;
+    padding-right : 0.3em !important;
+    margin-left : 0.3em !important;
+    margin-right : 0.3em !important;
+    width : 1.4em !important;
+}
+.dj_ie7 .dijit_a11y .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    padding-left : 0.0em !important;
+    padding-right : 0.0em !important;
+    width : 1em !important;
+}
+.dj_ie6 .dijit_a11y .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    margin-left : 0.1em !important;
+    margin-right : 0.1em !important;
+    width : 1em !important;
+}
+.dj_iequirks .dijit_a11y .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    margin-left : 0 !important;
+    margin-right : 0 !important;
+    width : 2em !important;
+}
+.dijitSpinner .dijitSpinnerButtonContainer .dijitArrowButton {
+    padding : 0;
+    position : absolute !important;
+    right : 0;
+    float : none;
+    height : 50%;
+    width : 100%;
+    bottom : auto;
+    left : 0;
+    right : auto;
+}
+.dj_iequirks .dijitSpinner .dijitSpinnerButtonContainer .dijitArrowButton {
+    width : auto;
+}
+.dijit_a11y .dijitSpinnerButtonContainer .dijitArrowButton {
+    overflow : visible !important;
+}
+.dijitSpinner .dijitSpinnerButtonContainer .dijitDownArrowButton {
+    top : 50%;
+    border-top-width : 1px !important;
+}
+.dijitSpinner .dijitSpinnerButtonContainer .dijitUpArrowButton {
+    #bottom : 50%;
+    top : 0;
+}
+.dijitSpinner .dijitArrowButtonInner {
+    margin : auto;
+    overflow-x : hidden;
+    height : 100% !important;
+}
+.dj_iequirks .dijitSpinner .dijitArrowButtonInner {
+    height : auto !important;
+}
+.dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    -moz-transform : scale(0.5);
+    -moz-transform-origin : center top;
+    -webkit-transform : scale(0.5);
+    -webkit-transform-origin : center top;
+    -o-transform : scale(0.5);
+    -o-transform-origin : center top;
+    transform : scale(0.5);
+    transform-origin : left top;
+    padding-top : 0;
+    padding-bottom : 0;
+    padding-left : 0 !important;
+    padding-right : 0 !important;
+    width : 100%;
+}
+.dj_ie .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    zoom : 50%;
+}
+.dijitSpinner .dijitSpinnerButtonContainer .dijitArrowButtonInner {
+    overflow : hidden;
+}
+.dijit_a11y .dijitSpinner .dijitSpinnerButtonContainer .dijitArrowButton {
+    width : 100%;
+}
+.dj_iequirks .dijit_a11y .dijitSpinner .dijitSpinnerButtonContainer .dijitArrowButton {
+    width : 1em;
+}
+.dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    visibility : hidden;
+}
+.dijit_a11y .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    vertical-align : top;
+    visibility : visible;
+}
+.dijit_a11y .dijitSpinnerButtonContainer {
+    width : 1em;
+}
+.dijit_a11y .dijitSpinnerButtonContainer .dijitButtonNode {
+    border-width : 1px 0px 0px 0px;
+    border-style : solid !important;
+}
+.dijitCheckBox, .dijitRadio, .dijitCheckBoxInput {
+    padding : 0;
+    border : 0;
+    width : 16px;
+    height : 16px;
+    background-position : center center;
+    background-repeat : no-repeat;
+    overflow : hidden;
+}
+.dijitCheckBox INPUT, .dijitRadio INPUT {
+    margin : 0;
+    padding : 0;
+    display : block;
+}
+.dijitCheckBoxInput {
+    opacity : 0.01;
+}
+.dj_ie .dijitCheckBoxInput {
+    filter : alpha(opacity=0);
+}
+.dijit_a11y .dijitCheckBox, .dijit_a11y .dijitRadio {
+    width : auto !important;
+    height : auto !important;
+}
+.dijit_a11y .dijitCheckBoxInput {
+    opacity : 1;
+    filter : none;
+    width : auto;
+    height : auto;
+}
+.dijitProgressBarEmpty {
+    position : relative;
+    overflow : hidden;
+    border : 1px solid black;
+    z-index : 0;
+}
+.dijitProgressBarFull {
+    position : absolute;
+    overflow : hidden;
+    z-index : -1;
+    top : 0;
+    width : 100%;
+}
+.dj_ie6 .dijitProgressBarFull {
+    height : 1.6em;
+}
+.dijitProgressBarTile {
+    position : absolute;
+    overflow : hidden;
+    top : 0;
+    left : 0;
+    bottom : 0;
+    right : 0;
+    margin : 0;
+    padding : 0;
+    width : auto;
+    height : auto;
+    background-color : #aaa;
+    background-attachment : fixed;
+}
+.dijit_a11y .dijitProgressBarTile {
+    border-width : 2px;
+    border-style : solid;
+    background-color : transparent !important;
+}
+.dj_ie6 .dijitProgressBarTile {
+    position : static;
+    height : 1.6em;
+}
+.dijitProgressBarIndeterminate .dijitProgressBarLabel {
+    visibility : hidden;
+}
+.dijitProgressBarIndeterminate .dijitProgressBarTile {
+}
+.dijitProgressBarIndeterminateHighContrastImage {
+    display : none;
+}
+.dijit_a11y .dijitProgressBarIndeterminate .dijitProgressBarIndeterminateHighContrastImage {
+    display : block;
+    position : absolute;
+    top : 0;
+    bottom : 0;
+    margin : 0;
+    padding : 0;
+    width : 100%;
+    height : auto;
+}
+.dijitProgressBarLabel {
+    display : block;
+    position : static;
+    width : 100%;
+    text-align : center;
+    background-color : transparent !important;
+}
+.dijitTooltip {
+    position : absolute;
+    z-index : 2000;
+    display : block;
+    left : 50%;
+    top : -10000px;
+    overflow : visible;
+}
+.dijitTooltipContainer {
+    border : solid black 2px;
+    background : #b8b5b5;
+    color : black;
+    font-size : small;
+}
+.dijitTooltipFocusNode {
+    padding : 2px 2px 2px 2px;
+}
+.dijitTooltipConnector {
+    position : absolute;
+}
+.dijit_a11y .dijitTooltipConnector {
+    display : none;
+}
+.dijitTooltipData {
+    display : none;
+}
+.dijitLayoutContainer {
+    position : relative;
+    display : block;
+    overflow : hidden;
+}
+body .dijitAlignTop, body .dijitAlignBottom, body .dijitAlignLeft, body .dijitAlignRight {
+    position : absolute;
+    overflow : hidden;
+}
+body .dijitAlignClient {
+    position : absolute;
+}
+.dijitBorderContainer, .dijitBorderContainerNoGutter {
+    position : relative;
+    overflow : hidden;
+}
+.dijitBorderContainerPane, .dijitBorderContainerNoGutterPane {
+    position : absolute !important;
+    z-index : 2;
+}
+.dijitBorderContainer >  .dijitTextArea {
+    resize : none;
+}
+.dijitGutter {
+    position : absolute;
+    font-size : 1px;
+}
+.dijitSplitter {
+    position : absolute;
+    overflow : hidden;
+    z-index : 10;
+    background-color : #fff;
+    border-color : gray;
+    border-style : solid;
+    border-width : 0;
+}
+.dj_ie .dijitSplitter {
+    z-index : 1;
+}
+.dijitSplitterActive {
+    z-index : 11 !important;
+}
+.dijitSplitterCover {
+    position : absolute;
+    z-index : -1;
+    top : 0;
+    left : 0;
+    width : 100%;
+    height : 100%;
+}
+.dijitSplitterCoverActive {
+    z-index : 3 !important;
+}
+.dj_ie .dijitSplitterCover {
+    background : white;
+    filter : alpha(opacity=0);
+}
+.dijitSplitterH {
+    height : 7px;
+    border-top : 1px;
+    border-bottom : 1px;
+    cursor : ns-resize;
+}
+.dijitSplitterV {
+    width : 7px;
+    border-left : 1px;
+    border-right : 1px;
+    cursor : ew-resize;
+}
+.dijitSplitContainer {
+    position : relative;
+    overflow : hidden;
+    display : block;
+}
+.dj_ff3 .dijit_a11y div.dijitSplitter:focus {
+    outline-style : dotted;
+    outline-width : 2px;
+}
+.dijitSplitPane {
+    position : absolute;
+}
+.dijitSplitContainerSizerH, .dijitSplitContainerSizerV {
+    position : absolute;
+    font-size : 1px;
+    cursor : move;
+    cursor : w-resize;
+    background-color : ThreeDFace;
+    border : 1px solid;
+    border-color : ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+    margin : 0;
+}
+.dijitSplitContainerSizerH .thumb, .dijitSplitterV .dijitSplitterThumb {
+    overflow : hidden;
+    position : absolute;
+    top : 49%;
+}
+.dijitSplitContainerSizerV .thumb, .dijitSplitterH .dijitSplitterThumb {
+    position : absolute;
+    left : 49%;
+}
+.dijitSplitterShadow, .dijitSplitContainerVirtualSizerH, .dijitSplitContainerVirtualSizerV {
+    font-size : 1px;
+    background-color : ThreeDShadow;
+    -moz-opacity : 0.5;
+    opacity : 0.5;
+    filter : Alpha(Opacity=50);
+    margin : 0;
+}
+.dj_ie .dijitSplitterV, .dijitSplitContainerVirtualSizerH {
+    cursor : w-resize;
+}
+.dj_ie .dijitSplitterH, .dijitSplitContainerSizerV, .dijitSplitContainerVirtualSizerV {
+    cursor : n-resize;
+}
+.dijit_a11y .dijitSplitterH {
+    border-top : 1px solid #d3d3d3 !important;
+    border-bottom : 1px solid #d3d3d3 !important;
+}
+.dijit_a11y .dijitSplitterV {
+    border-left : 1px solid #d3d3d3 !important;
+    border-right : 1px solid #d3d3d3 !important;
+}
+.dijitContentPane {
+    display : block;
+    overflow : auto;
+}
+.dijitContentPaneSingleChild {
+    overflow : hidden;
+}
+.dijitTitlePane {
+    display : block;
+    overflow : hidden;
+}
+.dijitTitlePaneTitle {
+    cursor : pointer;
+}
+.dijitFixedOpen {
+    cursor : default;
+}
+.dijitTitlePaneTitle * {
+    vertical-align : middle;
+}
+.dijitTitlePane .dijitArrowNodeInner {
+    display : none;
+}
+.dijit_a11y .dijitTitlePane .dijitArrowNodeInner {
+    display : inline !important;
+    font-family : monospace;
+}
+.dijit_a11y .dijitTitlePane .dijitArrowNode {
+    display : none;
+}
+.dj_ie6 .dijitTitlePaneContentOuter, .dj_ie6 .dijitTitlePane .dijitTitlePaneTitle {
+    zoom : 1;
+}
+.dijitColorPalette {
+    border : 1px solid #999;
+    background : #fff;
+    position : relative;
+}
+img.dijitColorPaletteUnder {
+    border-style : none;
+    position : absolute;
+    left : 0;
+    top : 0;
+}
+.dijitColorPalette .dijitPaletteTable {
+    padding : 2px 3px 3px 3px;
+    position : relative;
+    overflow : hidden;
+    outline : 0;
+    border-collapse : separate;
+}
+.dj_ie6 .dijitColorPalette .dijitPaletteTable, .dj_ie7 .dijitColorPalette .dijitPaletteTable, .dj_iequirks .dijitColorPalette .dijitPaletteTable {
+    padding : 0;
+    margin : 2px 3px 3px 3px;
+}
+.dijitColorPalette .dijitPaletteCell {
+    font-size : 1px;
+    vertical-align : middle;/*height: 20px;
+	width: 20px;
+	font-size: 1px;
+	vertical-align: middle;
+	text-align: center;
+
+
+    */
+
+    text-align : center;
+    background : none;
+}
+.dijitColorPalette .dijitPaletteImg {
+    padding : 1px;
+    border : 1px solid #999;/*width: 16px;
+	height: 14px;
+	border: 1px solid #999;
+	cursor: default;
+	vertical-align: middle;
+
+
+    */
+
+    margin : 2px 1px;
+    cursor : default;
+    font-size : 1px;
+}
+.dj_iequirks .dijitColorPalette .dijitPaletteImg {
+    margin : 1px;
+}
+.dijitColorPalette .dijitColorPaletteSwatch {
+    width : 14px;
+    height : 12px;/* the actual part where the color is
+
+
+    */
+
+}
+.dijitPaletteTable td {
+    padding : 0px;
+}
+.dijitColorPalette .dijitPaletteCellHover .dijitPaletteImg {
+    border : 1px solid #000;
+}
+.dijitColorPalette .dijitPaletteCellActive .dijitPaletteImg, .dijitColorPalette .dijitPaletteCellSelected .dijitPaletteImg {
+    border : 2px solid #000;
+    margin : 1px 0;
+}
+.dijit_a11y .dijitColorPalette .dijitPaletteTable, .dijit_a11y .dijitColorPalette .dijitPaletteTable * {
+    background-color : transparent !important;
+}
+.dj_gecko .dijit_a11y .dijitColorPalette .dijitPaletteCellFocused .dijitPaletteImg {
+    border : 3px dotted #000;
+    margin : -1px;
+}
+.dijit_a11y .dijitColorPalette .dijitPaletteCellHover .dijitPaletteImg {
+    border : 2px solid #000 !important;
+}
+.dijitAccordionContainer {
+    border : 1px solid #b7b7b7;
+    border-top : 0 !important;
+}
+.dijitAccordionTitle {
+    cursor : pointer;
+}
+.dijitAccordionTitleSelected {
+    cursor : default;
+}
+.dijitAccordionTitle .arrowTextUp, .dijitAccordionTitle .arrowTextDown {
+    display : none;
+    font-size : 0.65em;
+    font-weight : normal !important;
+}
+.dijit_a11y .dijitAccordionTitle .arrowTextUp, .dijit_a11y .dijitAccordionTitleSelected .arrowTextDown {
+    display : inline;
+}
+.dijit_a11y .dijitAccordionTitleSelected .arrowTextUp {
+    display : none;
+}
+.dj_ie6 .dijitAccordionTitle, .dj_iequirks .dijitAccordionTitle {
+    zoom : 1;
+}
+.dijitCalendarContainer {
+    width : auto;
+}
+.dijitCalendarContainer th, .dijitCalendarContainer td {
+    padding : 0;
+}
+.dijitCalendarNextYear {
+    margin : 0 0 0 0.55em;
+}
+.dijitCalendarPreviousYear {
+    margin : 0 0.55em 0 0;
+}
+.dijitCalendarIncrementControl {
+    vertical-align : middle;
+}
+.dijitCalendarIncrementControl, .dijitCalendarDateTemplate, .dijitCalendarMonthLabel, .dijitCalendarPreviousYear, .dijitCalendarNextYear {
+    cursor : pointer;
+}
+.dijitCalendarDisabledDate {
+    color : gray;
+    text-decoration : line-through;
+    cursor : default;
+}
+.dijitSpacer {
+    position : relative;
+    height : 1px;
+    overflow : hidden;
+    visibility : hidden;
+}
+.dijitMenu {
+    border : 1px solid black;
+    background-color : white;
+}
+.dijitMenuTable {
+    border-collapse : collapse;
+    border-width : 0;
+    background-color : white;
+}
+.dj_webkit .dijitMenuTable td[colspan="2"] {
+    border-right : hidden;
+}
+.dijitMenuItem {
+    text-align : left;
+    white-space : nowrap;
+    padding : .1em .2em;
+    cursor : pointer;
+}
+.dijitMenuPassive .dijitMenuItemHover, .dijitMenuItemSelected {
+    background-color : black;
+    color : white;
+}
+.dijitMenuItemIcon, .dijitMenuExpand {
+    background-repeat : no-repeat;
+}
+.dijitMenuItemDisabled * {
+    opacity : 0.5;
+    cursor : default;
+}
+.dj_ie .dijit_a11y .dijitMenuItemDisabled, .dj_ie .dijit_a11y .dijitMenuItemDisabled td, .dj_ie .dijitMenuItemDisabled *,  .dj_ie .dijitMenuItemDisabled td {
+    color : gray !important;
+    filter : alpha(opacity=35);
+}
+.dijitMenuItemLabel {
+    position : relative;
+    vertical-align : middle;
+}
+.dijit_a11y .dijitMenuItemSelected {
+    border : 1px dotted black !important;
+}
+.dj_ff3 .dijit_a11y .dijitMenuItem td {
+    padding : none !important;
+    background : none !important;
+}
+.dijit_a11y .dijitMenuItemSelected .dijitMenuItemLabel {
+    border-width : 1px;
+    border-style : solid;
+}
+.dj_ie8 .dijit_a11y .dijitMenuItemLabel {
+    position : static;
+}
+.dijitMenuExpandA11y {
+    display : none;
+}
+.dijit_a11y .dijitMenuExpandA11y {
+    display : inline;
+}
+.dijitMenuSeparator td {
+    border : 0;
+    padding : 0;
+}
+.dijitMenuSeparatorTop {
+    height : 50%;
+    margin : 0;
+    margin-top : 3px;
+    font-size : 1px;
+}
+.dijitMenuSeparatorBottom {
+    height : 50%;
+    margin : 0;
+    margin-bottom : 3px;
+    font-size : 1px;
+}
+.dijitCheckedMenuItemIconChar {
+    vertical-align : middle;
+    visibility : hidden;
+}
+.dijitCheckedMenuItemChecked .dijitCheckedMenuItemIconChar {
+    visibility : visible;
+}
+.dijit_a11y .dijitCheckedMenuItemIconChar {
+    display : inline !important;
+}
+.dijit_a11y .dijitCheckedMenuItemIcon {
+    display : none;
+}
+.dj_ie .dijit_a11y .dijitMenuBar .dijitMenuItem {
+    margin : 0px;
+}
+.dijitStackController .dijitToggleButtonChecked * {
+    cursor : default;
+}
+.dijitTabContainerNoLayout {
+    width : 100%;
+}
+.dijitTabContainerBottom-tabs, .dijitTabContainerTop-tabs, .dijitTabContainerLeft-tabs, .dijitTabContainerRight-tabs {
+    overflow : visible !important;
+}
+.dijitTabContainerBottom-container, .dijitTabContainerTop-container, .dijitTabContainerLeft-container, .dijitTabContainerRight-container {
+    z-index : 0;
+    overflow : hidden;
+    border : 1px solid black;
+}
+.nowrapTabStrip {
+    width : 50000px;
+    display : block;
+    position : relative;
+}
+.dijitTabListWrapper {
+    overflow : hidden;
+}
+.dijit_a11y .tabStripButton img {
+    display : none;
+}
+.dijitTabContainerTop-tabs {
+    border-bottom : 1px solid black;
+}
+.dijitTabContainerTop-container {
+    border-top : 0px;
+}
+.dijitTabContainerLeft-tabs {
+    border-right : 1px solid black;
+    float : left;
+}
+.dijitTabContainerLeft-container {
+    border-left : 0px;
+}
+.dijitTabContainerBottom-tabs {
+    border-top : 1px solid black;
+}
+.dijitTabContainerBottom-container {
+    border-bottom : 0px;
+}
+.dijitTabContainerRight-tabs {
+    border-left : 1px solid black;
+    float : left;
+}
+.dijitTabContainerRight-container {
+    border-right : 0px;
+}
+DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
+    cursor : auto;
+}
+.dijitTab {
+    position : relative;
+    cursor : pointer;
+    white-space : nowrap;
+    z-index : 3;
+}
+.dijitTab * {
+    vertical-align : middle;
+}
+.dijitTabChecked {
+    cursor : default;
+}
+.dijitTabContainerTop-tabs .dijitTab {
+    top : 1px;
+}
+.dijitTabContainerBottom-tabs .dijitTab {
+    top : -1px;
+}
+.dijitTabContainerLeft-tabs .dijitTab {
+    left : 1px;
+}
+.dijitTabContainerRight-tabs .dijitTab {
+    left : -1px;
+}
+.dijitTabContainerTop-tabs .dijitTab, .dijitTabContainerBottom-tabs .dijitTab {
+    display : inline-block;
+    #zoom : 1;
+    #display : inline;
+}
+.dijitTabInnerDiv {
+    position : relative;
+}
+.tabStripButton {
+    z-index : 12;
+}
+.dijitTabButtonDisabled .tabStripButton {
+    display : none;
+}
+.dijitTabCloseButton {
+    margin-left : 1em;
+}
+.dijitTabCloseText {
+    display : none;
+}
+.dijit_a11y .dijitTabCloseButton {
+    background-image : none !important;
+    width : auto !important;
+    height : auto !important;
+    border : thin dotted;
+}
+.dijit_a11y .dijitTabCloseButtonHover {
+    border : thin solid;
+}
+.dijit_a11y .dijitTabCloseText {
+    display : inline;
+}
+.dijit_a11y .dijitTabChecked {
+    border-style : dashed !important;
+}
+.dijit_a11y .dijitTabInnerDiv {
+    border-left : none !important;
+}
+.dijitTabPane, .dijitStackContainer-child, .dijitAccordionContainer-child {
+    border : none !important;
+}
+.dijitInlineEditBoxDisplayMode {
+    border : 1px solid transparent;
+    cursor : text;
+}
+.dijit_a11y .dijitInlineEditBoxDisplayMode, .dj_ie6 .dijitInlineEditBoxDisplayMode {
+    border : none;
+}
+.dijitInlineEditBoxDisplayModeHover, .dijit_a11y .dijitInlineEditBoxDisplayModeHover, .dj_ie6 .dijitInlineEditBoxDisplayModeHover {
+    background-color : #e2ebf2;
+    border : solid 1px black;
+}
+.dijitInlineEditBoxDisplayModeDisabled {
+    cursor : default;
+}
+.dijitTreeIndent {
+    width : 19px;
+}
+.dijitTreeRow, .dijitTreeContent {
+    white-space : nowrap;
+}
+.dijitTreeRow img {
+    vertical-align : middle;
+}
+.dijitTreeContent {
+    cursor : default;
+}
+.dijitExpandoText {
+    display : none;
+}
+.dijit_a11y .dijitExpandoText {
+    display : inline;
+    padding-left : 10px;
+    padding-right : 10px;
+    font-family : monospace;
+    border-style : solid;
+    border-width : thin;
+    cursor : pointer;
+}
+.dijitTreeLabel {
+    margin : 0px 4px;
+}
+.dijitDialog {
+    position : absolute;
+    z-index : 999;
+    overflow : hidden;
+}
+.dijitDialogTitleBar {
+    cursor : move;
+}
+.dijitDialogFixed .dijitDialogTitleBar {
+    cursor : default;
+}
+.dijitDialogCloseIcon {
+    cursor : pointer;
+}
+.dijitDialogUnderlayWrapper {
+    position : absolute;
+    left : 0;
+    top : 0;
+    z-index : 998;
+    display : none;
+    background : transparent !important;
+}
+.dijitDialogUnderlay {
+    background : #eee;
+    opacity : 0.5;
+}
+.dj_ie .dijitDialogUnderlay {
+    filter : alpha(opacity=50);
+}
+.dijit_a11y .dijitSpinnerButtonContainer, .dijit_a11y .dijitDialog {
+    opacity : 1 !important;
+    background-color : white !important;
+}
+.dijitDialog .closeText {
+    display : none;
+    position : absolute;
+}
+.dijit_a11y .dijitDialog .closeText {
+    display : inline;
+}
+.dijitSliderMoveable {
+    z-index : 99;
+    position : absolute !important;
+    display : block;
+    vertical-align : middle;
+}
+.dijitSliderMoveableH {
+    right : 0;
+}
+.dijitSliderMoveableV {
+    right : 50%;
+}
+.dijit_a11y DIV.dijitSliderImageHandle, .dijitSliderImageHandle {
+    margin : 0;
+    padding : 0;
+    position : relative !important;
+    border : 8px solid gray;
+    width : 0;
+    height : 0;
+    cursor : pointer;
+}
+.dj_iequirks .dijit_a11y .dijitSliderImageHandle {
+    font-size : 0;
+}
+.dj_ie7 .dijitSliderImageHandle {
+    overflow : hidden;
+}
+.dj_ie7 .dijit_a11y .dijitSliderImageHandle {
+    overflow : visible;
+}
+.dijit_a11y .dijitSliderFocused .dijitSliderImageHandle {
+    border : 4px solid #000;
+    height : 8px;
+    width : 8px;
+}
+.dijitSliderImageHandleV {
+    top : -8px;
+    right : -50%;
+}
+.dijitSliderImageHandleH {
+    left : 50%;
+    top : -5px;
+    vertical-align : top;
+}
+.dijitSliderBar {
+    border-style : solid;
+    border-color : black;
+    cursor : pointer;
+}
+.dijitSliderBarContainerV {
+    position : relative;
+    height : 100%;
+    z-index : 1;
+}
+.dijitSliderBarContainerH {
+    position : relative;
+    z-index : 1;
+}
+.dijitSliderBarH {
+    height : 4px;
+    border-width : 1px 0;
+}
+.dijitSliderBarV {
+    width : 4px;
+    border-width : 0 1px;
+}
+.dijitSliderProgressBar {
+    background-color : red;
+    z-index : 1;
+}
+.dijitSliderProgressBarV {
+    position : static !important;
+    height : 0%;
+    vertical-align : top;
+    text-align : left;
+}
+.dijitSliderProgressBarH {
+    position : absolute !important;
+    width : 0%;
+    vertical-align : middle;
+    overflow : visible;
+}
+.dijitSliderRemainingBar {
+    overflow : hidden;
+    background-color : transparent;
+    z-index : 1;
+}
+.dijitSliderRemainingBarV {
+    height : 100%;
+    text-align : left;
+}
+.dijitSliderRemainingBarH {
+    width : 100% !important;
+}
+.dijitSliderBumper {
+    overflow : hidden;
+    z-index : 1;
+}
+.dijitSliderBumperV {
+    width : 4px;
+    height : 8px;
+    border-width : 0 1px;
+}
+.dijitSliderBumperH {
+    width : 8px;
+    height : 4px;
+    border-width : 1px 0;
+}
+.dijitSliderBottomBumper, .dijitSliderLeftBumper {
+    background-color : red;
+}
+.dijitSliderTopBumper, .dijitSliderRightBumper {
+    background-color : transparent;
+}
+.dijitSliderDecoration {
+    text-align : center;
+}
+.dijitSliderV TD {
+    position : relative;
+}
+.dijitSliderDecorationH {
+    width : 100%;
+}
+.dijitSliderDecorationV {
+    height : 100%;
+}
+.dijitSliderButton {
+    font-family : monospace;
+    margin : 0;
+    padding : 0;
+    display : block;
+}
+.dijit_a11y .dijitSliderButtonInner {
+    visibility : visible !important;
+}
+.dijitSliderButtonContainer {
+    text-align : center;
+    height : 0;
+}
+.dijitSliderButtonContainer * {
+    cursor : pointer;
+}
+.dijitSlider .dijitButtonNode {
+    padding : 0;
+    display : block;
+}
+.dijitRuleContainer {
+    position : relative;
+    overflow : visible;
+}
+.dijitRuleContainerV {
+    height : 100%;
+    line-height : 0;
+    float : left;
+    text-align : left;
+}
+.dj_opera .dijitRuleContainerV {
+    line-height : 2%;
+}
+.dj_ie .dijitRuleContainerV {
+    line-height : normal;
+}
+.dj_gecko .dijitRuleContainerV {
+    margin : 0 0 1px 0;
+}
+.dijitRuleMark {
+    position : absolute;
+    border : 1px solid black;
+    line-height : 0;
+    height : 100%;
+}
+.dijitRuleMarkH {
+    width : 0;
+    border-top-width : 0 !important;
+    border-bottom-width : 0 !important;
+    border-left-width : 0 !important;
+}
+.dijitRuleLabelContainer {
+    position : absolute;
+}
+.dijitRuleLabelContainerH {
+    text-align : center;
+    display : inline-block;
+}
+.dijitRuleLabelH {
+    position : relative;
+    left : -50%;
+}
+.dijitRuleLabelV {
+    text-overflow : ellipsis;
+    white-space : nowrap;
+    overflow : hidden;
+}
+.dijitRuleMarkV {
+    height : 0;
+    border-right-width : 0 !important;
+    border-bottom-width : 0 !important;
+    border-left-width : 0 !important;
+    width : 100%;
+    left : 0;
+}
+.dj_ie .dijitRuleLabelContainerV {
+    margin-top : -.55em;
+}
+.dijit_a11y .dijitSliderReadOnly, .dijit_a11y .dijitSliderDisabled {
+    opacity : 0.6;
+}
+.dj_ie .dijit_a11y .dijitSliderReadOnly .dijitSliderBar, .dj_ie .dijit_a11y .dijitSliderDisabled .dijitSliderBar {
+    filter : alpha(opacity=40);
+}
+.dijit_a11y .dijitSlider .dijitSliderButtonContainer DIV {
+    font-family : monospace;
+    font-size : 1em;
+    line-height : 1em;
+    height : auto;
+    width : auto;
+    margin : 0px 4px;
+}
+.dijit_a11y .dijitButtonContents .dijitButtonText, .dijit_a11y .dijitTab .tabLabel {
+    display : inline !important;
+}
+.dijitTextArea {
+    width : 100%;
+    overflow-y : auto;
+}
+.dijitTextArea[cols] {
+    width : auto;
+}
+.dj_ie .dijitTextAreaCols {
+    width : auto;
+}
+.dijitToolbarSeparator {
+    height : 18px;
+    width : 5px;
+    padding : 0 1px;
+    margin : 0;
+}
+.dijitIEFixedToolbar {
+    position : absolute;
+    top : expression(eval((document.documentElement||document.body).scrollTop));
+}
+.dijitEditor {
+    display : block;
+}
+.dijitEditorDisabled, .dijitEditorReadOnly {
+    color : gray;
+}
+.dijitTimePickerItemInner {
+    text-align : center;
+    border : 0;
+    padding : 2px 8px 2px 8px;
+}
+.dijitTimePickerTick, .dijitTimePickerMarker {
+    border-bottom : 1px solid gray;
+}
+.dijitTimePicker .dijitDownArrowButton {
+    border-top : none !important;
+}
+.dijitTimePickerTick {
+    color : #CCC;
+}
+.dijitTimePickerMarker {
+    color : black;
+    background-color : #CCC;
+}
+.dijitTimePickerItemSelected {
+    font-weight : bold;
+    color : #333;
+    background-color : #b7cdee;
+}
+.dijitTimePickerItemHover {
+    background-color : gray;
+    color : white;
+    cursor : pointer;
+}
+.dijit_a11y .dijitTimePickerItemSelected .dijitTimePickerItemInner {
+    border : solid 4px black;
+}
+.dijit_a11y .dijitTimePickerItemHover .dijitTimePickerItemInner {
+    border : dashed 4px black;
+}
+.dijitToggleButtonIconChar {
+    display : none !important;
+}
+.dijit_a11y .dijitToggleButton .dijitToggleButtonIconChar {
+    display : inline !important;
+    visibility : hidden;
+}
+.dj_ie6 .dijitToggleButtonIconChar, .dj_ie6 .tabStripButton .dijitButtonText {
+    font-family : "Arial Unicode MS";
+}
+.dijit_a11y .dijitToggleButtonChecked .dijitToggleButtonIconChar {
+    display : inline !important;
+    visibility : visible !important;
+}
+.dijitArrowButtonChar {
+    display : none !important;
+}
+.dijit_a11y .dijitArrowButtonChar {
+    display : inline !important;
+}
+.dijit_a11y .dijitDropDownButton .dijitArrowButtonInner, .dijit_a11y .dijitComboButton .dijitArrowButtonInner {
+    display : none !important;
+}
+.dijitSelect {
+    margin : 0.2em;
+    border-collapse : collapse;
+}
+.dj_ie .dijitSelect, .dj_ie7 .dijitSelect, .dj_iequirks .dijitSelect {
+    vertical-align : middle;
+}
+.dj_ie8 .dijitSelect .dijitButtonText {
+    vertical-align : top;
+}
+.dijitToolbar .dijitSelect {
+    margin : 0;
+}
+.dj_webkit .dijitToolbar .dijitSelect {
+    padding-left : 0.3em;
+}
+.dijit_a11y .dijitSelectDisabled .dijitButtonNode {
+    border-style : outset!important;
+    border-width : medium!important;
+    border-color : #999 !important;
+    color : #999 !important;
+}
+.dijitSelect .dijitButtonContents {
+    padding : 0px;
+    background : transparent none;
+    white-space : nowrap;
+    text-align : left;
+}
+.dijitSelectFixedWidth .dijitButtonContents {
+    width : 100%;
+}
+.dijitSelectMenu .dijitMenuItemIcon {
+    display : none;
+}
+.dj_ie6 .dijitSelectMenu .dijitMenuItemLabel, .dj_ie7 .dijitSelectMenu .dijitMenuItemLabel {
+    position : static;
+}
+.dijitSelectLabel * {
+    vertical-align : baseline;
+}
+.dijitSelectSelectedOption * {
+    font-weight : bold;
+}
+.dijitSelectMenu {
+    border-width : 1px;
+}
+.dijitSelectMenu .dijitMenuTable {
+    margin : 0px;
+    background-color : transparent;
+}
+.dijitForceStatic {
+    position : static !important;
+}
+.dijitReadOnly *,  .dijitDisabled *,  .dijitReadOnly, .dijitDisabled {
+    cursor : default;
+}
+.freeguipy {
+    font-family : Verdana,Arial,Helvetica,sans-serif;
+    font-size : .688em;
+    color : #131313;
+}
+h1 {
+    font-size : 1.545em;
+    font-weight : normal;
+    line-height : 1em;
+    margin-top : 1em;
+    margin-bottom : 0.727em;
+}
+.freeguipy .dijitDialog h1 {
+    margin-top : 0em;
+}
+h2 {
+    font-size : 1.364em;
+    line-height : 1.455em;
+    margin-top : 1em;
+    margin-bottom : 0.60em;
+    font-weight : normal;
+}
+h3, h4, h5, h6 {
+    font-size : 1.091em;
+    font-weight : normal;
+    line-height : 1.5em;
+    margin-top : 1.5em;
+    margin-bottom : 0;
+}
+p {
+    font-size : 1em;
+    line-height : 1.3em;
+}
+blockquote {
+    font-size : 0.916em;
+    margin-top : 3.272em;
+    margin-bottom : 3.272em;
+    line-height : 1.636em;
+    padding : 1.636em;
+    border-top : 1px solid #ccc;
+    border-bottom : 1px solid #ccc;
+}
+ol li, ul li {
+    font-size : 1em;
+    line-height : 1.5em;
+    margin : 0;
+}
+pre, code {
+    font-size : 115%;
+    *font-size : 100%;
+    font-family : inherit;
+    background-color : #efefef;
+    border : 1px solid #ccc;
+}
+pre {
+    border-width : 1px 0;
+    padding : 1.5em;
+}
+table {
+    font-size : 100%;
+}
+table.dojoTabular {
+    border-collapse : collapse;
+    border-spacing : 0;
+    border : 1px solid #ccc;
+    margin : 0 1.5em;
+}
+.dojoTabular th {
+    text-align : center;
+    font-weight : bold;
+}
+table.dojoTabular thead, table.dojoTabular tfoot {
+    background-color : #efefef;
+    border : 1px solid #ccc;
+    border-width : 1px 0;
+}
+table.dojoTabular thead tr th, table.dojoTabular thead tr td, table.dojoTabular tbody tr td, table.dojoTabular tfoot tr td {
+    padding : 0.25em 0.5em;
+}
+.dijitIconSave, .dijitIconPrint, .dijitIconCut, .dijitIconCopy, .dijitIconClear, .dijitIconDelete, .dijitIconUndo, .dijitIconEdit, .dijitIconNewTask, .dijitIconEditTask, .dijitIconEditProperty, .dijitIconTask, .dijitIconFilter, .dijitIconConfigure, .dijitIconSearch, .dijitIconApplication, .dijitIconBookmark, .dijitIconChart, .dijitIconConnector, .dijitIconDatabase, .dijitIconDocuments, .dijitIconMail, .dijitLeaf, .dijitIconFile, .dijitIconFunction, .dijitIconKey, .dijitIconPackage, .dijitIconSample, .dijitIconTable, .dijitIconUsers, .dijitFolderClosed, .dijitIconFolderClosed, .dijitFolderOpened, .dijitIconFolderOpen, .dijitIconError {
+    background-image : url(icons/images/commonIconsObjActEnabled.png);
+    width : 16px;
+    height : 16px;
+}
+.dj_ie6 .dijitIconSave, .dj_ie6 .dijitIconPrint, .dj_ie6 .dijitIconCut, .dj_ie6 .dijitIconCopy, .dj_ie6 .dijitIconClear, .dj_ie6 .dijitIconDelete, .dj_ie6 .dijitIconUndo, .dj_ie6 .dijitIconEdit, .dj_ie6 .dijitIconNewTask, .dj_ie6 .dijitIconEditTask, .dj_ie6 .dijitIconEditProperty, .dj_ie6 .dijitIconTask, .dj_ie6 .dijitIconFilter, .dj_ie6 .dijitIconConfigure, .dj_ie6 .dijitIconSearch, .dj_ie6 .dijitIconApplication, .dj_ie6 .dijitIconBookmark, .dj_ie6 .dijitIconChart, .dj_ie6 .dijitIconConnector, .dj_ie6 .dijitIconDatabase, .dj_ie6 .dijitIconDocuments, .dj_ie6 .dijitIconMail, .dj_ie6 .dijitLeaf, .dj_ie6 .dijitIconFile, .dj_ie6 .dijitIconFunction, .dj_ie6 .dijitIconKey, .dj_ie6 .dijitIconPackage, .dj_ie6 .dijitIconSample, .dj_ie6 .dijitIconTable, .dj_ie6 .dijitIconUsers, .dj_ie6 .dijitFolderClosed, .dj_ie6 .dijitIconFolderClosed, .dj_ie6 .dijitFolderOpened, .dj_ie6 .dijitIconFolderOpen, .dj_ie6 .dijitIconError {
+    background-image : url(icons/images/commonIconsObjActEnabled8bit.png);
+}
+.dijitDisabled .dijitIconSave, .dijitDisabled .dijitIconPrint, .dijitDisabled .dijitIconCut, .dijitDisabled .dijitIconCopy, .dijitDisabled .dijitIconClear, .dijitDisabled .dijitIconDelete, .dijitDisabled .dijitIconUndo, .dijitDisabled .dijitIconEdit, .dijitDisabled .dijitIconNewTask, .dijitDisabled .dijitIconEditTask, .dijitDisabled .dijitIconEditProperty, .dijitDisabled .dijitIconTask, .dijitDisabled .dijitIconFilter, .dijitDisabled .dijitIconConfigure, .dijitDisabled .dijitIconSearch, .dijitDisabled .dijitIconApplication, .dijitDisabled .dijitIconBookmark, .dijitDisabled .dijitIconChart, .dijitDisabled .dijitIconConnector, .dijitDisabled .dijitIconDatabase, .dijitDisabled .dijitIconDocuments, .dijitDisabled .dijitIconMail, .dijitDisabled .dijitLeaf, .dijitDisabled .dijitIconFile, .dijitDisabled .dijitIconFunction, .dijitDisabled .dijitIconKey, .dijitDisabled .dijitIconPackage, .dijitDisabled .dijitIconSample, .dijitDisabled .dijitIconTable, .dijitDisabled .dijitIconUsers, .dijitDisabled .dijitFolderClosed, .dijitDisabled .dijitIconFolderClosed, .dijitDisabled .dijitFolderOpened, .dijitDisabled .dijitIconFolderOpen, .dijitDisabled .dijitIconError {
+    background-image : url(icons/images/commonIconsObjActDisabled.png);
+}
+.dijitIconSave {
+    background-position : 0px;
+}
+.dijitIconPrint {
+    background-position : -16px;
+}
+.dijitIconCut {
+    background-position : -32px;
+}
+.dijitIconCopy {
+    background-position : -48px;
+}
+.dijitIconClear {
+    background-position : -64px;
+}
+.dijitIconDelete {
+    background-position : -80px;
+}
+.dijitIconUndo {
+    background-position : -96px;
+}
+.dijitIconEdit {
+    background-position : -112px;
+}
+.dijitIconNewTask {
+    background-position : -128px;
+}
+.dijitIconEditTask {
+    background-position : -144px;
+}
+.dijitIconEditProperty {
+    background-position : -166px;
+}
+.dijitIconTask {
+    background-position : -176px;
+}
+.dijitIconFilter {
+    background-position : -192px;
+}
+.dijitIconConfigure {
+    background-position : -208px;
+}
+.dijitIconSearch {
+    background-position : -224px;
+}
+.dijitIconError {
+    background-position : -496px;
+}
+.dijitIconApplication {
+    background-position : -240px;
+}
+.dijitIconBookmark {
+    background-position : -256px;
+}
+.dijitIconChart {
+    background-position : -272px;
+}
+.dijitIconConnector {
+    background-position : -288px;
+}
+.dijitIconDatabase {
+    background-position : -304px;
+}
+.dijitIconDocuments {
+    background-position : -320px;
+}
+.dijitIconMail {
+    background-position : -336px;
+}
+.dijitIconFile, .dijitLeaf {
+    background-position : -352px;
+}
+.dijitIconFunction {
+    background-position : -368px;
+}
+.dijitIconKey {
+    background-position : -384px;
+}
+.dijitIconPackage {
+    background-position : -400px;
+}
+.dijitIconSample {
+    background-position : -416px;
+}
+.dijitIconTable {
+    background-position : -432px;
+}
+.dijitIconUsers {
+    background-position : -448px;
+}
+.dijitIconFolderClosed, .dijitFolderClosed {
+    background-position : -464px;
+}
+.dijitIconFolderOpen, .dijitFolderOpened {
+    background-position : -480px;
+}
+.freeguipy .dijitPopup {
+    box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+    -webkit-box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+    -moz-box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+}
+.freeguipy .dijitTooltipDialogPopup {
+    box-shadow : none;
+    -webkit-box-shadow : none;
+    -moz-box-shadow : none;
+}
+.freeguipy .dijitComboBoxHighlightMatch {
+    background-color : #a5beda;
+}
+.freeguipy .dijitFocusedLabel {
+    outline : 1px dotted #666666;
+}
+.freeguipy .dijitContentPaneLoading {
+    background : url(images/loadingAnimation.gif) no-repeat left center;
+    padding-left : 25px;
+}
+.freeguipy .dijitContentPaneError {
+    background : url(../../icons/images/commonIconsObjActEnabled.png) no-repeat left center;
+    background-position : -496px;
+    padding-left : 25px;
+}
+.freeguipy .dojoDndItemBefore, .freeguipy .dojoDndItemAfter {
+    border-top : 1px solid #769DC0;
+}
+.freeguipy .dojoDndItemOver {
+    cursor : pointer;
+}
+.freeguipy table.dojoDndAvatar {
+    border : 1px solid #b5bcc7;
+    border-collapse : collapse;
+    background-color : #fff;
+    -webkit-box-shadow : 0px 1px 3px rgba(0, 0, 0, .25);
+}
+.freeguipy .dojoDndAvatarHeader td {
+    height : 20px;
+    padding-left : 21px;
+}
+.claro.dojoDndMove .dojoDndAvatarHeader, .claro.dojoDndCopy .dojoDndAvatarHeader {
+    background-image : url(images/dnd.png);
+    background-repeat : no-repeat;
+    background-position : 2px -122px;
+}
+.freeguipy .dojoDndAvatarItem td {
+    padding : 5px;
+}
+.claro.dojoDndMove .dojoDndAvatarHeader {
+    background-color : #f58383;
+    background-position : 2px -103px;
+}
+.claro.dojoDndCopy .dojoDndAvatarHeader {
+    background-color : #f58383;
+    background-position : 2px -68px;
+}
+.claro.dojoDndMove .dojoDndAvatarCanDrop .dojoDndAvatarHeader {
+    background-color : #97e68d;
+    background-position : 2px -33px;
+}
+.claro.dojoDndCopy .dojoDndAvatarCanDrop .dojoDndAvatarHeader {
+    background-color : #97e68d;
+    background-position : 2px 2px;
+}
+.freeguipy .dijitTextBoxError .dijitValidationContainer {
+    background-color : #d46363;
+    background-image : url(form/images/error.png);
+    background-position : top center;
+    border : solid #d46464 0px;
+    border-left-width : 1px;
+    width : 9px;
+}
+.freeguipy .dijitTextBoxError .dijitValidationIcon {
+    width : 0px;
+    background-color : transparent !important;
+}
+.freeguipy .dijitTextBox .dijitInputContainer, .freeguipy .dijitTextArea, .freeguipy .dijitInputField .dijitPlaceHolder {
+    padding : 2px;
+}
+.freeguipy .dijitTextBox, .freeguipy .dijitTextBox .dijitButtonNode {
+    border-color : #b5bcc7;
+    -webkit-transition-property : background-color, border;
+    -webkit-transition-duration : .35s;
+    background-color : #7e95a5;
+}
+.freeguipy .dijitTextBox {
+    background-color : #7e95a5;
+}
+.freeguipy .dijitTextBoxHover, .freeguipy .dijitTextBoxHover .dijitButtonNode {
+    border-color : #769dc0;
+    -webkit-transition-duration : .25s;
+    background-color : #7f8a95;
+}
+.freeguipy .dijitTextBoxHover {
+    background-image : url(form/images/textBox_back.png);
+    background-repeat : repeat-x;
+    background-color : #7f8a95;
+}
+.freeguipy .dijitTextBoxError, .freeguipy .dijitTextBoxError .dijitButtonNode {
+    border-color : #d46464;
+}
+.freeguipy .dijitTextBoxError, .freeguipy .dijitTextBoxError .dijitInputContainer {
+    background-color : #fdf7f7;
+}
+.freeguipy .dijitTextBoxFocused, .freeguipy .dijitTextBoxFocused .dijitButtonNode {
+    border-color : #769dc0;
+    -webkit-transition-duration : .1s;
+    background-color : #3fe4ec;
+}
+.freeguipy .dijitTextBoxFocused {
+    background-image : url(form/images/textBox_back.png);
+    background-repeat : repeat-x;
+    background-color : #3fe4ec;
+}
+.freeguipy .dijitTextBoxFocused .dijitInputContainer {
+    background : #fff;
+}
+.freeguipy .dijitTextBoxErrorFocused, .freeguipy .dijitTextBoxErrorFocused .dijitButtonNode {
+    border-color : #ce4f4f;
+}
+.freeguipy .dijitTextBoxDisabled, .freeguipy .dijitTextBoxDisabled .dijitButtonNode {
+    border-color : #d3d3d3;
+}
+.freeguipy .dijitTextBoxDisabled {
+    background-color : #efefef;
+    background-image : none;
+    color : #818181;
+}
+.freeguipy .dijitComboBox .dijitArrowButtonInner {
+    background-image : url(form/images/commonFormArrows.png);
+    background-position : -35px 53%;
+    background-repeat : no-repeat;
+    margin : 0px;
+    width : 16px;
+    height : 100%;
+    border : 1px solid #fff;
+}
+.freeguipy .dijitTextBox .dijitInputField {
+    padding-top : 1px;
+    padding-bottom : 1px;
+}
+.freeguipy .dijitTextBox .dijitInputInner {
+    padding : 1px 2px 1px 0;
+}
+.freeguipy .dijitTextBox .dijitValidationContainer {
+    padding : 0 0 2px 0;
+}
+.freeguipy .dijitComboBox .dijitButtonNode {
+    background-image : url(form/images/formHighlight.png);
+    background-repeat : repeat-x;
+    background-color : #6a8097;
+}
+.freeguipy .dijitComboBoxHover .dijitButtonNode {
+    background-color : #5d7086;
+}
+.freeguipy .dijitComboBoxHover .dijitArrowButtonInner {
+    background-position : -70px 53%;
+}
+.freeguipy .dijitComboBoxFocused .dijitButtonNode {
+    background-color : #7dbefa;
+    background-position : 0px -177px;
+    padding : 1px;
+}
+.freeguipy .dijitComboBoxFocused .dijitArrowButtonInner {
+    background-position : -70px 53%;
+    border : 0px none;
+}
+.freeguipy div.dijitComboBoxDisabled .dijitArrowButtonInner {
+    background-position : 0px 50%;
+    background-color : #f1f1f1;
+}
+.dj_ff3 .freeguipy .dijitInputField input[type="hidden"] {
+    display : none;
+    height : 0;
+    width : 0;
+}
+.dj_ie6 .freeguipy .dijitTextBox, .dj_ie6 .freeguipy .dijitComboBox .dijitButtonNode {
+    background-image : none;
+}
+.dj_quirks .freeguipy .dijitComboBox .dijitArrowButtonInner {
+    border : 0px;
+}
+.dj_quirks .freeguipy .dijitComboBox .dijitArrowButtonContainer {
+    padding : 1px;
+}
+.freeguipy .dijitButtonNode {
+    -webkit-transition-property : background-color;
+    -webkit-transition-duration : .3s;
+}
+.freeguipy .dijitButton .dijitButtonNode, .freeguipy .dijitDropDownButton .dijitButtonNode, .freeguipy .dijitComboButton .dijitButtonNode, .freeguipy .dijitToggleButton .dijitButtonNode {
+    border-color : #769dc0;
+    border-style : solid;
+    border-width : 1px;
+    padding : 2px 4px 4px 4px;
+    background-image : url(form/images/button.png);
+    background-position : center top;
+    background-repeat : repeat-x;
+    border-radius : 4px;
+    -moz-border-radius : 4px;
+    -webkit-border-radius : 4px;
+    box-shadow : 0px 1px 1px rgba(0,0,0,0.15);
+    -webkit-box-shadow : 0px 1px 1px rgba(0,0,0,0.15);
+    -moz-box-shadow : 0px 1px 1px rgba(0,0,0,0.15);
+    border : 1px solid black;
+    background-color : #6a8097;
+}
+.freeguipy .dijitComboButton .dijitArrowButton {
+    border-left-width : 0px;
+    padding : 4px 2px 4px 2px;
+}
+.freeguipy .dijitArrowButtonInner {
+    width : 15px;
+    height : 15px;
+    margin : 0 auto;
+    background-image : url(form/images/buttonArrows.png);
+    background-repeat : no-repeat;
+    background-position : -51px 53%;
+}
+.freeguipy .dijitLeftArrowButton .dijitArrowButtonInner {
+    background-position : -77px 53%;
+}
+.freeguipy .dijitRightArrowButton .dijitArrowButtonInner {
+    background-position : -26px 53%;
+}
+.freeguipy .dijitUpArrowButton .dijitArrowButtonInner {
+    background-position : 0px 53%;
+}
+.freeguipy .dijitDisabled .dijitArrowButtonInner {
+    background-position : -151px 53%;
+}
+.freeguipy .dijitDisabled .dijitLeftArrowButton .dijitArrowButtonInner {
+    background-position : -177px 53%;
+}
+.freeguipy .dijitDisabled .dijitRightArrowButton .dijitArrowButtonInner {
+    background-position : -126px 53%;
+}
+.freeguipy .dijitDisabled .dijitUpArrowButton .dijitArrowButtonInner {
+    background-position : -100px 53%;
+}
+.freeguipy .dijitButtonText {
+    padding : 0 0.3em;
+    text-align : center;
+}
+.freeguipy .dijitDisabled .dijitButtonText {
+    color : #7F7F7F;
+}
+.freeguipy .dijitButtonHover .dijitButtonNode, .freeguipy .dijitDropDownButtonHover .dijitButtonNode, .freeguipy .dijitComboButton .dijitButtonNodeHover, .freeguipy .dijitComboButton .dijitDownArrowButtonHover, .freeguipy .dijitToggleButtonHover .dijitButtonNode {
+    color : #000;
+    -webkit-transition-duration : .2s;
+    background-color : #5d7086;
+}
+.freeguipy .dijitButtonActive .dijitButtonNode, .freeguipy .dijitDropDownButtonActive .dijitButtonNode, .freeguipy .dijitComboButtonActive .dijitButtonNode, .freeguipy .dijitToggleButtonActive .dijitButtonNode {
+    box-shadow : 0px 0px 0px rgba(0,0,0,0);
+    -webkit-box-shadow : 0px 0px 0px rgba(0,0,0,0);
+    -moz-box-shadow : 0px 0px 0px rgba(0,0,0,0);
+    -webkit-transition-duration : .1s;
+    background-color : #515860;
+}
+.freeguipy .dijitButtonDisabled, .freeguipy .dijitDropDownButtonDisabled, .freeguipy .dijitComboButtonDisabled, .freeguipy .dijitToggleButtonDisabled {
+    background-image : none;
+    outline : none;
+}
+.freeguipy .dijitButtonDisabled .dijitButtonNode, .freeguipy .dijitDropDownButtonDisabled .dijitButtonNode, .freeguipy .dijitComboButtonDisabled .dijitButtonNode, .freeguipy .dijitToggleButtonDisabled .dijitButtonNode {
+    background-position : 0px -149px;
+    background-color : #e3e3e3;
+    border : solid 1px #c9c9c9;
+    color : #696969;
+    box-shadow : 0px 0px 0px rgba(0,0,0,0);
+    -webkit-box-shadow : 0px 0px 0px rgba(0,0,0,0);
+    -moz-box-shadow : 0px 0px 0px rgba(0,0,0,0);
+}
+.freeguipy .dijitComboButtonDisabled .dijitArrowButton {
+    border-left-width : 0px;
+}
+.freeguipy table.dijitComboButton {
+    border-collapse : separate;
+}
+.dj_ie6 .freeguipy .dijitButtonNode {
+    background-image : none;
+}
+.freeguipy .dijitComboButton .dijitStretch {
+    -moz-border-radius : 4px 0px 0px 4px;
+    -webkit-border-top-left-radius : 4px;
+    -webkit-border-top-right-radius : 0px;
+    -webkit-border-bottom-right-radius : 0px;
+    -webkit-border-bottom-left-radius : 4px;
+}
+.freeguipy .dijitComboButton .dijitArrowButton {
+    -moz-border-radius : 0px 4px 4px 0px;
+    -webkit-border-top-left-radius : 0px;
+    -webkit-border-top-right-radius : 4px;
+    -webkit-border-bottom-right-radius : 4px;
+    -webkit-border-bottom-left-radius : 0px;
+}
+.freeguipy .dijitToggleButton .dijitCheckBoxIcon {
+    background-image : url(images/checkmarkNoBorder.png);
+}
+.dj_ie6 .freeguipy .dijitToggleButton .dijitCheckBoxIcon {
+    background-image : url(images/checkmarkNoBorder.gif);
+}
+.freeguipy .dijitCheckBox, .freeguipy .dijitCheckBoxIcon {
+    background-image : url(form/images/checkboxRadioButtonStates.png);
+    background-repeat : no-repeat;
+    width : 15px;
+    height : 16px;
+    margin : 0 2px 0 0;
+    padding : 0;
+}
+.dj_ie6 .freeguipy .dijitCheckBox, .dj_ie6 .freeguipy .dijitCheckBoxIcon {
+    background-image : url(form/images/checkboxAndRadioButtons_IE6.png);
+}
+.freeguipy .dijitCheckBox, .freeguipy .dijitToggleButton .dijitCheckBoxIcon {
+    background-position : -15px;
+}
+.freeguipy .dijitCheckBoxChecked, .freeguipy .dijitToggleButtonChecked .dijitCheckBoxIcon {
+    background-position : -0px;
+}
+.freeguipy .dijitCheckBoxDisabled {
+    background-position : -75px;
+}
+.freeguipy .dijitCheckBoxCheckedDisabled {
+    background-position : -60px;
+}
+.freeguipy .dijitCheckBoxHover {
+    background-position : -45px;
+}
+.freeguipy .dijitCheckBoxCheckedHover {
+    background-position : -30px;
+}
+.freeguipy .dijitToggleButton .dijitRadio, .freeguipy .dijitToggleButton .dijitRadioIcon {
+    background-image : url(form/images/checkboxRadioButtonStates.png);
+}
+.dj_ie6 .freeguipy .dijitToggleButton .dijitRadio, .dj_ie6 .freeguipy .dijitToggleButton .dijitRadioIcon {
+    background-image : url(form/images/checkboxAndRadioButtons_IE6.png);
+}
+.freeguipy .dijitRadio, .freeguipy .dijitRadioIcon {
+    background-image : url(form/images/checkboxRadioButtonStates.png);
+    background-repeat : no-repeat;
+    width : 15px;
+    height : 15px;
+    margin : 0px 2px 0px 0px;
+    padding : 0px;
+}
+.dj_ie6 .freeguipy .dijitRadio, .dj_ie6 .freeguipy .dijitRadioIcon {
+    background-image : url(form/images/checkboxAndRadioButtons_IE6.png);
+}
+.freeguipy .dijitRadio {
+    background-position : -105px;
+}
+.freeguipy .dijitToggleButton .dijitRadioIcon {
+    background-position : -107px;
+}
+.freeguipy .dijitRadioDisabled {
+    background-position : -165px;
+}
+.freeguipy .dijitRadioHover {
+    background-position : -135px;
+}
+.freeguipy .dijitRadioChecked {
+    background-position : -90px;
+}
+.freeguipy .dijitToggleButtonChecked .dijitRadioIcon {
+    background-position : -92px;
+}
+.freeguipy .dijitRadioCheckedHover {
+    background-position : -120px;
+}
+.freeguipy .dijitRadioCheckedDisabled {
+    background-position : -150px;
+}
+.freeguipy .dijitSelect .dijitButtonText {
+    padding : 0px 5px 2px 5px;
+}
+.freeguipy .dijitSelect {
+    border : 1px solid #b5bcc7;
+    background-color : #f7fcff;
+    border-collapse : separate;
+}
+.dj_ie6 .freeguipy .dijitSelect, .dj_ie6 .freeguipy .dijitSelect .dijitButtonNode {
+    background-image : none;
+}
+.freeguipy .dijitSelect .dijitButtonContents {
+    border : 0px solid #b5bcc7;
+    border-right-width : 1px;
+}
+.freeguipy .dijitSelect .dijitArrowButton {
+    padding : 0;
+    border : 1px solid #fff;
+    border-top : none;
+    background-color : #ebeef4;
+    background-image : url(form/images/formHighlight.png);
+    background-repeat : repeat-x;
+}
+.freeguipy .dijitSelect .dijitArrowButton .dijitArrowButtonInner {
+    background-image : url(form/images/commonFormArrows.png);
+    background-position : -35px 70%;
+    background-repeat : no-repeat;
+    width : 16px;
+    height : 16px;
+    display : block;
+}
+.freeguipy .dijitSelectHover {
+    border : 1px solid #769dc0;
+    background-color : #e9f4fe;
+    background-image : url(form/images/textBox_back.png);
+    background-repeat : repeat-x;
+}
+.freeguipy .dijitSelectHover .dijitButtonContents {
+    border-color : #81a5c6;
+}
+.freeguipy .dijitSelectHover .dijitArrowButton {
+    background-color : #abd6ff;
+}
+.freeguipy .dijitSelectHover .dijitArrowButton .dijitArrowButtonInner {
+    background-position : -70px 70%;
+}
+.freeguipy .dijitSelectFocused {
+    border : 1px solid #769dc0;
+}
+.freeguipy .dijitSelectFocused .dijitButtonContents {
+    border-color : #81a5c6;
+}
+.freeguipy .dijitSelectFocused .dijitArrowButton {
+    background-color : #7dbefa;
+    background-position : 0px -177px;
+    border : none;
+    padding : 0px 1px;
+}
+.freeguipy .dijitSelectFocused .dijitArrowButton .dijitArrowButtonInner {
+    background-position : -70px 70%;
+    margin-bottom : 1px;
+}
+.freeguipy .dijitSelectDisabled {
+    border : 1px solid #d3d3d3;
+    background-color : #efefef;
+    background-image : none;
+    color : #818181;
+}
+.freeguipy .dijitSelectDisabled .dijitArrowButton {
+    background-color : #efefef;
+}
+.freeguipy .dijitSelectDisabled .dijitArrowButton .dijitArrowButtonInner {
+    background-position : 0px 70%;
+}
+.freeguipy .dijitSelectMenu td.dijitMenuItemIconCell, .freeguipy .dijitSelectMenu td.dijitMenuArrowCell {
+    display : none;
+}
+.freeguipy .dijitSelectMenu td.dijitMenuItemLabel {
+    padding-left : 5px;
+    padding-right : 5px;
+}
+.freeguipy .dijitSelectMenu .dijitMenuSeparatorTop {
+    border-bottom : 1px solid #769dc0;
+}
+.freeguipy .dijitTabContainer {
+}
+.freeguipy .dijitTabPaneWrapper {
+    background : #fff;
+}
+.freeguipy .dijitTabPaneWrapper, .freeguipy .dijitTabContainerTop-tabs, .freeguipy .dijitTabContainerBottom-tabs, .freeguipy .dijitTabContainerLeft-tabs, .freeguipy .dijitTabContainerRight-tabs {
+    border-color : #b5bcc7;
+}
+.freeguipy .dijitTabCloseButton {
+    background : url(layout/images/tabClose.png) no-repeat;
+    width : 14px;
+    height : 14px;
+    margin-left : 5px;
+    margin-right : -3px;
+}
+.freeguipy .dijitTabCloseButtonHover {
+    background-position : -14px;
+}
+.freeguipy .dijitTabCloseButtonActive {
+    background-position : -28px;
+}
+.freeguipy .dijitTabSpacer {
+    display : none;
+}
+.freeguipy .dijitTabInnerDiv {
+    background-color : #e6e6e7;
+    -webkit-transition-property : background-color, border;
+    -webkit-transition-duration : .35s;
+    color : #4a4a4a;
+}
+.freeguipy .dijitTabHover .dijitTabInnerDiv {
+    -webkit-transition-duration : .25s;
+    color : #000;
+    background-color : #5d7086;
+}
+.freeguipy .dijitTabActive .dijitTabInnerDiv {
+    -webkit-transition-duration : .1s;
+    color : black;
+    background-color : #515860;
+}
+.freeguipy .dijitTabChecked .dijitTabInnerDiv {
+    color : #000;
+    background-color : #73695f;
+}
+.freeguipy .dijitTabContent {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #b5bcc7;
+}
+.freeguipy .dijitTabHover .dijitTabContent, .freeguipy .dijitTabActive .dijitTabContent {
+    border-color : #769dc0;
+}
+.freeguipy .dijitTabChecked .dijitTabContent {
+    color : #000;
+    border-color : #b5bcc7;
+}
+.freeguipy .tabStripButton .dijitTabInnerDiv {
+    background-color : transparent;
+}
+.freeguipy .tabStripButton .dijitTabContent {
+    border : none;
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTab {
+    top : 1px;
+    margin-right : 1px;
+    padding-top : 3px;
+}
+.dj_ie7 .freeguipy .dijitTabContainerTop-tabs .dijitTab {
+    top : 3px;
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabContent {
+    padding : 3px 8px 3px 4px;
+    border-bottom : 1px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    min-width : 60px;
+    text-align : center;
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    padding-bottom : 4px;
+    padding-top : 6px;
+}
+.dj_ie .freeguipy .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    border-bottom : none;
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px -248px;
+    background-position : bottom;
+    background-repeat : repeat-x;
+    box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-image : none;
+    box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    background-position : 0px -102px;
+    background-repeat : repeat-x;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTab {
+    top : -1px;
+    margin-right : 1px;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    border-top : none;
+    background-image : url(layout/images/tabBottom.png);
+    background-position : 0px -249px;
+    background-repeat : repeat-x;
+    background-position : bottom;
+    min-width : 60px;
+    text-align : center;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTab {
+    padding-bottom : 3px;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabBottom.png);
+    background-position : top;
+    background-repeat : repeat-x;
+    box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabContent {
+    padding-bottom : 7px;
+    padding-top : 4px;
+    background-position : 0px -119px;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabChecked {
+    padding-bottom : 0;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-image : none;
+    box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTab {
+    left : 1px;
+    margin-bottom : 1px;
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabLeft.png);
+    background-position : -347px -340px;
+    background-repeat : repeat-y;
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    background-image : url(layout/images/tabLeft.png);
+    background-repeat : repeat-y;
+    background-position : 0px 0px;
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabContent {
+    padding-right : 9px;
+    border-right : none;
+    background-image : none;
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-position : 0px -179px;
+    background-repeat : repeat-y;
+    box-shadow : -1px 0px 2px rgba(0, 0, 0, .05);
+    -webkit-box-shadow : -1px 0px 2px rgba(0, 0, 0, .05);
+    -moz-box-shadow : -1px 0px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTab {
+    left : -1px;
+    margin-bottom : 1px;
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabRight.png);
+    background-repeat : repeat-y;
+    background-position : -1px -347px;
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    background-image : url(layout/images/tabRight.png);
+    background-position : right top;
+    background-repeat : repeat-y;
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTabChecked .dijitTabContent {
+    padding-left : 5px;
+    border-left : none;
+    background-image : none;
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-position : -348px -179px;
+    box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+    -webkit-box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+    -moz-box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabInnerDiv, .freeguipy .dijitTabContainerTop-tabs .dijitTabContent {
+    border-radius : 2px 2px 0px 0px;
+    -moz-border-radius : 2px 2px 0px 0px;
+    -webkit-border-top-left-radius : 2px;
+    -webkit-border-top-right-radius : 2px;
+}
+.freeguipy .dijitTabContainerBottom-tabs .dijitTabInnerDiv, .freeguipy .dijitTabContainerBottom-tabs .dijitTabContent {
+    border-radius : 0px 0px 2px 2px;
+    -moz-border-radius : 0px 0px 2px 2px;
+    -webkit-border-bottom-right-radius : 2px;
+    -webkit-border-bottom-left-radius : 2px;
+}
+.freeguipy .dijitTabContainerLeft-tabs .dijitTabInnerDiv, .freeguipy .dijitTabContainerLeft-tabs .dijitTabContent {
+    border-radius : 2px 0px 0px 2px;
+    -moz-border-radius : 2px 0px 0px 2px;
+    -webkit-border-top-left-radius : 2px;
+    -webkit-border-bottom-left-radius : 2px;
+}
+.freeguipy .dijitTabContainerRight-tabs .dijitTabInnerDiv, .freeguipy .dijitTabContainerRight-tabs .dijitTabContent {
+    border-radius : 0px 2px 2px 0px;
+    -moz-border-radius : 0px 2px 2px 0px;
+    -webkit-border-top-right-radius : 2px;
+    -webkit-border-bottom-right-radius : 2px;
+}
+.freeguipy .tabStripButton {
+    background-color : #deecf9;
+    border : 1px solid #b5bcc7;
+}
+.freeguipy .dijitTabListContainer-top .tabStripButton {
+    padding : 4px 3px;
+    margin-top : 7px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px 0px;
+}
+.freeguipy .dijitTabListContainer-bottom .tabStripButton {
+    padding : 5px 3px;
+    margin-bottom : 4px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px -248px;
+    background-position : bottom;
+}
+.freeguipy .tabStripButtonHover {
+    background-color : #a6d2fb;
+}
+.freeguipy .tabStripButtonActive {
+    background-color : #7dbefa;
+}
+.freeguipy .dijitTabStripIcon {
+    height : 15px;
+    width : 15px;
+    margin : 0 auto;
+    background : url(form/images/buttonArrows.png) no-repeat -75px 50%;
+    background-color : transparent;
+}
+.freeguipy .dijitTabStripSlideRightIcon {
+    background-position : -24px 50%;
+}
+.freeguipy .dijitTabStripMenuIcon {
+    background-position : -51px 50%;
+}
+.freeguipy .dijitTabListContainer-top .tabStripButtonDisabled, .freeguipy .dijitTabListContainer-bottom .tabStripButtonDisabled {
+    background-color : #dddddd;
+    border : 1px solid #c9c9c9;
+}
+.freeguipy .tabStripButtonDisabled .dijitTabStripSlideLeftIcon {
+    background-position : -175px 50%;
+}
+.freeguipy .tabStripButtonDisabled .dijitTabStripSlideRightIcon {
+    background-position : -124px 50%;
+}
+.freeguipy .tabStripButtonDisabled .dijitTabStripMenuIcon {
+    background-position : -151px 50%;
+}
+.freeguipy .dijitTabContainerNested .dijitTabListWrapper {
+    height : auto;
+}
+.freeguipy .dijitTabContainerNested .dijitTabContainerTop-tabs {
+    border-bottom : solid 1px #b5bcc7;
+    padding : 1px 2px 4px;
+    margin-top : -2px;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabContent {
+    background : rgba(255, 255, 255, 0) none repeat scroll 0 0;
+    border : none;
+    padding : 4px;
+    border-color : rgba(118,157,192,0);
+    -webkit-transition-property : background-color, border-color;
+    -webkit-transition-duration : .3s;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv {
+    background : none;
+    border : none;
+    top : 0px;
+    box-shadow : none;
+    -webkit-box-shadow : none;
+    -moz-box-shadow : none;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent {
+    background-color : #eaf4fc;
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    border : solid 1px #c8dff3;
+    padding : 3px;
+    webkit-transition-duration : .2s;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabHover .tabLabel {
+    text-decoration : none;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabActive .dijitTabContent {
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    border : solid 1px #a8c7e2;
+    padding : 3px;
+    background : #b9d9f5 url(layout/images/tabNested.png) repeat-x;
+    -webkit-transition-duration : .1s;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent {
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    padding : 3px;
+    border : solid 1px #a8c7e2;
+    background-position : 0px 105px;
+    background-color : #d4e8f9;
+}
+.freeguipy .dijitTabContainerTabListNested .dijitTabChecked .tabLabel {
+    text-decoration : none;
+    background-image : none;
+}
+.freeguipy .dijitTabPaneWrapperNested {
+    border : none;
+}
+.dj_ie6 .freeguipy .dijitTabContent, .dj_ie6 .freeguipy .dijitTabInnerDiv, .dj_ie6 .dijitTabListContainer-top .tabStripButton, .dj_ie6 .dijitTabListContainer-bottom .tabStripButton {
+    background-image : none;
+}
+.freeguipy .dijitDialog {
+    border-color : #769dc0;
+    border-style : solid;
+    border-width : 1px;
+    box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+    -webkit-box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+    -moz-box-shadow : 0px 1px 5px rgba(0,0,0,0.25);
+}
+.freeguipy .dijitDialogPaneContent {
+    background : #fff repeat-x top left;
+    border-top-color : #769dc0;
+    border-top-style : solid;
+    border-top-width : 1px;
+    padding : 10px 8px;
+    position : relative;
+}
+.freeguipy .dijitDialogPaneContentArea {
+    margin : -10px -8px;
+    padding : 10px 8px;
+}
+.freeguipy .dijitDialogPaneActionBar {
+    background-color : #f2f2f2;
+    padding : 3px 5px 2px 7px;
+    text-align : right;
+    border-top : 1px solid #cdcdcd;
+    margin : 10px -8px -10px;
+}
+.freeguipy .dijitDialogPaneActionBar .dijitButton {
+    float : none;
+}
+.freeguipy .dijitDialogTitleBar {
+    border : 1px solid #fff;
+    border-top : none;
+    background-image : url(images/titlebar.png);
+    background-repeat : repeat-x;
+    padding : 5px 7px 4px 7px;
+    background-color : #6a8097;
+}
+.freeguipy .dijitDialogTitle {
+    padding : 0px 1px;
+    font-size : 1.091em;
+}
+.freeguipy .dijitDialogCloseIcon {
+    background : url(images/dialogCloseIcon.png);
+    background-repeat : no-repeat;
+    position : absolute;
+    right : 5px;
+    height : 15px;
+    width : 21px;
+}
+.dj_ie6 .freeguipy .dijitDialogCloseIcon {
+    background-image : url(images/dialogCloseIcon8bit.png);
+}
+.freeguipy .dijitDialogCloseIconHover {
+    background-position : -21px;
+}
+.freeguipy .dijitDialogCloseIconActive {
+    background-position : -42px;
+}
+.freeguipy .dijitTooltip, .freeguipy .dijitTooltipDialog {
+    background : transparent;
+}
+.dijitTooltipBelow {
+    padding-top : 13px;
+    padding-left : 3px;
+    padding-right : 3px;
+}
+.dijitTooltipAbove {
+    padding-bottom : 13px;
+    padding-left : 3px;
+    padding-right : 3px;
+}
+.freeguipy .dijitTooltipContainer {
+    background-color : #fff;
+    background-image : url(images/tooltip.png);
+    background-repeat : repeat-x;
+    background-position : -575px 100%;
+    padding : 6px 8px;
+    border-radius : 4px;
+    -webkit-border-radius : 4px;
+    -moz-border-radius : 4px;
+    box-shadow : 0px 1px 3px rgba(0,0,0,0.25);
+    -webkit-box-shadow : 0px 1px 3px rgba(0,0,0,0.25);
+    -moz-box-shadow : 0px 1px 3px rgba(0,0,0,0.25);
+    font-size : 1em;
+    border-width : 1px;
+    border-style : solid;
+    border-color : #769DC0;
+}
+.dj_ie6 .freeguipy .dijitTooltipContainer {
+    background-image : none;
+}
+.freeguipy .dijitTooltipConnector {
+    border : 0px;
+    z-index : 2;
+    background-image : url(images/tooltip.png);
+    background-repeat : no-repeat;
+    width : 16px;
+    height : 14px;
+}
+.dj_ie6 .freeguipy .dijitTooltipConnector {
+    background-image : url(images/tooltip8bit.png);
+}
+.freeguipy .dijitTooltipABRight .dijitTooltipConnector {
+    left : auto !important;
+    right : 3px;
+}
+.freeguipy .dijitTooltipBelow .dijitTooltipConnector {
+    top : 0px;
+    left : 3px;
+    background-position : -31px 0%;
+    width : 16px;
+    height : 14px;
+}
+.freeguipy .dijitTooltipAbove .dijitTooltipConnector {
+    bottom : 0px;
+    left : 3px;
+    background-position : -15px 0%;
+    width : 16px;
+    height : 14px;
+}
+.dj_ie7 .freeguipy .dijitTooltipAbove .dijitTooltipConnector, .dj_ie6 .freeguipy .dijitTooltipAbove .dijitTooltipConnector {
+    bottom : -1px;
+}
+.freeguipy .dijitTooltipLeft {
+    padding-right : 14px;
+}
+.dj_ie6 .freeguipy .dijitTooltipLeft {
+    padding-left : 15px;
+}
+.freeguipy .dijitTooltipLeft .dijitTooltipConnector {
+    right : 0px;
+    bottom : 3px;
+    background-position : 0px 0%;
+    width : 16px;
+    height : 14px;
+}
+.freeguipy .dijitTooltipRight {
+    padding-left : 14px;
+}
+.freeguipy .dijitTooltipRight .dijitTooltipConnector {
+    left : 0px;
+    bottom : 3px;
+    background-position : -48px 0%;
+    width : 16px;
+    height : 14px;
+}
+.freeguipy .dijitDialogUnderlay {
+    background : #fff;
+}
+.freeguipy .dijitAccordionContainer {
+    border : none;
+}
+.freeguipy .dijitAccordionInnerContainer {
+    background-color : #e6e6e7;
+    border-color : #b5bcc7;
+    border-style : solid;
+    border-width : 1px;
+    margin-bottom : 1px;
+    -webkit-transition-property : background-color,border;
+    -webkit-transition-duration : .3s;
+    -webkit-transition-timing-function : linear;
+}
+.freeguipy .dijitAccordionTitle {
+    background-color : transparent;
+    background-image : url(layout/images/accordion.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    padding : 5px 7px 2px 7px;
+    min-height : 17px;
+    color : #4a4a4a;
+}
+.dj_ie6 .freeguipy .dijitAccordionTitle {
+    background-image : none;
+}
+.freeguipy .dijitAccordionContainer .dijitAccordionContainer-child {
+    background-color : #fff;
+    border-width : 1px !important;
+    border-style : solid !important;
+    border-color : #92bce1 !important;
+    margin : 0px 2px 2px;
+    padding : 9px;
+}
+.freeguipy .dijitAccordionInnerContainerActive {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #769DC0;
+    -webkit-transition-duration : .1s;
+    background-color : #515860;
+}
+.freeguipy .dijitAccordionInnerContainerActive .dijitAccordionTitle {
+    background-position : 0px -136px;
+    color : #000;
+}
+.freeguipy .dijitAccordionInnerContainerSelected {
+    border-color : #92bce1;
+    background-color : #667c93;
+}
+.freeguipy .dijitAccordionInnerContainerSelected .dijitAccordionTitle {
+    color : #000;
+    background-position : 0 0;
+}
+.freeguipy .dijitAccordionInnerContainerHover dijitAccordionTitle {
+    color : #000;
+}
+.freeguipy .dijitAccordionInnerContainerHover, .freeguipy .dijitAccordionInnerContainerSelectedActive {
+    border-width : 1px;
+    border-color : #769DC0;
+    -webkit-transition-duration : .2s;
+    background-color : #5d7086;
+}
+.freeguipy .dijitAccordionInnerContainerSelectedHover .dijitAccordionContainer-child, .freeguipy .dijitAccordionInnerContainerSelectedActive .dijitAccordionContainer-child {
+    background-color : #ffffff;
+    border-width : 1px  !important;
+    border-style : solid !important;
+    border-color : #769DC0 !important;
+    -webkit-box-shadow : inset 0px 0px 3px rgba(0, 0, 0, .25);
+    -moz-box-shadow : inset 0px 0px 3px rgba(0, 0, 0, .25);
+}
+.freeguipy .dijitContentPane {
+    padding : 8px;
+    fill : #465f79;
+}
+.freeguipy .dijitTabContainerTop-dijitContentPane, .freeguipy .dijitTabContainerLeft-dijitContentPane, .freeguipy .dijitTabContainerBottom-dijitContentPane, .freeguipy .dijitTabContainerRight-dijitContentPane, .freeguipy .dijitAccordionContainer-dijitContentPane {
+    background-color : #fff;
+    padding : 8px;
+}
+.freeguipy .dijitSplitContainer-dijitContentPane, .freeguipy .dijitBorderContainer-dijitContentPane {
+    background-color : #fff;
+    padding : 8px;
+}
+.freeguipy .dijitCalendar {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #b5bcc7;
+    background-image : url(images/calendarContainerImages.png);
+    background-position : 0px -448px;
+    background-repeat : repeat-x;
+    text-align : center;
+    padding : 6px 5px 3px 5px;
+    -moz-border-radius : 4px;
+    -webkit-border-radius : 4px;
+    background-color : #6a8097;
+}
+.dj_ie6 .freeguipy .dijitCalendar {
+    background-image : none;
+}
+.freeguipy .dijitCalendar img {
+    border : none;
+}
+.freeguipy .dijitCalendarHover, .freeguipy .dijitCalendarActive {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #769dc0;
+    background-color : #5d7086;
+}
+.freeguipy .dijitCalendarMonthContainer th {
+    text-align : center;
+    padding-bottom : 4px;
+    vertical-align : middle;
+}
+.freeguipy .dijitCalendarMonthLabelSpacer {
+    display : none;
+}
+.freeguipy .dijitCalendarMonthLabel {
+    color : #000000;
+    font-size : 1.091em;
+    display : block;
+}
+.freeguipy .dijitCalendarIncrementControl {
+    width : 18px;
+    height : 16px;
+    background-image : url(images/calendarArrows.png);
+    background-repeat : no-repeat;
+}
+.dj_ie6 .freeguipy .dijitCalendarIncrementControl {
+    background-image : url(images/calendarArrows8bit.png);
+}
+.freeguipy .dijitCalendarIncrease {
+    background-position : -18px 0px;
+}
+.freeguipy .dijitCalendarArrowHover .dijitCalendarDecrease {
+    background-position : -36px 0px;
+}
+.freeguipy .dijitCalendarArrowHover .dijitCalendarIncrease {
+    background-position : -55px 0px;
+}
+.freeguipy .dijitCalendarArrowActive .dijitCalendarDecrease {
+    background-position : -72px 0px;
+}
+.freeguipy .dijitCalendarArrowActive .dijitCalendarIncrease {
+    background-position : -91px 0px;
+}
+.freeguipy .dijitA11ySideArrow {
+    display : none;
+}
+.freeguipy .dijitDayLabels th {
+    padding : 0px 4px 0px 4px;
+    border-bottom : solid 1px #99b5cd;
+    font-weight : bold;
+    text-align : center;
+}
+.freeguipy .dijitCalendarDayLabelTemplate {
+    padding-bottom : 0em;
+    text-align : center;
+    border-bottom : 1px solid #99B5CD;
+    font-size : 0.909em;
+    padding : 0 3px 2px;
+}
+.freeguipy .dijitCalendarDateTemplate {
+    text-align : center;
+    background-image : url(images/calendarContainerImages.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    border-bottom : 1px solid #dadde1;
+    padding-top : 0px;
+    font-size : 0.909em;
+    font-family : Arial;
+    font-weight : bold;
+    letter-spacing : .05em;
+    text-align : center;
+    background-color : #6a8097;
+}
+.dj_ie6 .freeguipy .dijitCalendarDateTemplate {
+    background-image : none;
+}
+.freeguipy .dijitCalendarPreviousMonth, .freeguipy .dijitCalendarNextMonth {
+    background-image : none;
+    border-bottom : solid 1px #d2dae8;
+    color : #547da1;
+    background-color : #aa8767;
+}
+.freeguipy .dijitCalendarDateTemplate .dijitCalendarDateLabel {
+    text-decoration : none;
+    display : block;
+    padding : 3px 5px 3px 4px;
+    border : solid 1px #fff;
+    color : #1e1e1e;
+    -webkit-transition-property : background-color, border;
+    -webkit-transition-duration : .35s;
+    background-color : white;
+}
+.freeguipy .dijitCalendarPreviousMonth .dijitCalendarDateLabel, .freeguipy .dijitCalendarNextMonth .dijitCalendarDateLabel {
+    color : #547da1;
+    border-color : #ebf3f9;
+}
+.freeguipy .dijitCalendarYearContainer {
+    vertical-align : middle;
+}
+.freeguipy .dijitCalendarYearControl {
+    padding : 1px 2px 2px 2px;
+}
+.freeguipy .dijitCalendarYearLabel {
+    padding : 2px 0px 0px 0px;
+    margin : 0;
+}
+.freeguipy .dijitCalendarYearLabel span {
+    vertical-align : middle;
+}
+.freeguipy .dijitCalendarSelectedYear {
+    padding : 0px 3px;
+}
+.freeguipy .dijitCalendarNextYear, .freeguipy .dijitCalendarPreviousYear {
+    padding : 1px 6px 1px 6px;
+    font-size : 0.909em;
+}
+.freeguipy .dijitCalendarSelectedYear {
+    font-size : 1.091em;
+    color : #000;
+}
+.freeguipy .dijitCalendarHoveredDate .dijitCalendarDateLabel {
+    border-color : #729dc2;
+    border-style : solid;
+    border-width : 1px;
+    color : #000;
+    -webkit-transition-duration : .2s;
+    background-color : #606973;
+}
+.freeguipy .dijitCalendarNextYearHover, .freeguipy .dijitCalendarPreviousYearHover {
+    color : #000;
+    border : solid 1px #fefefe;
+    padding : 0px 5px 0px 5px;
+    background-color : #eaf4fe;
+}
+.freeguipy .dijitCalendarNextYearActive, .freeguipy .dijitCalendarPreviousYearActive {
+    border : solid 1px #87b3d9;
+    padding : 0px 5px 0px 5px;
+    background-color : #90bde6;
+}
+.freeguipy .dijitCalendarActiveDate .dijitCalendarDateLabel {
+    background-image : url(images/calendarContainerImages.png);
+    background-position : 0px -300px;
+    background-color : #75b5f0;
+    border : solid 1px #fff;
+    -webkit-transition-duration : .1s;
+}
+.dj_ie6 .freeguipy .dijitCalendarActiveDate .dijitCalendarDateLabel {
+    background-image : none;
+}
+.freeguipy .dijitCalendarSelectedDate .dijitCalendarDateLabel {
+    color : #000;
+    border-color : #accfed;
+    background-color : #75899e;
+}
+.freeguipy .dijitCalendarDisabledDate .dijitCalendarDateLabel {
+    text-decoration : line-through;
+    background-color : transparent;
+    border-width : 0px;
+    padding : 4px 6px 4px 5px;
+    color : #547DA1;
+}
+.freeguipy .dijitCalendarMonthContainer .dijitMenu {
+    top : 20px !important;
+    left : 0px;
+    border-color : #769dc0;
+    background-color : #fff;
+    text-align : center;
+    background-image : none;
+}
+.freeguipy .dijitCalendarMonthContainer .dijitMenu .dijitCalendarMonthLabel {
+    border-top : solid 1px #fff;
+    border-bottom : solid 1px #fff;
+    padding : 2px 20px;
+}
+.freeguipy .dijitCalendarMonthContainer .dijitMenu .dijitMenuItemHover {
+    background-color : #abd6ff;
+    border-color : #769dc0;
+    border-width : 1px 0px;
+    background-image : url(images/commonHighlight.png);
+    background-repeat : repeat-x;
+}
+.freeguipy .dijitMenuBar {
+    border : 1px solid #b5bcc7;
+    margin : 0px;
+    padding : 0px;
+    background-color : #e6e6e7;
+    background-image : url(images/commonHighlight.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+}
+.dj_ie6 .freeguipy .dijitMenuBar {
+    background-image : none;
+}
+.freeguipy .dijitMenu {
+    background-repeat : repeat-y;
+    background-color : #fff;
+    border-color : #769dc0;
+    border-style : solid;
+    border-width : 1px;
+    margin : -1px 0;
+}
+.freeguipy .dijitMenuBar .dijitMenuItem {
+    padding : 6px 10px 7px;
+    background-position : 0px 100px;
+    color : #4a4a4a;
+    margin : -1px;
+}
+.freeguipy .dijitMenuItem {
+    background-image : url(images/menuHighlight.png);
+    background-position : 0px -40px;
+    background-repeat : repeat-x;
+}
+.freeguipy .dijitMenuTable {
+    border-collapse : separate;
+    border-spacing : 0 0;
+    padding : 0px;
+}
+.freeguipy .dijitMenuItem td {
+    padding : 1px;
+}
+.freeguipy .dijitMenuPassive .dijitMenuItemHover, .freeguipy .dijitMenuPassive .dijitMenuItemSelected {
+    border-style : solid;
+    border-width : 1px;
+    border-color : #769dc0;
+    background-position : 0px 0px;
+    color : #000;
+    padding : 5px 9px 6px;
+    background-color : #5d7086;
+}
+.freeguipy .dijitMenuPassive .dijitMenuItemActive {
+    background-position : 0px -177px;
+}
+.dj_ie6 .freeguipy .dijitMenuItem, .dj_ie6 .freeguipy .dijitMenuPassive .dijitMenuItem {
+    background-image : none;
+}
+.freeguipy .dijitMenuActive .dijitMenuItemHover, .freeguipy .dijitMenuActive .dijitMenuItemSelected {
+    border-style : solid;
+    border-width : 1px;
+    border-color : #769dc0;
+    padding : 5px 9px 6px;
+    background-position : 0px 0px;
+    color : #000;
+    background-color : #5d7086;
+}
+.dj_ie .freeguipy .dijitMenuActive .dijitMenuItemHover, .dj_ie .freeguipy .dijitMenuActive .dijitMenuItemSelected, .dj_ie .freeguipy .dijitMenuPassive .dijitMenuItemHover, .dj_ie .freeguipy .dijitMenuPassive .dijitMenuItemSelected {
+    padding-top : 6px;
+    padding-bottom : 5px;
+    margin-top : -3px;
+}
+.freeguipy .dijitMenuActive .dijitMenuItemActive {
+    background-color : #7dbefa;
+    background-position : 0px -177px;
+}
+.freeguipy .dijitMenuItemActive {
+    background-position : 0px -177px;
+}
+.freeguipy td.dijitMenuItemIconCell {
+    padding : 2px;
+    margin : 0px 0px 0px 4px;
+}
+.freeguipy td.dijitMenuItemLabel {
+    padding-top : 5px;
+    padding-bottom : 5px;
+}
+.freeguipy .dijitMenuExpand {
+    width : 7px;
+    height : 7px;
+    background-image : url(images/spriteArrows.png);
+    background-position : -14px 0px;
+    margin-right : 3px;
+}
+.freeguipy .dijitMenuItemDisabled .dijitMenuItemIconCell {
+    opacity : 1;
+}
+.freeguipy .dijitMenuSeparatorTop {
+    height : auto;
+    margin-top : 1px;
+    border-bottom-width : 1px;
+    border-bottom-style : solid;
+    border-bottom-color : #b5bcc7;
+}
+.freeguipy .dijitMenuSeparatorBottom {
+    height : auto;
+    margin-bottom : 1px;
+}
+.freeguipy .dijitCheckedMenuItemIconChar {
+    display : none;
+}
+.freeguipy .dijitCheckedMenuItemIcon {
+    background-image : url(form/images/checkboxRadioButtonStates.png);
+    background-repeat : no-repeat;
+    background-position : -15px 50%;
+    width : 15px;
+    height : 16px;
+}
+.dj_ie6 .freeguipy .dijitCheckedMenuItemIcon {
+    background-image : url(form/images/checkboxAndRadioButtons_IE6.png);
+}
+.freeguipy .dijitCheckedMenuItemChecked .dijitCheckedMenuItemIcon {
+    background-position : 0 50%;
+}
+.freeguipy .dijitComboBoxMenu {
+    margin-left : 0px;
+    background-image : none;
+}
+.freeguipy .dijitComboBoxMenu .dijitMenuItem {
+    padding : 2px 0px;
+    text-indent : 6px;
+    border-width : 1px 0px 1px 0px;
+    border-style : solid;
+    border-color : #fff;
+}
+.freeguipy .dijitComboBoxMenu .dijitMenuItemSelected {
+    color : #000;
+    border-color : #768dc0;
+    background-color : #abd6ff;
+}
+.freeguipy .dijitComboBoxMenuActive .dijitMenuItemSelected {
+    background-position : 0px -177px;
+    background-color : #7dbefa;
+}
+.freeguipy .dijitMenuPreviousButton, .freeguipy .dijitMenuNextButton {
+    font-style : italic;
+}
+.freeguipy .dijitSliderBar {
+    border-style : solid;
+    outline : 1px;
+}
+.freeguipy .dijitSliderFocused .dijitSliderBar {
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderHover .dijitSliderBar {
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderBar {
+    background-image : none;
+    border-color : #d3d3d3;
+}
+.freeguipy .dijitRuleLabelsContainerH {
+    padding : 2px 0px;
+}
+.freeguipy .dijitSlider .dijitSliderProgressBarH, .freeguipy .dijitSlider .dijitSliderLeftBumper {
+    background-image : url(form/images/sliderHorizontal.png);
+    background-repeat : repeat-x;
+    background-position : 0 -20px;
+    border-color : #b5bcc7;
+    background-color : #cfe5fa;
+}
+.freeguipy .dijitSlider .dijitSliderRemainingBarH, .freeguipy .dijitSlider .dijitSliderRightBumper {
+    background-image : url(form/images/sliderHorizontal.png);
+    background-repeat : repeat-x;
+    background-position : 0 -11px;
+    border-color : #b5bcc7;
+    background-color : #fff;
+}
+.freeguipy .dijitSliderRightBumper {
+    border-right : solid 1px #b5bcc7;
+}
+.freeguipy .dijitSliderLeftBumper {
+    border-left : solid 1px #b5bcc7;
+}
+.freeguipy .dijitSliderHover .dijitSliderProgressBarH, .freeguipy .dijitSliderHover .dijitSliderLeftBumper {
+    background-position : 0 -20px;
+    background-color : #abd6ff;
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderHover .dijitSliderRemainingBarH, .freeguipy .dijitSliderHover .dijitSliderRightBumper {
+    background-position : 0 0px;
+    background-color : #fff;
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderFocused .dijitSliderProgressBarH, .freeguipy .dijitSliderFocused .dijitSliderLeftBumper {
+    background-position : 0 -30px;
+    background-color : #abd6ff;
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderFocused .dijitSliderRemainingBarH, .freeguipy .dijitSliderFocused .dijitSliderRightBumper {
+    background-position : 0 -9px;
+    background-color : #fff;
+    border-color : #769dc0;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderProgressBarH, .freeguipy .dijitSliderDisabled .dijitSliderLeftBumper {
+    background-color : #cdcdcd;
+    background-image : none;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderRemainingBarH, .freeguipy .dijitSliderDisabled .dijitSliderRightBumper {
+    background-color : #efefef;
+}
+.freeguipy .dijitRuleLabelsContainerV {
+    padding : 0px 2px;
+}
+.freeguipy .dijitSlider .dijitSliderProgressBarV, .freeguipy .dijitSlider .dijitSliderBottomBumper {
+    background-image : url(form/images/sliderVertical.png);
+    background-repeat : repeat-y;
+    background-position : -36px 0;
+    border-color : #b5bcc7;
+    background-color : #cfe5fa;
+}
+.freeguipy .dijitSlider .dijitSliderRemainingBarV, .freeguipy .dijitSlider .dijitSliderTopBumper {
+    background-image : url(form/images/sliderVertical.png);
+    background-repeat : repeat-y;
+    background-position : -3px 0;
+    border-color : #b5bcc7;
+    background-color : #fff;
+}
+.freeguipy .dijitSliderBottomBumper {
+    border-bottom : solid 1px #b5bcc7;
+}
+.freeguipy .dijitSliderTopBumper {
+    border-top : solid 1px #b5bcc7;
+}
+.freeguipy .dijitSliderHover .dijitSliderProgressBarV, .freeguipy .dijitSliderHover .dijitSliderBottomBumper {
+    background-position : -36px 0;
+    background-color : #abd6ff;
+}
+.freeguipy .dijitSliderHover .dijitSliderRemainingBarV, .freeguipy .dijitSliderHover .dijitSliderTopBumper {
+    background-position : 0 0;
+    background-color : #fff;
+}
+.freeguipy .dijitSliderFocused .dijitSliderProgressBarV, .freeguipy .dijitSliderFocused .dijitSliderBottomBumper {
+    background-position : -56px 0;
+    background-color : #abd6ff;
+}
+.freeguipy .dijitSliderFocused .dijitSliderRemainingBarV, .freeguipy .dijitSliderFocused .dijitSliderTopBumper {
+    background-position : -18px 0;
+    background-color : #fff;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderProgressBarV, .freeguipy .dijitSliderDisabled .dijitSliderBottomBumper {
+    background-color : #cdcdcd;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderRemainingBarV, .freeguipy .dijitSliderDisabled .dijitSliderTopBumper {
+    background-color : #efefef;
+}
+.freeguipy .dijitSliderImageHandleH {
+    border : 0px;
+    width : 18px;
+    height : 16px;
+    background-image : url(form/images/sliderThumbs.png);
+    background-repeat : no-repeat;
+    background-position : 0 0;
+}
+.freeguipy .dijitSliderHover .dijitSliderImageHandleH {
+    background-position : -18px 0;
+}
+.freeguipy .dijitSliderFocused .dijitSliderImageHandleH {
+    background-position : -36px 0;
+}
+.freeguipy .dijitSliderProgressBarH .dijitSliderThumbHover {
+    background-position : -36px 0;
+}
+.freeguipy .dijitSliderProgressBarH .dijitSliderThumbActive {
+    background-position : -36px 0;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderImageHandleH, .freeguipy .dijitSliderDisabled .dijitSliderImageHandleH {
+    background-position : -54px 0;
+}
+.freeguipy .dijitSliderImageHandleV {
+    border : 0px;
+    width : 18px;
+    height : 16px;
+    background-image : url(form/images/sliderThumbs.png);
+    background-repeat : no-repeat;
+    background-position : -289px 0;
+}
+.freeguipy .dijitSliderHover .dijitSliderImageHandleV {
+    background-position : -307px 0;
+}
+.freeguipy .dijitSliderFocused .dijitSliderImageHandleV {
+    background-position : -325px 0;
+}
+.freeguipy .dijitSliderProgressBarV .dijitSliderThumbHover {
+    background-position : -325px 0;
+}
+.freeguipy .dijitSliderProgressBarV .dijitSliderThumbActive {
+    background-position : -325px 0;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderImageHandleV, .freeguipy .dijitSliderDisabled .dijitSliderImageHandleV {
+    background-position : -343px 0;
+}
+.freeguipy .dijitSliderButtonContainerH {
+    padding : 1px 3px 1px 2px;
+}
+.freeguipy .dijitSliderButtonContainerV {
+    padding : 3px 1px 2px 1px;
+}
+.freeguipy .dijitSliderDecrementIconH, .freeguipy .dijitSliderIncrementIconH, .freeguipy .dijitSliderDecrementIconV, .freeguipy .dijitSliderIncrementIconV {
+    background-image : url(form/images/commonFormArrows.png);
+    background-repeat : no-repeat;
+    background-color : #e9ecf2;
+    -moz-border-radius : 2px;
+    -webkit-border-radius : 2px;
+    border : solid 1px #b5bcc7;
+    font-size : 1px;
+}
+.freeguipy .dijitSliderDecrementIconH, .freeguipy .dijitSliderIncrementIconH {
+    height : 12px;
+    width : 9px;
+}
+.freeguipy .dijitSliderDecrementIconV, .freeguipy .dijitSliderIncrementIconV {
+    height : 9px;
+    width : 12px;
+}
+.freeguipy .dijitSliderActive .dijitSliderDecrementIconH, .freeguipy .dijitSliderActive .dijitSliderIncrementIconH, .freeguipy .dijitSliderActive .dijitSliderDecrementIconV, .freeguipy .dijitSliderActive .dijitSliderIncrementIconV, .freeguipy .dijitSliderHover .dijitSliderDecrementIconH, .freeguipy .dijitSliderHover .dijitSliderIncrementIconH, .freeguipy .dijitSliderHover .dijitSliderDecrementIconV, .freeguipy .dijitSliderHover .dijitSliderIncrementIconV {
+    border : solid 1px #769dc0;
+    background-color : #fff;
+}
+.freeguipy .dijitSliderDecrementIconH {
+    background-position : -357px 50%;
+}
+.freeguipy .dijitSliderActive .dijitSliderDecrementIconH.claro .dijitSliderHover .dijitSliderDecrementIconH {
+    background-position : -393px 50%;
+}
+.freeguipy .dijitSliderIncrementIconH {
+    background-position : -251px 50%;
+}
+.freeguipy .dijitSliderActive .dijitSliderIncrementIconH.claro .dijitSliderHover .dijitSliderIncrementIconH {
+    background-position : -283px 50%;
+}
+.freeguipy .dijitSliderDecrementIconV {
+    background-position : -38px 50%;
+}
+.freeguipy .dijitSliderActive .dijitSliderDecrementIconV.claro .dijitSliderHover .dijitSliderDecrementIconV {
+    background-position : -73px 50%;
+}
+.freeguipy .dijitSliderIncrementIconV {
+    background-position : -143px 49%;
+}
+.freeguipy .dijitSliderActive .dijitSliderIncrementIconV.claro .dijitSliderHover .dijitSliderIncrementIconV {
+    background-position : -178px 49%;
+}
+.freeguipy .dijitSliderButtonContainerV .dijitSliderDecrementButtonHover, .freeguipy .dijitSliderButtonContainerH .dijitSliderDecrementButtonHover, .freeguipy .dijitSliderButtonContainerV .dijitSliderIncrementButtonHover, .freeguipy .dijitSliderButtonContainerH .dijitSliderIncrementButtonHover {
+    background-color : #cce3fc;
+}
+.freeguipy .dijitSliderButtonContainerV .dijitSliderDecrementButtonActive, .freeguipy .dijitSliderButtonContainerH .dijitSliderDecrementButtonActive, .freeguipy .dijitSliderButtonContainerV .dijitSliderIncrementButtonActive, .freeguipy .dijitSliderButtonContainerH .dijitSliderIncrementButtonActive {
+    background-color : #a5d0fc;
+    border-color : #6591b9;
+}
+.freeguipy .dijitSliderButtonInner {
+    visibility : hidden;
+}
+.freeguipy .dijitSliderDisabled .dijitSliderBar {
+    border-color : #d3d3d3;
+}
+.freeguipy .dijitSliderReadOnly *,  .freeguipy .dijitSliderDisabled * {
+    border-color : #d3d3d3;
+    color : #bdbdbd;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderDecrementIconH, .freeguipy .dijitSliderDisabled .dijitSliderDecrementIconH {
+    background-position : -321px 50%;
+    background-color : #e9e9e9;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderIncrementIconH, .freeguipy .dijitSliderDisabled .dijitSliderIncrementIconH {
+    background-position : -215px 50%;
+    background-color : #e9e9e9;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderDecrementIconV, .freeguipy .dijitSliderDisabled .dijitSliderDecrementIconV {
+    background-position : -3px 49%;
+    background-color : #e9e9e9;
+}
+.freeguipy .dijitSliderReadOnly .dijitSliderIncrementIconV, .freeguipy .dijitSliderDisabled .dijitSliderIncrementIconV {
+    background-position : -107px 49%;
+    background-color : #e9e9e9;
+}
+.dj_ie6 .freeguipy .dijitSlider .dijitSliderProgressBarH, .dj_ie6 .freeguipy .dijitSlider .dijitSliderLeftBumper, .dj_ie6 .freeguipy .dijitSlider .dijitSliderRemainingBarH, .dj_ie6 .freeguipy .dijitSlider .dijitSliderRightBumper, .dj_ie6 .freeguipy .dijitSlider .dijitSliderProgressBarV, .dj_ie6 .freeguipy .dijitSlider .dijitSliderTopBumper, .dj_ie6 .freeguipy .dijitSlider .dijitSliderRemainingBarV, .dj_ie6 .freeguipy .dijitSlider .dijitSliderBottomBumper {
+    background-image : none;
+}
+.freeguipy .dijitColorPalette {
+    outline : 1px solid #769dc0;
+    border : 1px solid #c0ccdf;
+    background : #fff;
+    -moz-border-radius : 0px;
+}
+.freeguipy .dijitColorPalette .dijitPaletteImg {
+    border : 1px solid #cecece;
+}
+.freeguipy .dijitColorPalette .dijitPaletteCellHover .dijitPaletteImg {
+    border : 1px solid #000;
+}
+.freeguipy .dijitColorPalette .dijitPaletteCellActive .dijitPaletteImg, .freeguipy .dijitColorPalette .dijitPaletteCellSelected .dijitPaletteImg {
+    border : 2px solid #000;
+}
+.freeguipy .dijitInlineEditBoxDisplayMode {
+    border : 1px solid transparent;
+}
+.freeguipy .dijitInlineEditBoxDisplayModeHover {
+    background-color : #e2f1ff;
+    border : solid 1px #769dc0;
+}
+.dj_ie6 .freeguipy .dijitInlineEditBoxDisplayMode {
+    border : none;
+}
+.freeguipy .dijitProgressBar {
+    margin : 2px 0px 2px 0px;
+}
+.freeguipy .dijitProgressBarEmpty {
+    background : #fff url(images/progressBarEmpty.png) repeat-none left;
+    border-color : #769dc0;
+}
+.freeguipy .dijitProgressBarTile {
+    background : #9dcfff url(images/progressBarFull.png) repeat-x top;
+}
+.dj_ie6 .freeguipy .dijitProgressBarTile {
+    background-image : none;
+}
+.freeguipy .dijitProgressBarFull {
+    border-right : 1px solid #769dc0;
+}
+.freeguipy .dijitProgressBarLabel {
+    color : #293a4b;
+}
+.freeguipy .dijitProgressBarIndeterminate .dijitProgressBarTile {
+    background : #cad2de url(images/progressBarAnim.gif) repeat-x top;
+}
+.freeguipy .dijitTimePicker .dijitButtonNode {
+    padding : 0 0;
+    border-radius : 0;
+    -moz-border-radius : 0;
+    -webkit-border-radius : 0;
+}
+.freeguipy .dijitTimePicker {
+    border : 1px #b5bcc7 solid;
+    border-top : none;
+    border-bottom : none;
+    background-color : #fff;
+}
+.freeguipy .dijitTimePickerItem {
+    background-image : url(images/commonHighlight.png);
+    background-position : 0px -1px;
+    background-repeat : repeat-x;
+    border-top : solid 1px #b5bcc7;
+    border-bottom : solid 1px #b5bcc7;
+    margin-right : -1px;
+    margin-left : -1px;
+    margin-top : -1px;
+}
+.dj_ie6 .freeguipy .dijitTimePickerItem {
+    background-image : none;
+}
+.freeguipy .dijitTimePickerTick {
+    color : #7a7a7a;
+    background-color : #f2f2f2;
+    font-size : 0.818em;
+}
+.freeguipy .dijitTimePickerMarker {
+    color : #000;
+    background-color : #e3f2ff;
+    font-size : 1em;
+    white-space : nowrap;
+}
+.freeguipy .dijitTimePickerTickHover, .freeguipy .dijitTimePickerMarkerHover, .freeguipy .dijitTimePickerMarkerSelected, .freeguipy .dijitTimePickerTickSelected {
+    background-color : #83c0fa;
+    color : #000;
+    border : solid 1px #b5bcc7;
+    margin-left : -7px;
+    margin-right : -7px;
+}
+.freeguipy .dijitTimePickerMarkerSelected, .freeguipy .dijitTimePickerTickSelected {
+    font-size : 1em;
+}
+.dj_ie .freeguipy .dijitTimePickerTickHover, .dj_ie .freeguipy .dijitTimePickerMarkerHover, .dj_ie .freeguipy .dijitTimePickerMarkerSelected, .dj_ie .freeguipy .dijitTimePickerTickSelected {
+    width : 114%;
+}
+.dj_ie6 .freeguipy .dijitTimePickerTickHover, .dj_ie6 .freeguipy .dijitTimePickerMarkerHover, .dj_ie6 .freeguipy .dijitTimePickerMarkerSelected, .dj_ie6 .freeguipy .dijitTimePickerTickSelected {
+    position : relative;
+    zoom : 1;
+}
+.freeguipy .dijitTimePickerTick .dijitTimePickerItemInner {
+    padding : 1px;
+    margin : 0px;
+}
+.freeguipy .dijitTimePicker .dijitButtonNode {
+    border-left : none;
+    border-right : none;
+    border-color : #b5bcc7;
+    background-color : #f6f7fa;
+    background-image : url(images/commonHighlight.png);
+    background-position : 0px -1px;
+    background-repeat : repeat-x;
+}
+.dj_ie6 .freeguipy .dijitTimePicker .dijitButtonNode {
+    background-image : none;
+}
+.freeguipy .dijitTimePicker .dijitArrowButtonInner {
+    height : 100%;
+    background-image : url(form/images/commonFormArrows.png);
+    background-repeat : no-repeat;
+    background-position : -140px 45%;
+}
+.freeguipy .dijitTimePicker .dijitDownArrowButton .dijitArrowButtonInner {
+    background-position : -35px 45%;
+}
+.freeguipy .dijitTimePicker .dijitUpArrowHover, .freeguipy .dijitTimePicker .dijitDownArrowHover {
+    background-color : #abd6ff;
+}
+.freeguipy .dijitTimePicker .dijitUpArrowHover .dijitArrowButtonInner {
+    background-position : -175px 45%;
+}
+.freeguipy .dijitTimePicker .dijitDownArrowHover .dijitArrowButtonInner {
+    background-position : -70px 45%;
+}
+.freeguipy .dijitBorderContainer {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #b5bcc7;
+    padding : 5px;
+}
+BODY >  .dijitBorderContainer {
+    border : 0 !important;
+}
+.freeguipy .dijitSplitContainer-child, .freeguipy .dijitBorderContainer-child {
+    border-style : solid;
+    border-width : 1px;
+    border-color : #b5bcc7;
+}
+.freeguipy .dijitBorderContainer-dijitTabContainerTop, .freeguipy .dijitBorderContainer-dijitTabContainerBottom, .freeguipy .dijitBorderContainer-dijitTabContainerLeft, .freeguipy .dijitBorderContainer-dijitTabContainerRight, .freeguipy .dijitBorderContainer-dijitAccordionContainer {
+    border : none;
+}
+.freeguipy .dijitBorderContainer-dijitBorderContainer {
+    border : 1px #c0ccdf solid;
+    padding : 5px;
+}
+.freeguipy .dijitSplitterH, .freeguipy .dijitGutterH {
+    background : none;
+    border : 0;
+    height : 5px;
+}
+.freeguipy .dijitSplitterH .dijitSplitterThumb {
+    background : #dde2e9 none;
+    height : 1px;
+    top : 2px;
+    width : 19px;
+}
+.freeguipy .dijitSplitterV, .freeguipy .dijitGutterV {
+    background : none;
+    border : 0;
+    width : 5px;
+    margin : 0;
+}
+.freeguipy .dijitSplitterV .dijitSplitterThumb {
+    background : #dde2e9 none;
+    height : 19px;
+    left : 2px;
+    width : 1px;
+    margin : 0;
+}
+.freeguipy .dijitSplitterHHover {
+    font-size : 1px;
+    background : url(layout/images/splitterHorizontalHover.png) no-repeat center top;
+}
+.freeguipy .dijitSplitterHHover .dijitSplitterThumb {
+    background : #769dc0 none;
+    background-color : #5d7086;
+}
+.freeguipy .dijitSplitterVHover {
+    font-size : 1px;
+    background : url(layout/images/splitterVerticalHover.png) no-repeat center left;
+}
+.freeguipy .dijitSplitterVHover .dijitSplitterThumb {
+    background : #769dc0 none;
+    background-color : #5d7086;
+}
+.dj_ie6 .dijitSplitterHHover, .dj_ie6 .freeguipy .dijitSplitterVHover {
+    background-color : #cfe9ff;
+    background-image : none;
+}
+.freeguipy .dijitSplitterHActive {
+    font-size : 1px;
+    border-top : blue;
+    background-color : #515860;
+}
+.freeguipy .dijitSplitterVActive {
+    font-size : 1px;
+    background-color : #515860;
+}
+.freeguipy .dijitTreeNode {
+    zoom : 1;
+}
+.freeguipy .dijitTreeIsRoot {
+    background-image : none;
+}
+.freeguipy .dijitTreeRow {
+    padding : 4px 1px 2px 0px;
+    margin-left : 1px;
+    background-image : url(images/commonHighlight.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    border-color : rgba(118,157,192,0);
+    background-color : rgba(171,214,255,0);
+    -webkit-transition-property : background-color, border-color;
+    -webkit-transition-duration : .25s ;
+    -webkit-transition-timing-function : ease-out;
+}
+.dj_ie6 .freeguipy .dijitTreeRow {
+    background-image : none;
+}
+.freeguipy .dijitTreeRowSelected {
+    background-repeat : repeat-x;
+    background-color : #d8edff;
+    padding : 3px 0px 1px;
+    margin-left : 0px;
+    border : solid 1px #c3e2fd;
+    color : #000;
+}
+.freeguipy .dijitTreeRowHover {
+    background-color : #abd6ff;
+    padding : 3px 0px 1px;
+    margin-left : 0px;
+    border : solid 1px #769dc0;
+    color : #000;
+    -webkit-transition-duration : .25s ;
+}
+.freeguipy .dijitTreeRowActive {
+    background-color : #7dbefa;
+    background-position : 0px -177px;
+    padding : 3px 0px 1px;
+    margin-left : 0px;
+    border : solid 1px #769dc0;
+    color : #000;
+}
+.dj_ie6 .freeguipy .dijitTreeRowActive {
+    background-image : none;
+}
+.freeguipy .dijitTreeRowFocused {
+    background-repeat : repeat;
+}
+.freeguipy .dijitTreeExpando {
+    background-image : url(images/treeExpandImages.png);
+    width : 16px;
+    height : 16px;
+    background-position : -35px 0px		;
+}
+.dj_ie6 .freeguipy .dijitTreeExpando {
+    background-image : url(images/treeExpandImages8bit.png);
+}
+.freeguipy .dijitTreeRowHover .dijitTreeExpandoOpened {
+    background-position : -53px 0px;
+}
+.freeguipy .dijitTreeExpandoClosed {
+    background-position : 1px 0px;
+}
+.freeguipy .dijitTreeRowHover .dijitTreeExpandoClosed {
+    background-position : -17px 0px;
+}
+.freeguipy .dijitTreeExpandoLeaf {
+    background-image : none;
+}
+.freeguipy .dijitTreeExpandoLoading {
+    background-image : url(images/loadingAnimation.gif);
+}
+.freeguipy .dijitTreeNode .dojoDndItemBefore, .freeguipy .dijitTreeNode .dojoDndItemAfter {
+    border-bottom : none;
+    border-top : none;
+}
+.freeguipy .dijitTreeNode .dojoDndItemBefore .dijitTreeContent {
+    border-top : 2px solid #369;
+}
+.freeguipy .dijitTreeNode .dojoDndItemAfter .dijitTreeContent {
+    border-bottom : 2px solid #369;
+}
+.freeguipy .dijitToolbar {
+    border-bottom : 1px solid #b5bcc7;
+    background-color : #f1f1f1;
+    background-image : url(images/commonHighlight.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    padding : 2px 0px 2px 4px;
+    zoom : 1;
+}
+.freeguipy .dijitToolbar label {
+    padding : 0px 3px 0 6px;
+}
+.freeguipy .dijitToolbar .dijitButtonNode {
+    border : none;
+    padding : 2px;
+    background-image : url(images/commonHighlight.png);
+    background-position : 0 -30px;
+    background-repeat : repeat-x;
+    background-color : rgba(171,214,255,0);
+    border-radius : 2px;
+    -moz-border-radius : 2px;
+    -webkit-border-radius : 2px;
+    -moz-box-shadow : none;
+    -webkit-box-shadow : none;
+    -webkit-transition-property : background-color;
+    -webkit-transition-duration : .3s, .35s;
+}
+.freeguipy .dijitToolbar .dijitComboButton .dijitButtonNode {
+    padding : 3px 2px 3px 2px;
+}
+.dj_ie .freeguipy .dijitToolbar .dijitButtonNode {
+    background-color : transparent;
+}
+.dj_ie6 .freeguipy .dijitToolbar .dijitButtonNode {
+    background : none;
+}
+.freeguipy .dijitToolbar .dijitComboBox .dijitButtonNode {
+    padding : 0px;
+}
+.freeguipy .dijitToolbar .dijitComboButton {
+    padding : 1px;
+}
+.freeguipy .dijitToolbar .dijitButtonHover .dijitButtonNode, .freeguipy .dijitToolbar .dijitDropDownButtonHover .dijitButtonNode, .freeguipy .dijitToolbar .dijitToggleButtonHover .dijitButtonNode {
+    background-position : 0 0;
+    border-color : #769dc0;
+    border-width : 1px;
+    border-style : solid;
+    padding : 1px;
+    background-color : #5d7086;
+}
+.freeguipy .dijitToolbar .dijitComboButtonHover {
+    background-color : #abd6ff;
+    border : solid 1px #769dc0;
+    padding : 0px;
+}
+.freeguipy .dijitToolbar .dijitComboButtonHover .dijitButtonNode, .freeguipy .dijitToolbar .dijitComboButtonHover .dijitDownArrowButton {
+    background-position : 0 0;
+    padding : 2px;
+}
+.freeguipy .dijitToolbar .dijitComboButtonHover .dijitDownArrowButton {
+    background-color : #7dd6fa;
+}
+.freeguipy .dijitToolbar .dijitButtonActive .dijitButtonNode, .freeguipy .dijitToolbar .dijitDropDownButtonActive .dijitButtonNode, .freeguipy .dijitToolbar .dijitToggleButtonActive .dijitButtonNode {
+    border-width : 1px;
+    border-style : solid;
+    border-color : #769dc0;
+    background-position : 0px -177px;
+    padding : 1px;
+    background-color : #515860;
+}
+.freeguipy .dijitToolbar .dijitComboButtonActive {
+    -webkit-transition-duration : .2s;
+    border : solid 1px #769dc0;
+    padding : 0px;
+}
+.freeguipy .dijitToolbar .dijitComboButtonActive .dijitButtonNode {
+    background-color : #7dbefa;
+    background-position : 0px -177px;
+    padding : 2px;
+}
+.freeguipy .dijitToolbar .dijitComboButton .dijitDownArrowButtonActive {
+    background-color : #7dbefa;
+}
+.freeguipy .dijitToolbar .dijitToggleButtonChecked .dijitButtonNode {
+    border-color : #769dc0;
+    background-color : #fff;
+    padding : 1px;
+}
+.dj_ie6 .freeguipy .dijitToolbar .dijitButtonContents, .dj_ie7 .freeguipy .dijitToolbar .dijitButtonContents {
+    margin : -2px 0;
+    padding : 0;
+}
+.dj_ie6 .freeguipy .dijitToolbar {
+    background-image : none;
+}
+.dj_ie6 .freeguipy .dijitToolbar .dijitButtonNode {
+    margin : 1px;
+    border : none;
+}
+.dj_ie6 .freeguipy .dijitToolbar .dijitButtonHover .dijitButtonNode, .dj_ie6 .freeguipy .dijitToolbar .dijitDropDownButtonHover .dijitButtonNode, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitButtonNodeHover, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitDownArrowButtonHover, .dj_ie6 .freeguipy .dijitToolbar .dijitToggleButtonHover .dijitButtonNode, .dj_ie6 .freeguipy .dijitToolbar .dijitButtonActive .dijitButtonNode, .dj_ie6 .freeguipy .dijitToolbar .dijitDropDownButtonActive .dijitButtonNode, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitButtonNodeActive, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitDownArrowButtonActive, .dj_ie6 .freeguipy .dijitToolbar .dijitToggleButtonActive .dijitButtonNode, .freeguipy .dijitToolbar .dijitToggleButtonChecked .dijitButtonNode {
+    margin : 0;
+    border-width : 1px;
+    border-style : solid;
+    background-image : none;
+}
+.dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitButtonNodeHover, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitDownArrowButtonHover, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitButtonNodeActive, .dj_ie6 .freeguipy .dijitToolbar .dijitComboButton .dijitDownArrowButtonActive {
+    padding : 1px;
+}
+.freeguipy .dijitToolbarSeparator {
+    background : url(../../icons/images/editorIconsEnabled.png);
+}
+.freeguipy .dijitDisabled .dijitToolbar {
+    background : none;
+    background-color : #f5f5f5;
+    border-bottom : 1px solid #d3d3d3;
+}
+.freeguipy .dijitEditorIFrameContainer {
+    padding : 3px 3px 1px 10px;
+}
+.freeguipy .dijitEditorIFrame {
+    background-color : #fff;
+}
+.freeguipy .dijitEditor {
+    border : 1px solid #b5bcc7;
+}
+.freeguipy .dijitEditor .dijitEditorIFrameContainer {
+    background-color : #fff;
+    background-image : url(form/images/textBox_back.png);
+    background-repeat : repeat-x;
+}
+.dj_ie6 .freeguipy .dijitEditor .dijitEditorIFrameContainer {
+    background-image : none;
+}
+.freeguipy .dijitEditorHover .dijitEditorIFrameContainer, .freeguipy .dijitEditorHover .dijitEditorIFrameContainer .dijitEditorIFrame {
+    background-color : #eef7ff;
+}
+.freeguipy .dijitEditorFocused .dijitEditorIFrameContainer, .freeguipy .dijitEditorFocused .dijitEditorIFrameContainer .dijitEditorIFrame {
+    background-color : #fff;
+}
+.freeguipy .dijitEditorDisabled {
+    border : 1px solid #d3d3d3;
+    color : #818181;
+}
+.freeguipy .dijitDisabled .dijitEditorIFrame, .freeguipy .dijitDisabled .dijitEditorIFrameContainer {
+    background-color : #efefef;
+    background-image : none;
+}
+.dijitEditorIcon {
+    background-image : url(icons/images/editorIconsEnabled.png);
+    background-repeat : no-repeat;
+    width : 18px;
+    height : 18px;
+    text-align : center;
+}
+.dijitDisabled .dijitEditorIcon {
+    background-image : url(icons/images/editorIconsDisabled.png);
+}
+.dijitEditorIconSep {
+    background-position : 0px;
+}
+.dijitEditorIconSave {
+    background-position : -18px;
+}
+.dijitEditorIconPrint {
+    background-position : -36px;
+}
+.dijitEditorIconCut {
+    background-position : -54px;
+}
+.dijitEditorIconCopy {
+    background-position : -72px;
+}
+.dijitEditorIconPaste {
+    background-position : -90px;
+}
+.dijitEditorIconDelete {
+    background-position : -108px;
+}
+.dijitEditorIconCancel {
+    background-position : -126px;
+}
+.dijitEditorIconUndo {
+    background-position : -144px;
+}
+.dijitEditorIconRedo {
+    background-position : -162px;
+}
+.dijitEditorIconSelectAll {
+    background-position : -180px;
+}
+.dijitEditorIconBold {
+    background-position : -198px;
+}
+.dijitEditorIconItalic {
+    background-position : -216px;
+}
+.dijitEditorIconUnderline {
+    background-position : -234px;
+}
+.dijitEditorIconStrikethrough {
+    background-position : -252px;
+}
+.dijitEditorIconSuperscript {
+    background-position : -270px;
+}
+.dijitEditorIconSubscript {
+    background-position : -288px;
+}
+.dijitEditorIconJustifyCenter {
+    background-position : -306px;
+}
+.dijitEditorIconJustifyFull {
+    background-position : -324px;
+}
+.dijitEditorIconJustifyLeft {
+    background-position : -342px;
+}
+.dijitEditorIconJustifyRight {
+    background-position : -360px;
+}
+.dijitEditorIconIndent {
+    background-position : -378px;
+}
+.dijitEditorIconOutdent {
+    background-position : -396px;
+}
+.dijitEditorIconListBulletIndent {
+    background-position : -414px;
+}
+.dijitEditorIconListBulletOutdent {
+    background-position : -432px;
+}
+.dijitEditorIconListNumIndent {
+    background-position : -450px;
+}
+.dijitEditorIconListNumOutdent {
+    background-position : -468px;
+}
+.dijitEditorIconTabIndent {
+    background-position : -486px;
+}
+.dijitEditorIconLeftToRight {
+    background-position : -504px;
+}
+.dijitEditorIconRightToLeft, .dijitEditorIconToggleDir {
+    background-position : -522px;
+}
+.dijitEditorIconBackColor {
+    background-position : -540px;
+}
+.dijitEditorIconForeColor {
+    background-position : -558px;
+}
+.dijitEditorIconHiliteColor {
+    background-position : -576px;
+}
+.dijitEditorIconNewPage {
+    background-position : -594px;
+}
+.dijitEditorIconInsertImage {
+    background-position : -612px;
+}
+.dijitEditorIconInsertTable {
+    background-position : -630px;
+}
+.dijitEditorIconSpace {
+    background-position : -648px;
+}
+.dijitEditorIconInsertHorizontalRule {
+    background-position : -666px;
+}
+.dijitEditorIconInsertOrderedList {
+    background-position : -684px;
+}
+.dijitEditorIconInsertUnorderedList {
+    background-position : -702px;
+}
+.dijitEditorIconCreateLink {
+    background-position : -720px;
+}
+.dijitEditorIconUnlink {
+    background-position : -738px;
+}
+.dijitEditorIconViewSource {
+    background-position : -756px;
+}
+.dijitEditorIconRemoveFormat {
+    background-position : -774px;
+}
+.dijitEditorIconFullScreen {
+    background-position : -792px;
+}
+.dijitEditorIconWikiword {
+    background-position : -810px;
+}
+.freeguipy .dijitTitlePaneTitle {
+    background-image : url(images/titlebar.png);
+    background-repeat : repeat-x;
+    border-width : 1px;
+    border-style : solid;
+    border-color : #b5bcc7;
+    padding : 0px 7px 3px 7px;
+    min-height : 17px;
+    color : #131313;
+    background-color : #6a8097;
+}
+.dj_ie6 .freeguipy .dijitTitlePaneTitle {
+    background-image : none;
+}
+.freeguipy .dijitTitlePaneTitleHover {
+    border-color : #769dc0;
+    background-color : #5d7086;
+}
+.freeguipy .dijitTitlePaneTitleActive {
+    border-color : #769dc0;
+    background-position : 0px -136px;
+    background-color : #515860;
+}
+.freeguipy .dijitTitlePaneTitleFocus {
+    margin-top : 3px;
+    padding-bottom : 2px;
+}
+.freeguipy .dijitTitlePane .dijitArrowNode {
+    background-image : url(images/spriteArrows.png);
+    background-repeat : no-repeat;
+    height : 8px;
+    width : 7px;
+}
+.freeguipy .dijitTitlePane .dijitOpen .dijitArrowNode {
+    background-position : 0px 0px;
+}
+.freeguipy .dijitTitlePane .dijitClosed .dijitArrowNode {
+    background-position : -14px 0px;
+}
+.freeguipy .dijitTitlePaneFocused .dijitTitlePaneTextNode {
+    color : #000;
+}
+.freeguipy .dijitTitlePaneContentOuter {
+    background : #ffffff;
+    border-style : solid;
+    border-width : 1px;
+    border-color : #b5bcc7;
+    border-top : none;
+}
+.freeguipy .dijitTitlePaneContentInner {
+    padding : 10px;
+}
+.freeguipy .dijitTitlePaneTextNode {
+    margin-left : 4px;
+    margin-right : 4px;
+    vertical-align : text-top;
+}
+.freeguipy .dijitSpinnerButtonContainer {
+    overflow : hidden;
+    position : relative;
+    width : auto;
+    padding : 0 2px;
+}
+.freeguipy .dijitSpinnerButtonContainer .dijitSpinnerButtonInner {
+    border-width : 1px 0;
+    border-style : solid none;
+}
+.freeguipy .dijitSpinner .dijitArrowButton {
+    width : auto;
+    background-color : #ebeef4;
+    background-image : url(form/images/formHighlight.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    overflow : hidden;
+}
+.dj_iequirks .freeguipy .dijitSpinner .dijitArrowButton {
+    overflow : visible;
+}
+.freeguipy .dijitSpinner .dijitSpinnerButtonInner {
+    width : 15px;
+}
+.freeguipy .dijitSpinner .dijitArrowButtonInner {
+    border : solid 1px #fff;
+    border-bottom-width : 0;
+    background-image : url(form/images/commonFormArrows.png);
+    background-repeat : no-repeat;
+    height : 100%;
+    width : 15px;
+    padding-left : 1px;
+    padding-right : 1px;
+    background-position : -139px center;
+    display : block;
+    margin : -1px 0px -1px 0px;
+    #margin-top : 0;
+}
+.dj_iequirks .freeguipy .dijitSpinner .dijitArrowButtonInner {
+    width : 19px;
+}
+.freeguipy .dijitSpinner .dijitDownArrowButton .dijitArrowButtonInner {
+    background-position : -34px;
+}
+.freeguipy .dijitSpinner .dijitArrowButtonInner .dijitInputField {
+    padding : 0;
+}
+.freeguipy .dijitUpArrowButtonActive, .freeguipy .dijitDownArrowButtonActive {
+    background-color : #abd6ff;
+}
+.freeguipy .dijitSpinner .dijitUpArrowButtonHover, .freeguipy .dijitSpinner .dijitDownArrowButtonHover, .freeguipy .dijitSpinnerFocused .dijitArrowButton {
+    background-color : #a0d1ff;
+}
+.freeguipy .dijitSpinner .dijitUpArrowButtonHover .dijitArrowButtonInner {
+    background-position : -174px;
+}
+.freeguipy .dijitSpinner .dijitDownArrowButtonHover .dijitArrowButtonInner {
+    background-position : -69px;
+}
+.freeguipy .dijitSpinnerFocused {
+    background-color : #fff;
+    background-image : none;
+}
+.freeguipy .dijitSpinner .dijitDownArrowButtonActive, .freeguipy .dijitSpinner .dijitUpArrowButtonActive {
+    background-color : #3299f9;
+    background-position : 0px -177px;
+}
+.freeguipy .dijitSpinner .dijitUpArrowButtonActive .dijitArrowButtonInner, .freeguipy .dijitSpinner .dijitDownArrowButtonActive .dijitArrowButtonInner {
+    border : 0px;
+    padding : 1px;
+    margin-right : 2px;
+    margin-bottom : 1px;
+}
+.freeguipy .dijitSpinner .dijitUpArrowButtonActive .dijitArrowButtonInner {
+    background-position : -173px;
+}
+.freeguipy .dijitSpinner .dijitDownArrowButtonActive .dijitArrowButtonInner {
+    background-position : -68px;
+}
+.freeguipy .dijitSpinnerDisabled .dijitArrowButtonInner {
+    background-color : #f1f1f1;
+}
+.freeguipy .dijitSpinnerDisabled .dijitUpArrowButton .dijitArrowButtonInner {
+    background-position : -104px;
+}
+.freeguipy .dijitSpinnerDisabled .dijitDownArrowButton .dijitArrowButtonInner {
+    background-position : 1px;
+}
+.dj_ie7 .freeguipy .dijitSpinner {
+    overflow : visible;
+}
+.freeguipy .globalWidget .dijitTabContainerDefault {
+    border-color : #b5bcc7;
+    background-color : #6a8097;
+}
+.freeguipy .globalWidget .dijitTabContainer {
+    border-style : none;
+    background-color : white;
+}
+.freeguipy .globalWidget .dijitTabPaneWrapper {
+    background : #fff;
+}
+.freeguipy .globalWidget .dijitTabPaneWrapper, .freeguipy .globalWidget .dijitTabContainerTop-tabs, .freeguipy .globalWidget.dijitTabContainerBottom-tabs, .freeguipy .globalWidget .dijitTabContainerLeft-tabs, .freeguipy .globalWidget .dijitTabContainerRight-tabs {
+    border-color : #b5bcc7;
+}
+.freeguipy .globalWidget .dijitTabCloseButton {
+    margin-left : 0;
+}
+.freeguipy .globalWidget .dijitTabCloseIcon {
+    background : url(layout/images/tabClose.png) no-repeat;
+    width : 14px;
+    height : 14px;
+    margin-left : 5px;
+    margin-top : -1px;
+    margin-right : -3px;
+}
+.freeguipy .globalWidget .dijitTabCloseButtonHover .dijitTabCloseIcon {
+    background-position : -14px;
+}
+.freeguipy .globalWidget .dijitTabCloseButtonActive .dijitTabCloseIcon {
+    background-position : -28px;
+}
+.freeguipy .globalWidget .dijitTabSpacer {
+    display : none;
+}
+.freeguipy .globalWidget .dijitTabInnerDiv {
+    background-color : #e6e6e7;
+    -webkit-transition-property : background-color, border;
+    -webkit-transition-duration : .35s;
+    color : #4a4a4a;
+}
+.freeguipy .globalWidget .dijitTabHover .dijitTabInnerDiv {
+    -webkit-transition-duration : .25s;
+    color : #000;
+    background-color : #5d7086;
+}
+.freeguipy .globalWidget .dijitTabActive .dijitTabInnerDiv {
+    color : #000;
+    -webkit-transition-duration : .1s;
+    background-color : #515860;
+}
+.freeguipy .globalWidget .dijitTabChecked .dijitTabInnerDiv {
+    color : #000;
+    background-color : #73695f;
+}
+.freeguipy .globalWidget .dijitTabContent {
+    border-color : #b5bcc7;
+    border-style : solid;
+    border-width : 1px;
+}
+.freeguipy .globalWidget .dijitTabHover .dijitTabContent, .freeguipy .globalWidget .dijitTabActive .dijitTabContent {
+    border-color : #769dc0;
+}
+.freeguipy .globalWidget .dijitTabChecked .dijitTabContent {
+    color : #000;
+    border-color : #b5bcc7;
+}
+.freeguipy .globalWidget .tabStripButton .dijitTabInnerDiv {
+    background-color : transparent;
+}
+.freeguipy .globalWidget .tabStripButton .dijitTabContent {
+    border : none;
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTab {
+    top : 1px;
+    margin-right : 1px;
+    padding-top : 3px;
+}
+.dj_ie7 .freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTab {
+    top : 3px;
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabContent {
+    padding-top : 3px;
+    padding-right : 8px;
+    padding-bottom : 3px;
+    padding-left : 4px;
+    border-bottom : 1px;
+    border-radius : 2px 2px 0px 0px;
+    -moz-border-radius : 2px 2px 0px 0px;
+    -webkit-border-top-left-radius : 2px;
+    -webkit-border-top-right-radius : 2px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px 0px;
+    background-repeat : repeat-x;
+    min-width : 60px;
+    text-align : center;
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    padding-bottom : 4px;
+    padding-top : 6px;
+}
+.dj_ie .freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    border-bottom : none;
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px -248px;
+    background-position : bottom;
+    background-repeat : repeat-x;
+    box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow : 0px -1px 1px rgba(0, 0, 0, 0.04);
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-image : none;
+    box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow : 0px -1px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
+    background-position : 0px -102px;
+    background-repeat : repeat-x;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTab {
+    top : -1px;
+    margin-right : 1px;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    border-top : none;
+    background-image : url(layout/images/tabBottom.png);
+    background-position : 0px -249px;
+    background-repeat : repeat-x;
+    background-position : bottom;
+    min-width : 60px;
+    text-align : center;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTab {
+    padding-bottom : 3px;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabBottom.png);
+    background-position : top;
+    background-repeat : repeat-x;
+    box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow : 0px 1px 1px rgba(0, 0, 0, 0.04);
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabContent {
+    padding-bottom : 7px;
+    padding-top : 4px;
+    background-position : 0px -119px;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabChecked {
+    padding-bottom : 0;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-image : none;
+    box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow : 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTab {
+    left : 1px;
+    margin-bottom : 1px;
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabLeft.png);
+    background-position : -347px -340px;
+    background-repeat : repeat-y;
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    background-image : url(layout/images/tabLeft.png);
+    background-repeat : repeat-y;
+    background-position : 0px 0px;
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabContent {
+    padding-right : 9px;
+    border-right : none;
+    background-image : none;
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-position : 0px -179px;
+    background-repeat : repeat-y;
+    box-shadow : -1px 0px 2px rgba(0, 0, 0, .05);
+    -webkit-box-shadow : -1px 0px 2px rgba(0, 0, 0, .05);
+    -moz-box-shadow : -1px 0px 2px rgba(0, 0, 0, 0.05);
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTab {
+    left : -1px;
+    margin-bottom : 1px;
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabInnerDiv {
+    background-image : url(layout/images/tabRight.png);
+    background-repeat : repeat-y;
+    background-position : -1px -347px;
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabContent {
+    padding : 3px 8px 4px 4px;
+    background-image : url(layout/images/tabRight.png);
+    background-position : right top;
+    background-repeat : repeat-y;
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabChecked .dijitTabContent {
+    padding-left : 5px;
+    border-left : none;
+    background-image : none;
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabChecked .dijitTabInnerDiv {
+    background-position : -348px -179px;
+    box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+    -webkit-box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+    -moz-box-shadow : 1px 0px 2px rgba(0, 0, 0, 0.07);
+}
+.freeguipy .globalWidget .dijitTabContainerTop-tabs .dijitTabInnerDiv {
+    border-radius : 2px 2px 0px 0px;
+    -moz-border-radius : 2px 2px 0px 0px;
+    -webkit-border-top-left-radius : 2px;
+    -webkit-border-top-right-radius : 2px;
+}
+.freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabInnerDiv, .freeguipy .globalWidget .dijitTabContainerBottom-tabs .dijitTabContent {
+    border-radius : 0px 0px 2px 2px;
+    -moz-border-radius : 0px 0px 2px 2px;
+    -webkit-border-bottom-right-radius : 2px;
+    -webkit-border-bottom-left-radius : 2px;
+}
+.freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabInnerDiv, .freeguipy .globalWidget .dijitTabContainerLeft-tabs .dijitTabContent {
+    border-radius : 2px 0px 0px 2px;
+    -moz-border-radius : 2px 0px 0px 2px;
+    -webkit-border-top-left-radius : 2px;
+    -webkit-border-bottom-left-radius : 2px;
+}
+.freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabInnerDiv, .freeguipy .globalWidget .dijitTabContainerRight-tabs .dijitTabContent {
+    border-radius : 0px 2px 2px 0px;
+    -moz-border-radius : 0px 2px 2px 0px;
+    -webkit-border-top-right-radius : 2px;
+    -webkit-border-bottom-right-radius : 2px;
+}
+.freeguipy .globalWidget .tabStripButton {
+    background-color : #deecf9;
+    border : 1px solid #b5bcc7;
+}
+.freeguipy .globalWidget .dijitTabListContainer-top .tabStripButton {
+    padding : 4px 3px;
+    margin-top : 7px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px 0px;
+}
+.freeguipy .globalWidget .dijitTabListContainer-bottom .tabStripButton {
+    padding : 5px 3px;
+    margin-bottom : 4px;
+    background-image : url(layout/images/tabTop.png);
+    background-position : 0px -248px;
+    background-position : bottom;
+}
+.freeguipy .globalWidget .tabStripButtonHover {
+    background-color : #a6d2fb;
+}
+.freeguipy .globalWidget .tabStripButtonActive {
+    background-color : #7dbefa;
+}
+.freeguipy .globalWidget .dijitTabStripIcon {
+    height : 15px;
+    width : 15px;
+    margin : 0 auto;
+    background : url(form/images/arrows.gif) no-repeat 0px 0px;
+    background-color : transparent;
+}
+.freeguipy .globalWidget .dijitTabStripSlideRightIcon {
+    background-position : 0px -30px;
+}
+.freeguipy .globalWidget .dijitTabStripMenuIcon {
+    background-position : 0px -15px;
+}
+.freeguipy .globalWidget .dijitTabListContainer-top .tabStripButtonDisabled, .freeguipy .globalWidget .dijitTabListContainer-bottom .tabStripButtonDisabled {
+    background-color : #DDDDDD;
+    background-image : url(form/images/button_grad_d.png);
+    border : 1px solid #C9C9C9;
+}
+.freeguipy .globalWidget .tabStripButtonDisabled .dijitTabInnerDiv {
+    background : none;
+}
+.freeguipy .globalWidget .tabStripButtonDisabled .dijitTabStripSlideLeftIcon {
+    background-position : 0px -60px;
+}
+.freeguipy .globalWidget .tabStripButtonDisabled .dijitTabStripSlideRightIcon {
+    background-position : 0px -90px;
+}
+.freeguipy .globalWidget .tabStripButtonDisabled .dijitTabStripMenuIcon {
+    background-position : 0px -75px;
+}
+.freeguipy .globalWidget .dijitTabContainerNested .dijitTabListWrapper {
+    height : auto;
+}
+.freeguipy .globalWidget .dijitTabContainerNested .dijitTabContainerTop-tabs {
+    border-bottom : solid 1px #b5bcc7;
+    padding : 1px 2px 4px;
+    margin-top : -2px;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabContent {
+    background : rgba(255, 255, 255, 0) none repeat scroll 0 0;
+    border : none;
+    padding : 4px;
+    border-color : rgba(118,157,192,0);
+    -webkit-transition-property : background-color, border-color;
+    -webkit-transition-duration : .3s;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv {
+    background : none;
+    border : none;
+    top : 0px;
+    box-shadow : none;
+    -webkit-box-shadow : none;
+    -moz-box-shadow : none;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent {
+    background-color : #eaf4fc;
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    border : solid 1px #c8dff3;
+    padding : 3px;
+    webkit-transition-duration : .2s;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabHover .tabLabel {
+    text-decoration : none;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabActive .dijitTabContent {
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    border : solid 1px #a8c7e2;
+    padding : 3px;
+    background : #b9d9f5 url(layout/images/tabNested.png) repeat-x;
+    -webkit-transition-duration : .1s;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent {
+    border-radius : 2px 2px 2px 2px;
+    -moz-border-radius : 2px 2px 2px 2px;
+    -webkit-border-radius : 2px;
+    padding : 3px;
+    border : solid 1px #a8c7e2;
+    background-position : 0px 105px;
+    background-color : #d4e8f9;
+}
+.freeguipy .globalWidget .dijitTabContainerTabListNested .dijitTabChecked .tabLabel {
+    text-decoration : none;
+    background-image : none;
+}
+.freeguipy .globalWidget .dijitTabPaneWrapperNested {
+    border : none;
+}
+.dj_ie6 .freeguipy .globalWidget .dijitTabContent, .dj_ie6 .freeguipy .globalWidget .dijitTabInnerDiv, .dj_ie6 .dijitTabListContainer-top .tabStripButton, .dj_ie6 .dijitTabListContainer-bottom .tabStripButton {
+    background-image : none;
+}
+.freeguipy .globalWidget .dijitTabContainerTop-dijitContentPane, .freeguipy .globalWidget .dijitTabContainerLeft-dijitContentPane, .freeguipy .globalWidget .dijitTabContainerBottom-dijitContentPane, .freeguipy .globalWidget .dijitTabContainerRight-dijitContentPane {
+    background-color : #fff;
+    padding : 8px;
+}
+.dijitRtl .dijitPlaceHolder {
+    left : auto;
+    right : 0;
+}
+.dijitMenuItemRtl {
+    text-align : right;
+}
+.dj_iequirks .dijitComboButtonRtl BUTTON {
+    float : left;
+}
+.dijit_a11y .dijitTextBoxRtl .dijitValidationContainer, .dijitTextBoxRtl .dijitSpinnerButtonContainer, .dijitComboBoxRtl .dijitArrowButtonContainer {
+    border-right-width : 1px !important;
+    border-right-style : solid !important;
+    border-left-width : 0px !important;
+    border-left-style : none !important;
+}
+.dijit_a11y .dijitTextBoxRtl .dijitValidationContainer, .dijit_a11y .dijitTextBoxRtl .dijitSpinnerButtonContainer, .dijit_a11y .dijitComboBoxRtl .dijitArrowButtonContainer {
+    border-right : 1px solid black !important;
+    border-left : 0px none black !important;
+}
+.dijitSpinnerRtl .dijitSpinnerButtonContainer .dijitArrowButton {
+    right : 0;
+    left : auto;
+}
+.dijitTextBoxRtl .dijitSpinnerButtonContainer, .dijitTextBoxRtl .dijitValidationContainer, .dijitTextBoxRtl .dijitArrowButtonContainer {
+    float : left;
+}
+.dijitCalendarRtl .dijitCalendarNextYear {
+    margin : 0 0.55em 0 0;
+}
+.dijitCalendarRtl .dijitCalendarPreviousYear {
+    margin : 0 0 0 0.55em;
+}
+.dijitSliderRtl .dijitSliderImageHandleV {
+    left : auto;
+}
+.dijitSliderRtl .dijitSliderImageHandleH {
+    left : -50%;
+}
+.dijitSliderRtl .dijitSliderMoveableH {
+    right : auto;
+    left : 0;
+}
+.dijitSliderRtl .dijitRuleContainerV {
+    float : right;
+}
+.dj_ie .dijitSliderRtl .dijitRuleContainerV {
+    text-align : right;
+}
+.dj_ie .dijitSliderRtl .dijitRuleLabelV {
+    text-align : left;
+}
+.dj_ie .dijitSliderRtl .dijitRuleLabelH {
+    zoom : 1;
+}
+.dijitSliderRtl .dijitSliderProgressBarH {
+    float : right;
+    right : 0;
+    left : auto;
+}
+.dijitRtl .dijitContentPaneLoading, .dijitRtl .dijitContentPaneError {
+    background-position : right;
+    padding-right : 25px;
+}
+.dijitTabRtl .dijitTabCloseButton {
+    margin-left : 0px;
+    margin-right : 1em;
+}
+.dj_ie .dijitTimePickerRtl .dijitTimePickerItem {
+    width : 100%;
+}
+.dijitColorPaletteRtl .dijitColorPaletteUnder {
+    left : auto;
+    right : 0;
+}
+.dijitSelectRtl .dijitButtonContents {
+    text-align : right;
+}
+.freeguipy .dijitTextBoxRtlError .dijitValidationContainer {
+    border-left-width : 0px;
+    border-right-width : 1px;
+}
+.freeguipy .dijitComboButtonRtl .dijitStretch {
+    -moz-border-radius : 0px 4px 4px 0px;
+    -webkit-border-top-left-radius : 0px;
+    -webkit-border-top-right-radius : 4px;
+    -webkit-border-bottom-right-radius : 4px;
+    -webkit-border-bottom-left-radius : 0px;
+}
+.freeguipy .dijitComboButtonRtl .dijitArrowButton {
+    -moz-border-radius : 4px 0px 0px  4px;
+    -webkit-border-top-left-radius : 4px;
+    -webkit-border-top-right-radius : 0px;
+    -webkit-border-bottom-right-radius : 0px;
+    -webkit-border-bottom-left-radius : 4px;
+    padding : 3px 0px 4px;
+    border-left-width : 1px;
+    border-right-width : 0px;
+}
+.freeguipy .dijitTabContainerTop-tabs .dijitTabRtl, .freeguipy .dijitTabContainerBottom-tabs .dijitTabRtl {
+    margin-right : 0;
+    margin-left : 1px;
+}
+.freeguipy .dijitTabRtl {
+    -moz-box-orient : horizontal;
+    text-align : right;
+}
+.dj_ie7 .freeguipy .dijitTabRtl .dijitTabContent {
+    display : block;
+    left : 0;
+}
+.dj_ie7 .freeguipy .dijitTabContainerTop-tabs .dijitTabRtl, .dj_ie7 .freeguipy .dijitTabContainerTop-tabs .dijitTabCheckedRtl {
+    top : 1px;
+}
+.dj_ie7 .freeguipy .tabStripButtonRtl .dijitButtonContents, .dj_ie8 .freeguipy .tabStripButtonRtl .dijitButtonContents, .dj_ie6 .freeguipy .dijitTabContainerTop-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_ie6 .freeguipy .dijitTabContainerBottom-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_ie7 .freeguipy .dijitTabContainerTop-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_ie7 .freeguipy .dijitTabContainerBottom-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_iequirks .freeguipy .dijitTabContainerTop-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_iequirks .freeguipy .dijitTabContainerBottom-tabs .dijitTabRtl .dijitTabInnerDiv {
+    float : left;
+}
+.dj_ie6 .freeguipy .dijitTabRtl .tabLabel, .dj_ie6 .freeguipy .dijitTabContainerRight-tabs .dijitTabRtl, .dj_ie6 .freeguipy .dijitTabContainerLeft-tabs .dijitTabRtl, .dj_ie7 .freeguipy .dijitTabContainerRight-tabs .dijitTabRtl .dijitTabInnerDiv, .dj_ie7 .freeguipy .dijitTabContainerLeft-tabs .dijitTabRtl .dijitTabInnerDiv {
+    zoom : 1;
+}
+.dj_ie6 .freeguipy .dijitTabRtl .dijitTabCloseButton, .dj_ie7 .freeguipy .dijitTabRtl .dijitTabCloseButton, .dj_iequirks .freeguipy .dijitTabRtl .dijitTabCloseButton {
+    margin-right : 5px;
+}
+.dj_ie6 .freeguipy .dijitTabContainerRightRtl .dijitTabContainerRight-tabs, .dj_ie6 .freeguipy .dijitTabContainerLeftRtl .dijitTabContainerLeft-tabs {
+    width : 1%;
+}
+.dj_ie6 .dijitTabContainerTopStrip, .dj_ie6 .dijitTabContainerBottomStrip {
+    position : absolute;
+}
+.dj_iequirks .freeguipy .dijitTabContainerTopRtl .dijitTabContainerTopStrip {
+    padding-top : 10px;
+}
+.dj_ie7 .freeguipy .dijitTabContainerRight-tabs .dijitTabRtlChecked .dijitTabInnerDiv {
+    background-position : -341px -179px;
+}
+.dj_ie6 .dijitTabContainerTopRtl .dijitTabStripIcon, .dj_ie6 .dijitTabContainerBottomRtl .dijitTabStripIcon {
+    position : relative;
+}
+.dj_ie6-rtl .freeguipy .dijitTabContainerTop-tabs {
+    padding-left : 3px;
+}
+.dj_iequirks-rtl .freeguipy .dijitTabListWrapper {
+    border-left : 1px solid #fff;
+    border-right : 1px solid #fff;
+}
+.freeguipy .dijitSliderRtl .dijitSliderProgressBarH, .freeguipy .dijitSliderRtl .dijitSliderRemainingBarH, .freeguipy .dijitSliderRtl .dijitSliderLeftBumper, .freeguipy .dijitSliderRtl .dijitSliderRightBumper, .freeguipy .dijitSliderRtl .dijitSliderTopBumper {
+    background-position : top right;
+}
+.freeguipy .dijitSliderRtl .dijitSliderProgressBarV, .freeguipy .dijitSliderRtl .dijitSliderRemainingBarV, .freeguipy .dijitSliderRtl .dijitSliderBottomBumper {
+    background-position : bottom right;
+}
+.freeguipy .dijitSliderRtl .dijitSliderLeftBumper {
+    border-left-width : 0px;
+    border-right-width : 1px;
+}
+.freeguipy .dijitSliderRtl .dijitSliderRightBumper {
+    border-left-width : 1px;
+    border-right-width : 0px;
+}
+.freeguipy .dijitSliderRtl .dijitSliderIncrementIconH {
+    background-position : -357px 50%;
+}
+.freeguipy .dijitSliderRtl .dijitSliderDecrementIconH {
+    background-position : -251px 50%;
+}
+.freeguipy .dijitSelectRtl .dijitButtonContents {
+    border-right-width : 0px;
+    border-left-width : 1px;
+}
+.freeguipy .dijitDialogRtl .dijitDialogCloseIcon {
+    right : auto;
+    left : 5px;
+}
+.freeguipy .dijitDialogRtl .dijitDialogPaneActionBar {
+    text-align : left;
+    padding : 3px 7px 2px 5px;
+}
+.freeguipy .dijitEditorRtl .dijitEditorIFrameContainer {
+    padding : 3px 10px 1px 3px;
+}
+.dijitEditorRtl .dijitEditorIcon {
+    background-image : url(icons/images/editorIconsEnabled_rtl.png);
+}
+.dijitEditorRtlDisabled .dijitEditorIcon {
+    background-image : url(icons/images/editorIconsDisabled_rtl.png);
+}
+.dijitToolbarRtl .dijitToolbarSeparator {
+    background-image : url(icons/images/editorIconsEnabled_rtl.png);
+}
+.dijitRtl .dijitIconSave, .dijitRtl .dijitIconPrint, .dijitRtl .dijitIconCut, .dijitRtl .dijitIconCopy, .dijitRtl .dijitIconClear, .dijitRtl .dijitIconDelete, .dijitRtl .dijitIconUndo, .dijitRtl .dijitIconEdit, .dijitRtl .dijitIconNewTask, .dijitRtl .dijitIconEditTask, .dijitRtl .dijitIconEditProperty, .dijitRtl .dijitIconTask, .dijitRtl .dijitIconFilter, .dijitRtl .dijitIconConfigure, .dijitRtl .dijitIconSearch, .dijitRtl .dijitIconApplication, .dijitRtl .dijitIconBookmark, .dijitRtl .dijitIconChart, .dijitRtl .dijitIconConnector, .dijitRtl .dijitIconDatabase, .dijitRtl .dijitIconDocuments, .dijitRtl .dijitIconMail, .dijitRtl .dijitLeaf, .dijitRtl .dijitIconFile, .dijitRtl .dijitIconFunction, .dijitRtl .dijitIconKey, .dijitRtl .dijitIconPackage, .dijitRtl .dijitIconSample, .dijitRtl .dijitIconTable, .dijitRtl .dijitIconUsers, .dijitRtl .dijitFolderClosed, .dijitRtl .dijitIconFolderClosed, .dijitRtl .dijitFolderOpened, .dijitRtl .dijitIconFolderOpen, .dijitRtl .dijitIconError, .dijitRtl .dijitContentPaneError {
+    background-image : url(icons/images/commonIconsObjActEnabled_rtl.png);
+    width : 16px;
+    height : 16px;
+}
+.dj_ie6 .dijitRtl .dijitIconSave, .dj_ie6 .dijitRtl .dijitIconPrint, .dj_ie6 .dijitRtl .dijitIconCut, .dj_ie6 .dijitRtl .dijitIconCopy, .dj_ie6 .dijitRtl .dijitIconClear, .dj_ie6 .dijitRtl .dijitIconDelete, .dj_ie6 .dijitRtl .dijitIconUndo, .dj_ie6 .dijitRtl .dijitIconEdit, .dj_ie6 .dijitRtl .dijitIconNewTask, .dj_ie6 .dijitRtl .dijitIconEditTask, .dj_ie6 .dijitRtl .dijitIconEditProperty, .dj_ie6 .dijitRtl .dijitIconTask, .dj_ie6 .dijitRtl .dijitIconFilter, .dj_ie6 .dijitRtl .dijitIconConfigure, .dj_ie6 .dijitRtl .dijitIconSearch, .dj_ie6 .dijitRtl .dijitIconApplication, .dj_ie6 .dijitRtl .dijitIconBookmark, .dj_ie6 .dijitRtl .dijitIconChart, .dj_ie6 .dijitRtl .dijitIconConnector, .dj_ie6 .dijitRtl .dijitIconDatabase, .dj_ie6 .dijitRtl .dijitIconDocuments, .dj_ie6 .dijitRtl .dijitIconMail, .dj_ie6 .dijitRtl .dijitLeaf, .dj_ie6 .dijitRtl .dijitIconFile, .dj_ie6 .dijitRtl .dijitIconFunction, .dj_ie6 .dijitRtl .dijitIconKey, .dj_ie6 .dijitRtl .dijitIconPackage, .dj_ie6 .dijitRtl .dijitIconSample, .dj_ie6 .dijitRtl .dijitIconTable, .dj_ie6 .dijitRtl .dijitIconUsers, .dj_ie6 .dijitRtl .dijitFolderClosed, .dj_ie6 .dijitRtl .dijitIconFolderClosed, .dj_ie6 .dijitRtl .dijitFolderOpened, .dj_ie6 .dijitRtl .dijitIconFolderOpen, .dj_ie6 .dijitRtl .dijitIconError, .dj_ie6 .dijitRtl .dijitContentPaneError {
+    background-image : url(icons/images/commonIconsObjActEnabled8bit_rtl.png);
+}
+.dijitRtl .dijitDisabled .dijitIconSave, .dijitRtl .dijitDisabled .dijitIconPrint, .dijitRtl .dijitDisabled .dijitIconCut, .dijitRtl .dijitDisabled .dijitIconCopy, .dijitRtl .dijitDisabled .dijitIconClear, .dijitRtl .dijitDisabled .dijitIconDelete, .dijitRtl .dijitDisabled .dijitIconUndo, .dijitRtl .dijitDisabled .dijitIconEdit, .dijitRtl .dijitDisabled .dijitIconNewTask, .dijitRtl .dijitDisabled .dijitIconEditTask, .dijitRtl .dijitDisabled .dijitIconEditProperty, .dijitRtl .dijitDisabled .dijitIconTask, .dijitRtl .dijitDisabled .dijitIconFilter, .dijitRtl .dijitDisabled .dijitIconConfigure, .dijitRtl .dijitDisabled .dijitIconSearch, .dijitRtl .dijitDisabled .dijitIconApplication, .dijitRtl .dijitDisabled .dijitIconBookmark, .dijitRtl .dijitDisabled .dijitIconChart, .dijitRtl .dijitDisabled .dijitIconConnector, .dijitRtl .dijitDisabled .dijitIconDatabase, .dijitRtl .dijitDisabled .dijitIconDocuments, .dijitRtl .dijitDisabled .dijitIconMail, .dijitRtl .dijitDisabled .dijitLeaf, .dijitRtl .dijitDisabled .dijitIconFile, .dijitRtl .dijitDisabled .dijitIconFunction, .dijitRtl .dijitDisabled .dijitIconKey, .dijitRtl .dijitDisabled .dijitIconPackage, .dijitRtl .dijitDisabled .dijitIconSample, .dijitRtl .dijitDisabled .dijitIconTable, .dijitRtl .dijitDisabled .dijitIconUsers, .dijitRtl .dijitDisabled .dijitFolderClosed, .dijitRtl .dijitDisabled .dijitIconFolderClosed, .dijitRtl .dijitDisabled .dijitFolderOpened, .dijitRtl .dijitDisabled .dijitIconFolderOpen, .dijitRtl .dijitDisabled .dijitIconError, .dijitRtl .dijitDisabled .dijitContentPaneError {
+    background-image : url(icons/images/commonIconsObjActDisabled_rtl.png);
+}
+.dijitRtl .dijitContentPaneLoading {
+    background : url(icons/images/loadingAnimation_rtl.gif) no-repeat;
+}
+.freeguipy .dijitTitlePaneRtl .dijitClosed .dijitArrowNode {
+    background-position : -7px 0px;
+}
+.freeguipy .dijitMenuItemRtl .dijitMenuExpand {
+    background-position : -7px 0px;
+    margin-right : 0px;
+    margin-left : 3px;
+}
+.freeguipy .dijitMenuItemRtl .dijitMenuItemIcon {
+    margin : 0px 4px 0px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarIncrease {
+    background-position : 0px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarDecrease {
+    background-position : -18px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarArrowHover .dijitCalendarIncrease {
+    background-position : -36px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarArrowHover .dijitCalendarDecrease {
+    background-position : -55px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarArrowActive .dijitCalendarIncrease {
+    background-position : -72px 0px;
+}
+.freeguipy .dijitCalendarRtl .dijitCalendarArrowActive .dijitCalendarDecrease {
+    background-position : -91px 0px;
+}
+.dj_ie .freeguipy .dijitTimePickerRtl .dijitTimePickerTickHover, .dj_ie .freeguipy .dijitTimePickerRtl .dijitTimePickerMarkerHover, .dj_ie .freeguipy .dijitTimePickerRtl .dijitTimePickerMarkerSelected, .dj_ie .freeguipy .dijitTimePickerRtl .dijitTimePickerTickSelected {
+    margin-left : -6px;
+    margin-right : -8px;
+    width : 114%;
+}

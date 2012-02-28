@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<agents  xmlns:py="http://genshi.edgewall.org/">
+    <py:for each="agent in c.agents">
+        <agent>
+            <agent_name>${agent.agent}</agent_name>
+            <volume>${agent.volume}</volume>
+            <talk_time>${agent.talk_time}</talk_time>
+        </agent>
+    </py:for>
+</agents>

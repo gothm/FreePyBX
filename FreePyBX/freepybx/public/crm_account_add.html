@@ -1,0 +1,201 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    function crmAccountAddHandler() {
+        if(dijit.byId("crm_account_add_form").validate()) { 
+            dojo.xhrPost({
+                url: "/crm/account_add",
+                handleAs: "text",
+                form: dojo.byId("crm_account_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("crmContent").set("href", "/crm_accounts.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }    
+    
+</script>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmCampaignStore" data-dojo-props="url:'/crm/campaigns'"></div>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmAccountStatusTypeStore" data-dojo-props="url:'/crm/account_status_types'"></div>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmLeadTypeStore" data-dojo-props="url:'/crm/account_lead_types'"></div>
+<div dojoType="dijit.layout.ContentPane" style="background-color: #ededed; height: 30px; overflow: hidden; margin-bottom: 0px; border-bottom: solid 1px #c0c0c0; border-top: solid 1px #c0c0c0;">
+    <p style="margin-left: 20px; margin-top: 0px; font-weight: bold; font-size: large">
+        Add Account
+    </p>
+</div>
+<form dojoType="dijit.form.Form" id="crm_account_add_form">
+    <fieldset name="device_set" style="margin-top: 20px;border: solid 2px #c0c0c0; padding-top: 30px; padding-left: 30px; padding-bottom: 30px;">
+        <legend style="font-size: large; font-weight: bold; color: #c0c0c0; ">
+            Personal Information
+        </legend>
+        <script type="dojo/method" event="onSubmit">
+            if(this.validate()) {
+                return crmAccountAddHandler();
+            } else {
+                alert('Form contains invalid data.  Please correct and re-submit');
+                return false;
+            }
+            return true;
+        </script>
+        <table cellpadding="0" cellspacing="2" width="500">
+                <tr>
+                    <td valign="top"><strong>First Name: </strong></td>
+                    <td>
+                    <input type="text" required="true" name="first_name" placeholder="First Name"
+                            dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a first name!" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Last Name: </strong></td>
+                    <td>
+                    <input type="text" required="true" name="last_name" placeholder="Last Name"
+                            dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a last name!" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Company: </strong></td>
+                    <td>
+                    <input type="text" required="false" name="company" placeholder="Company"
+                            dojoType="dijit.form.ValidationTextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Title: </strong></td>
+                    <td>
+                    <input type="text" required="false" name="title" placeholder="Title"
+                            dojoType="dijit.form.ValidationTextBox" required="false" />
+                    </td>
+                </tr>      
+                <tr>
+                    <td valign="top"><strong>Email: </strong></td>
+                    <td>
+                    <input type="text" name="email" size="30"
+                        dojoType="dijit.form.ValidationTextBox"  placeholder="email@domain.com"
+                        required="false"
+                        regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                        promptMessage="Please enter a valid email address."
+                        invalidMessage="Invalid email."
+                        trim="true"
+                    />
+                    </td>
+                </tr>                                          
+                <tr>
+                    <td valign="top"><strong>Address:</strong></td>
+                    <td>
+                    <input type="text" name="address" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Address 2:</strong></td>
+                    <td>
+                    <input type="text" name="address_2" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>City:</strong></td>
+                    <td>
+                    <input type="text" name="city" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>State:</strong></td>
+                    <td>
+                    <input type="text" name="state" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Zip: </strong></td>
+                    <td>
+                    <input type="text" name="zip" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Tel:</strong></td>
+                    <td>
+                    <input type="text" name="tel" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Extension:</strong></td>
+                    <td>
+                    <input type="text" name="tel_ext" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>                
+                <tr>
+                    <td valign="top"><strong>Mobile:</strong></td>
+                    <td>
+                    <input type="text" name="mobile" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Active: </strong></td>
+                    <td>
+                    <input type="text" name="active" dojoType="dijit.form.CheckBox" />
+                    </td>
+                </tr>  
+                <tr>
+                    <td valign="top"><strong>Campaign: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmCampaignStore" value="" searchAttr="name" name="crm_campaign_name">
+                    </td>
+                </tr>      
+                <tr>
+                    <td valign="top"><strong>Campaign Lead Type: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmLeadTypeStore" value="" searchAttr="name" name="crm_lead_type_name">
+                    </td>
+                </tr>                                      
+                <tr>
+                    <td valign="top"><strong>Campaign Status Type: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmAccountStatusTypeStore" value="" searchAttr="name" name="status_type_name">
+                    </td>
+                </tr>    
+            <tr>
+                <td></td>
+                <td>
+                <br>
+                <input type="submit" value="Add CRM Account" label="Add CRM Account" id="add_crm_account_button" dojoType="dojox.form.BusyButton"
+                busyLabel="Creating CRM Account..." timeout="2000" onclick="crmAccountAddHandler()"/>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>

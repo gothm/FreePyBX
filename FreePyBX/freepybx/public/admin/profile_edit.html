@@ -1,0 +1,371 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+<?python from genshi.input import HTML ?>
+
+<script charset="UTF-8" type="text/javascript">
+//<![CDATA[
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.ValidationTextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.ComboBox");
+
+
+    function profileEditFormHandler() {
+        if(dijit.byId("profile_edit_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/edit_profile",
+                handleAs: "text",
+                form: dojo.byId("profile_edit_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("adminContent").set("href", "/admin/profile_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+    function setProfileForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("profile_id").value = obj.id;
+        dijit.byId("profile_name").set("value", obj.name);
+        dijit.byId("odbc_credentials").set("value", obj.odbc_credentials);
+        dijit.byId("manage_presence").set("value", obj.manage_presence);
+        dijit.byId("dbname").set("value", obj.presence_db_name);
+        dijit.byId("presence_hosts").set("value", obj.presence_hosts);
+        dijit.byId("send_presence_on_register").set("value", obj.send_presence_on_register);
+        dijit.byId("delete_subs_on_register").set("value", obj.delete_subs_on_register);
+        dijit.byId("caller_id_type").set("value", obj.caller_id_type);
+        dijit.byId("auto_jitterbuffer_msec").set("value", obj.auto_jitterbuffer_msec);
+        dijit.byId("ext_rtp_ip").set("value", obj.ext_rtp_ip);
+        dijit.byId("ext_sip_ip").set("value", obj.ext_sip_ip);
+        dijit.byId("sip_ip").set("value", obj.sip_ip);
+        dijit.byId("rtp_ip").set("value", obj.rtp_ip);
+        dijit.byId("sip_port").set("value", obj.sip_port);
+        dijit.byId("nonce_ttl").set("value", obj.nonce_ttl);
+        dijit.byId("sql_in_transactions").set("value", obj.sql_in_transactions);
+        dijit.byId("use_rtp_timer").set("value", obj.use_rtp_timer);
+        dijit.byId("rtp_timer_name").set("value", obj.rtp_timer_name);
+        dijit.byId("codec_prefs").set("value", obj.codec_prefs);
+        dijit.byId("inbound_codec_negotiation").set("value", obj.inbound_codec_negotiation);
+        dijit.byId("rtp_timeout_sec").set("value", obj.rtp_timeout_sec);
+        dijit.byId("rtp_timer_name").set("value", obj.rtp_timer_name);
+        dijit.byId("rtp_hold_timeout_sec").set("value", obj.rtp_hold_timeout_sec);
+        dijit.byId("rfc2833_pt").set("value", obj.rfc2833_pt);
+        dijit.byId("dtmf_duration").set("value", obj.dtmf_duration);
+        dijit.byId("dtmf_type").set("value", obj.dtmf_type);
+        dijit.byId("multiple_registrations").set("value", obj.multiple_registrations);
+        dijit.byId("vm_from_email").set("value", obj.vm_from_email);
+        dijit.byId("email_domain").set("value", obj.email_domain);
+        dijit.byId("accept_blind_reg").set("value", obj.accept_blind_reg);
+        dijit.byId("auth_calls").set("value", obj.auth_calls);
+        dijit.byId("codec_ms").set("value", obj.codec_ms);
+        dijit.byId("log_auth_failures").set("value", obj.log_auth_failures);
+        dijit.byId("disable_register").set("value", obj.disable_register);
+        dijit.byId("auth_all_packets").set("value", obj.auth_all_packets);
+        dijit.byId("minimum_session_expires").set("value", obj.minimum_session_expires);
+    }
+
+    function getProfileByID() {
+        dojo.xhrGet({
+            url: "/admin/get_profile_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setProfileForm(res.items[0]);
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        getProfileByID();
+    });
+
+//]]>
+</script>
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Edit Profile',legend:'Profile Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'profile_edit_form',helpCategory:'edit_profile', submitFunc:'profileEditFormHandler();',
+     delFunc:'this.form.rest();'">
+    <input type="hidden" name="id" id="profile_id" value=""/>
+    <ul class="field_list">
+        <li class="even first">
+            <label class="fieldlabel" for="profile_name">Profile Name</label>
+            <input type="text" required="true" name="name" id="profile_name" placeholder="e.g. Profile1"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a profile name."/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="odbc_credentials">ODBC Credentials</label>
+            <input type="text" required="true" name="odbc_credentials" id="odbc_credentials"
+                   placeholder="dsnname:username:password"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide your odbc credentials."/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="manage_presence">Manage Presence</label>
+            <input name="manage_presence" id="manage_presence" value="true" checked="false"
+                   dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="dbname">Presence DB Name</label>
+            <input type="text" required="false" name="dbname" id="dbname" value="share_presence"
+                   dojoType="dijit.form.ValidationTextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="presence_hosts">Presence Host</label>
+            <input type="text" required="false" name="presence_hosts" id="presence_hosts"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="xxx.xxx.xxx.xxx,sip.myco.com"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="send_presence_on_register">Send Presence On Reg</label>
+            <input name="send_presence_on_register" id="send_presence_on_register" value="true" checked="false"
+                   dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="delete_subs_on_register">Delete Subs on Reg</label>
+            <input name="delete_subs_on_register" id="delete_subs_on_register" value="true" checked="false"
+                   dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="caller_id_type">Caller ID Type</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="caller_id_type" name="caller_id_type">
+                <option selected="true">rpid</option>
+                <option>pid</option>
+                <option>none</option>
+            </select>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="auto_jitterbuffer_msec">Auto Jitter Buffer Size</label>
+            <input type="text" required="false" name="auto_jitterbuffer_msec" id="auto_jitterbuffer_msec" value="120"
+                   dojoType="dijit.form.ValidationTextBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="ext_rtp_ip">External RTP IP</label>
+            <input type="text" required="true" name="ext_rtp_ip" id="ext_rtp_ip" placeholder="xxx.xxx.xxx.xxx"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an external RTP IP Address."
+                   regExp="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
+                   promptMessage="Please enter a valid IP Address."
+                   invalidMessage="Invalid IP."
+                   trim="true"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="ext_sip_ip">External SIP IP</label>
+            <input type="text" required="true" name="ext_sip_ip" id="ext_sip_ip" placeholder="xxx.xxx.xxx.xxx"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an external SIP IP Address."
+                   regExp="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
+                   promptMessage="Please enter a valid IP Address."
+                   invalidMessage="Invalid IP."
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="rtp_ip">RTP IP</label>
+            <input type="text" required="true" name="rtp_ip" id="rtp_ip" placeholder="xxx.xxx.xxx.xxx"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an external SIP IP Address."
+                   regExp="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
+                   promptMessage="Please enter a valid IP Address."
+                   invalidMessage="Invalid IP."
+                   trim="true"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="sip_ip">SIP IP</label>
+            <input type="text" required="true" name="sip_ip" id="sip_ip" placeholder="xxx.xxx.xxx.xxx"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an external SIP IP Address."
+                   regExp="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
+                   promptMessage="Please enter a valid IP Address."
+                   invalidMessage="Invalid IP."
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="sip_port">SIP Port</label>
+            <input type="text" required="true" name="sip_port" id="sip_port" placeholder="5060"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an external SIP IP Address."
+                   regExp="\b\d{4}\b"
+                   promptMessage="Please enter a valid SIP Port."
+                   invalidMessage="Invalid Port."
+                   trim="true"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="sql_in_transactions">SQL in Transactions</label>
+            <input name="sql_in_transactions" id="sql_in_transactions" value="true" dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="nonce_ttl">Nonce TTL</label>
+            <input type="text" required="false" name="nonce_ttl" id="nonce_ttl" dojoType="dijit.form.ValidationTextBox"
+                   value="60"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="use_rtp_timer">Use RTP Timer</label>
+            <input name="use_rtp_timer" id="use_rtp_timer" value="true" checked="true" dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="rtp_timer_name">RTP Timer Name</label>
+            <input type="text" required="false" name="rtp_timer_name" id="rtp_timer_name"
+                   dojoType="dijit.form.ValidationTextBox" value="soft"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="codec_prefs">Codec Preferences</label>
+            <input type="text" required="false" name="codec_prefs" id="codec_prefs"
+                   dojoType="dijit.form.ValidationTextBox" value="PCMU,PCMA,G722,G726,H264,H263"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="inbound_codec_negotiation">Codec Negotiation</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="inbound_codec_negotiation"
+                    name="inbound_codec_negotiation">
+                <option selected="true">generous</option>
+                <option>greedy</option>
+                <option>scrouge</option>
+            </select>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="codec_ms">Codec ms</label>
+            <input type="text" required="true" name="codec_ms" id="codec_ms" regExp="\b\d{2,3}\b"
+                   dojoType="dijit.form.ValidationTextBox" value="20"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="rtp_timeout_sec">RTP Timeout</label>
+            <input type="text" required="true" name="rtp_timeout_sec" id="rtp_timeout_sec"
+                   dojoType="dijit.form.ValidationTextBox" value="300"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="rtp_hold_timeout_sec">RTP Hold Timeout</label>
+            <input type="text" required="true" name="rtp_hold_timeout_sec" id="rtp_hold_timeout_sec"
+                   dojoType="dijit.form.ValidationTextBox" value="1800"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="rfc2833_pt">RFC2833 Packet Type</label>
+            <input type="text" required="false" name="rfc2833_pt" id="rfc2833_pt"
+                   dojoType="dijit.form.ValidationTextBox" value="101"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="">DTMF Type</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="dtmf_type" name="dtmf_type">
+                <option selected="true">rfc2833</option>
+                <option>info</option>
+                <option>none</option>
+            </select>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="dtmf_duration">DTMF Duration</label>
+            <input type="text" required="true" name="dtmf_duration" id="dtmf_duration" regExp="\b\d{3,4}\b"
+                   dojoType="dijit.form.ValidationTextBox" value="100"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="multiple_registrations">Multiple Registrations</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="multiple_registrations" name="multiple_registrations">
+                <option selected="true">contact</option>
+                <option>true</option>
+            </select>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="minimum_session_expires">Min Session Expires</label>
+            <input type="text" required="true" name="minimum_session_expires" id="minimum_session_expires" regExp="\b\d{3,6}\b"
+                   dojoType="dijit.form.ValidationTextBox" value="120"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="session_timeout">Session Timeout</label>
+            <input type="text" required="true" name="session_timeout" id="session_timeout" regExp="\b\d{3,6}\b"
+                   dojoType="dijit.form.ValidationTextBox" value="1800"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="vm_from_email">Mailer App From Email</label>
+            <input type="text" required="true" name="vm_from_email" id="vm_from_email"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Email"
+                   regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid email address."
+                   invalidMessage="Invalid email."
+                   trim="true" value="voicemail@freeswitch.org"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="email_domain">Mailer Email Domain</label>
+            <input type="text" required="true" name="email_domain" id="email_domain"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Email"
+                   regExp="\b[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid email address."
+                   invalidMessage="Invalid email."
+                   trim="true" value="freeswitch.org"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="auth_calls">Auth Calls</label>
+            <input name="auth_calls" id="auth_calls" value="true" checked="true" dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="accept_blind_reg">Accept Blind Registrations</label>
+            <input name="accept_blind_reg" id="accept_blind_reg" value="true" checked="false"  dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="auth_all_packets">Auth All Packets</label>
+            <input name="auth_all_packets" id="auth_all_packets" value="true" checked="false"  dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="disable_register">Disable Registrations</label>
+            <input name="disable_register" id="disable_register" value="true" checked="false" onlick="alert('Bad idea. Check the documentation unless you know what this is.')"  dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="log_auth_failures">Log Auth Failures</label>
+            <input name="log_auth_failures" id="log_auth_failures" value="true" checked="false"  dojoType="dijit.form.CheckBox"/>
+        </li>
+    </ul>
+</div>
+</html>

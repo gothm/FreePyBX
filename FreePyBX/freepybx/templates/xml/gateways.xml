@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public 
+    License, v. 2.0. If a copy of the MPL was not distributed with this 
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan, 
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+    
+    http://www.vwci.com/ 
+    
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations 
+    of liability) contained within the Source Code Form of the Covered Software, 
+    except that You may alter any license notices to the extent required to 
+    remedy known factual inaccuracies.    
+-->
+
+<document type="freeswitch/xml"
+    xmlns:py="http://genshi.edgewall.org/"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml">
+    <section name="directory">
+            <domain name='${c.gateway.name}'></domain>
+            <gateways>
+                <py:for each="gateway in c.gateway.gateway">
+                    <gateway name='${gateway.name}'>
+                        <variables>
+                            <variable name="inbound_var_name"  data="inbound_call=true"  direction="inbound"/>
+                            <variable name="outbound_var_name" data="outbound_call=true" direction="outbound"/>
+                            <variable name="both_var_name"     data="gw=${gateway.name}"/>
+                        </variables>
+                        <param name='username' value='${gateway.username}'/>
+                        <param name='password' value='${gateway.password}'/>
+                        <param py:if="gateway.realm" name="realm" value="${gateway.realm}"/>
+                        <param py:if="gateway.from_user" name="from-user" value="${gateway.from_user}"/>
+                        <param py:if="gateway.from_domain" name="from-domain" value="${gateway.from_domain}"/>
+                        <param py:if="gateway.extension" name="extension" value="${gateway.extension}"/>
+                        <param py:if="gateway.proxy" name="proxy" value="${gateway.proxy}"/>
+                        <param py:if="gateway.register_proxy" name="register-proxy" value="${gateway.register_proxy}"/>
+                        <param py:if="gateway.expire_seconds" name="expire-seconds" value="${gateway.expire_seconds}"/>
+                        <param name='register' value='${gateway.register}'/>
+                        <param py:if="gateway.register_transport" name="register-transport" value="${gateway.register_transport}"/>
+                        <param name='retry-seconds' value='${gateway.retry_seconds}'/>
+                        <param py:if="gateway.caller_id_in_from" name="register-caller-id-in-from" value="${gateway.caller_id_in_from}"/>
+                        <param py:if="gateway.contact_params" name="contact-params" value="${gateway.contact_params}"/>
+                        <param name="ping" value="${gateway.ping}"/>
+                        <param name='register' value='${gateway.register}'/>
+                    </gateway>
+                </py:for>
+            </gateways>
+    </section>
+</document>

@@ -1,0 +1,101 @@
+
+
+.pbxTitle {
+    width: 100%;
+    border-top: 1px solid #999999;
+    border-bottom: 1px solid #999999;
+    background-color: rgb(224, 224, 224);
+    height: 40px;
+    margin: 0;
+}
+
+.pbxTitle h1{
+    color: #000;
+    font-size: 14px;
+    text-shadow: 0 1px #fff;
+    margin-left: 30px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.pbxFormHeader {
+    padding-right: 5px;
+}
+
+.pbxFormOuter {
+    width: 700px;
+    background-color: rgba(128, 201, 252, 0.38);
+    border: 1px solid #4787de;
+    margin-top: 10px;
+    padding-bottom: 20px;
+
+}
+
+.pbxFormFs {
+    border: 0 none;
+    margin-left: 40px;
+
+}
+
+.pbxFormFs legend {
+    font-size: 16px;
+    padding-bottom: 10px;
+    color: #3c4d5a;
+}
+
+.pbxFormContent {
+    margin: 0 auto;
+    padding: 10px;
+
+}
+
+.pbxFormFs ul{
+    margin: 0;
+    list-style: none outside none;
+    margin-left: 20px;
+}
+
+.pbxFormFs li {
+    padding: 5px;
+}
+
+.fieldlabel {
+    width: 170px;
+    text-align: right;
+    float: left;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+.delete_btn {
+    float: left;
+    margin-left: 100px;
+}
+
+.save_btn {
+    float: right;
+    margin-right: 100px;
+}
+
+.help_link {
+    float: right;
+    margin-right: 5px;
+    margin-bottom: 25px;
+    font-size: 12px;
+}
+
+.bluNotice {
+    background-color: #d0e9f7;
+    font-size: 10px;
+    padding: 10px;
+    border-left: solid 1px #c0c0c0;
+    border-right: solid 1px #c0c0c0;
+}
+
+.redNotice {
+    background-color: rgba(255, 0, 0, 0.32);
+    font-size: 10px;
+    padding: 10px;
+    border-left: solid 1px #c0c0c0;
+    border-right: solid 1px #c0c0c0;
+}

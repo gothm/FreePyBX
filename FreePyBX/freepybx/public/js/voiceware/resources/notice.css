@@ -1,0 +1,18 @@
+.flashNotice
+{
+    background:  #0c455e url(/images/info.png) no-repeat scroll 10px center;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 14px;
+    border-width:3px;
+    border-style:solid;
+    border-color: #0086b0;
+	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+}
+
+.flashNotice p {
+    margin-left: 50px;
+    padding: 15px 20px 15px 15px;
+}
+
+

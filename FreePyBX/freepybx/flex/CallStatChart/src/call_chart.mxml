@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:CallStatChart xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:view="com.vwna.charting.*"
+			   width="800" height="400" minWidth="955" minHeight="600">
+	<mx:ColumnChart id="agentChart" width="689" height="384" dataProvider="{agents}" 
+					showDataTips="false" type="clustered">
+		<mx:horizontalAxis>
+			<mx:CategoryAxis id="categoryAxis" categoryField="agent_name"/>			
+		</mx:horizontalAxis>
+		<mx:series>
+			<mx:ColumnSeries id="columnSeries" displayName="Call Volume" yField="volume"/>
+			<mx:ColumnSeries id="columnSeries2" displayName="Talk time" yField="talk_time"/>
+		</mx:series>
+	</mx:ColumnChart>
+	<mx:Legend x="707" y="6" dataProvider="{agentChart}"/>
+</view:CallStatChart>
+
+

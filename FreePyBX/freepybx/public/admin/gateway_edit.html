@@ -1,0 +1,233 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+
+
+    function setGatewayForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("gateway_id").value = obj.id;
+        dijit.byId("gateway_name").set("value", obj.name);
+        dijit.byId("gateway_username").set("value", obj.username);
+        dijit.byId("realm").set("value", obj.realm);
+        dijit.byId("from_user").set("value", obj.from_user);
+        dijit.byId("from_domain").set("value", obj.from_domain);
+        dijit.byId("password").set("value", obj.password);
+        dijit.byId("extension").set("value", obj.extension);
+        dijit.byId("proxy").set("value", obj.proxy);
+        dijit.byId("mask").set("value", obj.mask);
+        dijit.byId("register_proxy").set("value", obj.register_proxy);
+        dijit.byId("expire_seconds").set("value", obj.expire_seconds);
+        dijit.byId("register").set("checked", obj.register);
+        dijit.byId("register_transport").set("value", obj.register_transport);
+        dijit.byId("retry_seconds").set("value", obj.retry_seconds);
+        dijit.byId("caller_id_in_from").set("checked", obj.caller_id_in_from);
+        dijit.byId("contact_params").set("value", obj.contact_params);
+        dijit.byId("ping").set("value", obj.ping);
+        dijit.byId("rfc5626").set("checked", obj.rfc5626);
+        dijit.byId("reg_id").set("value", obj.reg_id);
+        dijit.byId("pbx_profile_id").set("value", obj.pbx_profile_id);
+    }
+
+    function getGetwayByID() {
+        dojo.xhrGet({
+            url: "/admin/gateway_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setGatewayForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: "Failed to retrieve company."});
+                return err;
+            }
+        });
+    }
+
+    function gatewayEditHandler() {
+        if(dijit.byId("gateway_edit_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/edit_gateway",
+                handleAs: "text",
+                form: dojo.byId("gateway_edit_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("adminContent").set("href", "/admin/gateway_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+    dojo.addOnLoad(function() {
+        getGetwayByID();
+    });
+
+</script>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="profileStore" url="/admin/profiles_id"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="contextStore" url="/admin/context_store"></div>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Edit Gateway',legend:'Gateway Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'gateway_edit_form',helpCategory:'edit_gateway', submitFunc:'gatewayEditHandler();',
+     delFunc:'this.form.rest();'">
+    <input type="hidden" name="gateway_id" id="gateway_id" value=""/>
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="gateway_name">Gateway Name</label>
+            <input type="text" required="true" name="name" id="gateway_name" placeholder="e.g. voipworld"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a gateway name."/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="gateway_username">Gateway Username</label>
+            <input type="text" required="true" name="gateway_username" id="gateway_username" placeholder="someuser"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a gateway username."/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="password">Password</label>
+            <input type="text" required="true" name="password" id="password" laceholder="Required... even if not used"
+                   dojoType="dijit.form.ValidationTextBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="proxy">Proxy</label>
+            <input type="text" required="false" name="proxy" id="proxy" placeholder="IP Address"
+                   dojoType="dijit.form.ValidationTextBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="mask">Netmask</label>
+            <input type="text" required="false" name="mask" id="mask" regExp="\b[0-9]{2}\b"
+                   placeholder="*optional* e.g. 24"
+                   dojoType="dijit.form.ValidationTextBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="realm">Realm</label>
+            <input type="text" required="false" name="realm" id="realm" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="register">Register</label>
+            <input name="register" id="register" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="register_proxy">Register Proxy</label>
+            <input type="text" required="false" name="register_proxy" id="register_proxy" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox" value="3600"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="register_transport">Register Transport</label>
+            <input type="text" required="false" name="register_transport" id="register_transport"
+                   dojoType="dijit.form.ValidationTextBox" value="udp"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="from_user">From User</label>
+            <input type="text" required="false" name="from_user" id="from_user" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="from_domain">From Domain</label>
+            <input type="text" required="false" name="from_domain" id="from_domain" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a from-username."/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="extension">Extension</label>
+            <input type="text" required="false" name="extension" id="extension" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="expire_seconds">Expire Seconds</label>
+            <input type="text" required="false" name="expire_seconds" id="expire_seconds" placeholder="*optional*"
+                   dojoType="dijit.form.ValidationTextBox" value="3600"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="retry_seconds">Retry Seconds</label>
+            <input type="text" required="false" name="retry_seconds" id="retry_seconds"
+                   dojoType="dijit.form.ValidationTextBox" value="30"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="caller_id_in_from">Caller ID in From</label>
+            <input name="caller_id_in_from" id="caller_id_in_from" value="true" checked="false"
+                   dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="contact_params">Contact Params</label>
+            <input type="text" required="false" name="contact_params" id="contact_params" placeholder="tport=tcp"
+                   dojoType="dijit.form.ValidationTextBox" value=""/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="ping">Ping</label>
+            <input type="text" required="false" name="ping" id="ping"
+                   dojoType="dijit.form.ValidationTextBox" value="30"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="rfc5626">rfc5626</label>
+            <input name="rfc5626" id="rfc5626" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="reg_id">Reg-ID</label>
+            <input type="text" required="false" name="reg_id" id="reg_id"
+                   dojoType="dijit.form.ValidationTextBox" value="1"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="pbx_profile_id">Sip Profile</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value="" id="pbx_profile_id"
+                   searchAttr="name" name="pbx_profile_id"/>
+        </li>
+    </ul>
+
+</div>
+</html>

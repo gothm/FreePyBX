@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<head>
+    <title>FreePyBX</title>
+<script>
+    var djConfig = {parseOnLoad: true, isDebug: true, baseUrl: "/js/", modulePaths: {voiceware: "voiceware", dojo: "dojo", dijit: "dijit", dojox: "dojox"}};
+</script>
+<script src="/js/dojo/dojo.js" type="text/javascript"></script>
+<script type="text/javascript" src="/js/swfobject.js"></script>
+<link rel="stylesheet" href="/css/mail.css" type="text/css"/>
+<link rel="stylesheet" href="/css/main.css" type="text/css"/>
+<link rel="stylesheet" href="/css/admin.css" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="/js/dijit/themes/claro/claro.css" />
+<link rel="stylesheet" href="/js/dojox/form/resources/CheckedMultiSelect.css" type="text/css"/> 
+<link rel="stylesheet" href="/js/voiceware/resources/notice.css" type="text/css" media="screen" charset="utf-8"/>
+<link rel="stylesheet" href="/js/voiceware/resources/error.css" type="text/css" media="screen" charset="utf-8"/>
+<link rel="stylesheet" href="/js/voiceware/PyForm/css/PyForm.css" type="text/css" media="screen" charset="utf-8"/>
+<link rel="stylesheet" href="/js/voiceware/PbxForm/css/PbxForm.css" type="text/css" media="screen" charset="utf-8"/>
+<link rel="stylesheet" href="/js/dojo/resources/dojo.css" media="screen"/>
+<link rel="stylesheet" href="/js/dojox/grid/resources/Grid.css" media="screen"/>
+<link rel="stylesheet" href="/js/dojox/grid/resources/claroGrid.css" media="screen"/>
+<link rel="stylesheet" href="/js/dojox/widget/Portlet/Portlet.css" media="screen"/>
+<link rel="stylesheet" href="/js/dojox/layout/resources/GridContainer.css" media="screen"/>
+<link rel="stylesheet" href="/js/dojox/widget/Wizard/Wizard.css" media="screen"/>
+<link rel="stylesheet" href="/js/dijit/themes/claro/claro.css" media="screen"/>    
+<link rel="stylesheet" href="/js/dojox/grid/enhanced/resources/claro/EnhancedGrid.css" type="text/css"/>
+<style type="text/css">
+    @import "/js/dojox/widget/Portlet/Portlet.css";
+    @import "/js/dojox/layout/resources/GridContainer.css";
+    @import "/js/dojox/widget/Calendar/Calendar.css";
+    .dndDropIndicator {
+        border: 2px dashed #99BBE8;
+        cursor: default;
+        margin-bottom: 5px;
+    }
+</style>
+<script type="text/javascript">    
+    var tmpObj = null;
+    var sid = "${c.sid}";
+    var my_name = "${c.my_name}";
+    var uid = "${session['user_id']}";
+
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.DropDownMenu");
+    dojo.require("dijit.MenuItem");
+    dojo.require("dojo.cookie");
+
+    dojo.ready(function(){
+        var menu = new dijit.DropDownMenu({ style: "display: block;"});
+        var pref_mnu = new dijit.MenuItem({
+            label: "Preferences",
+            iconClass:"prefsIcon",
+            onClick: function(){ selectTab('PBXContainer','mainContent','preferences.html');}
+        });
+        menu.addChild(pref_mnu);
+
+        var logout_mnu = new dijit.MenuItem({
+            label: "Logout",
+            iconClass:"logoutIcon",
+            onClick: function(){ location.href = "/admin/logout"; }
+        });
+
+        menu.addChild(logout_mnu);
+
+        var button = new dijit.form.DropDownButton({
+            label: my_name+" Quick Links",
+            name: "qlinks",
+            dropDown: menu,
+            iconClass:"qlIcon",
+            id: "progButton"
+        });
+        dojo.byId("quick_links").appendChild(button.domNode);
+    });
+
+    function showHelp(id) {
+        dijit.byId("help_dlg").set("href", "/help/"+id+".html");
+        dijit.byId("help_dlg").set("title", "FreePyBX Help");
+        dijit.byId("help_dlg").show();
+        return true;
+    }
+
+    function showControlMessage(msg) {
+        dijit.byId("control_return").set("content", "<pre>"+msg+"</pre>");
+        dijit.byId("control_return").show();
+        return true;
+    }
+
+</script>
+<script src="/js/voiceware-admin.js"></script>
+<!--[if gte IE 9]>
+<style type="text/css">
+    .gradient {
+        filter: none;
+    }
+</style>
+<![endif]-->
+</head>
+<body class="claro">
+<div dojoType="dijit.layout.BorderContainer" id="main" gutters="false">
+    <div dojoType="dojox.layout.ContentPane" region="top" id="logo">
+        <img id="logo_img" src="../images/logo.png" width="190px" height="43px"/>
+
+        <div id="mnuLogin" style="float: right">
+            <div id="quick_links"></div>
+        </div>
+    </div>
+    <div dojoType="dijit.layout.TabContainer" id="tabs" jsId="tabs" style="border-top: 1px solid #000000;" region="center">
+        <div dojoType="dijit.layout.BorderContainer" title="Administration" gutters="true" class="admin_context">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px;" style="width:195px; background-color: #E0E4EA;" spliter="true">
+                <div dojoType="dijit.Menu" id="adminNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                        onClick='dijit.byId("adminContent").set("href", "/admin/company_list.html");'>
+                        Customers
+                    </div>     
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="didIcon"
+                        onClick='dijit.byId("adminContent").set("href", "/admin/did_list.html");'>
+                        DIDs
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="contextIcon"
+                         onClick='dijit.byId("adminContent").set("href", "/admin/context_list.html");'>
+                        Contexts
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="profileIcon"
+                         onClick='dijit.byId("adminContent").set("href", "/admin/profile_list.html");'>
+                        Profiles
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="gatewayIcon"
+                        onClick='dijit.byId("adminContent").set("href", "/admin/gateway_list.html");'>
+                        Gateways
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="adminIcon"
+                         onClick='dijit.byId("adminContent").set("href", "/admin/cust_admin_list.html");'>
+                        Customer Admins
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="adminIcon"
+                        onClick='dijit.byId("adminContent").set("href", "/admin/admin_list.html");'>
+                        Admins
+                    </div>  
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="companyIcon"
+                        onClick='dijit.byId("adminContent").set("href", "/admin/company_list.html");'>
+                        Customer Reports
+                    </div>                                                                                      
+                </div>
+            <br/>
+            <div dojoType="dijit.Menu" id="adminControlNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                     onClick='sofiaStatus();'>
+                    Sofia Status
+                </div>
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                     onClick='reloadXML();'>
+                    Reload XML
+                </div>
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                     onClick='reloadACL();'>
+                    Reload ACL
+                </div>
+                <div dojoType="dijit.MenuSeparator"></div>
+                <div dojoType="dijit.PopupMenuItem">
+                    <span> Reload Profile </span>
+                    <div dojoType="dijit.Menu">
+                        <py:for each="p in c.profiles">
+                            <div dojoType="dijit.MenuItem" onClick="reloadProfile('${p.name}');">
+                                Reload ${p.name}
+                            </div>
+                        </py:for>
+                    </div>
+                </div>
+                <div dojoType="dijit.MenuSeparator"></div>
+                <div dojoType="dijit.PopupMenuItem">
+                    <span> Show Gateway Status</span>
+                    <div dojoType="dijit.Menu">
+                        <py:for each="p in c.profiles">
+                            <div dojoType="dijit.MenuItem" onClick="showGateways('${p.name}');">
+                                Show ${p.name} Gateway Status
+                            </div>
+                        </py:for>
+                    </div>
+                </div>
+                <div dojoType="dijit.MenuSeparator"></div>
+                <div dojoType="dijit.PopupMenuItem">
+                    <span> Show Registered Users</span>
+                    <div dojoType="dijit.Menu">
+                        <py:for each="p in c.profiles">
+                            <div dojoType="dijit.MenuItem" onClick="showRegUsers('${p.name}');">
+                                Show ${p.name} Registered
+                            </div>
+                        </py:for>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div id="adminContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/company_list.html"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true" style="background-color: #E0E4EA;">
+            </div>
+        </div>
+        <div dojoType="dijit.layout.BorderContainer" title="Billing" gutters="true">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:195px;" splitter="true">
+
+            </div>
+            <div id="custBilling" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/billing"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+            </div>
+        </div>
+        <div id="vwbroker"></div>
+    </div>
+    <div dojoType="dijit.layout.ContentPane" region="bottom" id="footer" align="left">
+        <span>FreePyBX Communications Center</span>
+    </div>
+</div>
+<div class="dijitHidden">
+    <div dojoType="dijit.Dialog" style="width:350px;" data-dojo-props="title:'FreePyBX Help',href: '', loadingMessage:'Please wait while help is loaded...'" id="help_dlg"></div>
+</div>
+<div class="dijitHidden">
+    <div dojoType="dijit.Dialog" data-dojo-props="title:'FreePyBX Controls', content: '', loadingMessage:'Please wait while help is loaded...'" id="control_return"></div>
+</div>
+</body>
+</html>

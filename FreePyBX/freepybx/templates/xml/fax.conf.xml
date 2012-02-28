@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name="fax.conf" description="FAX application configuration">
+            <settings>
+                <param name="use-ecm"           value="true"/>
+                <param name="verbose"           value="true"/>
+                <param name="disable-v17"       value="false"/>
+                <param name="enable-t38"        value="true"/>
+                <param name="enable-t38-request"        value="true"/>
+                <param name="ident"             value="VoiceWARE Fax Service"/>
+                <param name="header"            value="Web Fax"/>
+                <param name="spool-dir"         value="/tmp"/>
+                <param name="file-prefix"       value="faxrx"/>
+            </settings>
+        </configuration>
+    </section>
+</document>

@@ -1,0 +1,17 @@
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name="presence_map.conf" description="PRESENCE MAP">
+            <domains>
+                <py:for each="domain in c.domains">
+                    <domain name="${domain}">
+                        <exten regex="3\d+" proto="conf"/>
+                    </domain>
+                </py:for>
+            </domains>
+        </configuration>
+    </section>
+</document>

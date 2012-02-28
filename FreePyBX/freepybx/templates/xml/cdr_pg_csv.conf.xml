@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<document type="freeswitch/xml"
+          xmlns:py="http://genshi.edgewall.org/"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <section name="configuration">
+        <configuration name="cdr_pg_csv.conf" description="CDR PG CSV Format">
+            <settings>
+                <!-- See parameters for PQconnectdb() at http://www.postgresql.org/docs/8.4/static/libpq-connect.html -->
+                <param name="db-info" value="hostaddr=127.0.0.1 dbname=pbx user=pbxuser password=secretpass1 connect_timeout=10" />
+                <!-- CDR table name -->
+                <param name="db-table" value="cdr"/>
+
+                <!-- Log a-leg (a), b-leg (b) or both (ab) -->
+                <param name="legs" value="ab"/>
+
+                <!-- Directory in which to spool failed SQL inserts -->
+                <param name="spool-dir" value="$${base_dir}/cdr/cdr-pg-csv"/>
+                <!-- Disk spool format if DB connection/insert fails - csv (default) or sql -->
+                <param name="spool-format" value="csv"/>
+                <param name="rotate-on-hup" value="true"/>
+
+                <!-- This is like the info app but after the call is hung up -->
+                <!--<param name="debug" value="true"/>-->
+            </settings>
+            <schema>
+                <field var="local_ip_v4"/>
+                <field var="caller_id_name"/>
+                <field var="caller_id_number"/>
+                <field var="destination_number"/>
+                <field var="context"/>
+                <field var="start_stamp"/>
+                <field var="answer_stamp"/>
+                <field var="end_stamp"/>
+                <field var="duration" quote="false"/>
+                <field var="billsec" quote="false"/>
+                <field var="hangup_cause"/>
+                <field var="uuid"/>
+                <field var="bleg_uuid"/>
+                <field var="accountcode"/>
+                <field var="read_codec"/>
+                <field var="write_codec"/>
+                <field var="call_direction"/>
+                <field var="user_id"/>
+                <field var="company_id"/>
+                <field var="extension"/>
+                <!-- <field var="sip_hangup_disposition"/> -->
+                <!-- <field var="ani"/> -->
+            </schema>
+        </configuration>
+    </section>
+</document>

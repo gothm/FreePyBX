@@ -1,0 +1,128 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dojox.widget.Wizard");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+
+
+    function custAdminFormHandler() {
+        if(dijit.byId("cust_admin_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/add_cust_admin",
+                handleAs: "text",
+                form: dojo.byId("cust_admin_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("adminContent").set("href", "/admin/cust_admin_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+</script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="company_store" url="/admin/companies"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="profileStore" url="/admin/profiles"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="contextStore" url="/admin/context_store"></div>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Customer Admin',legend:'Customer Admin Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'cust_admin_add_form',helpCategory:'add_cust_admin', submitFunc:'custAdminFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="first_name">First Name</label>
+            <input type="text" required="true" name="first_name" id="first_name" placeholder="First Name"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a first name!"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="last_name">Last Name</label>
+            <input type="text" required="true" name="last_name" id="last_name" placeholder="Last Name"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a last name!"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="username">Username (Email)</label>
+            <input type="text" id="username" name="username" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Email"
+                   required="true"
+                   regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid email address."
+                   invalidMessage="Invalid email."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="password">Password</label>
+            <input type="text" required="true" name="password" id="password" placeholder="Password"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please add a password."
+                   onkeyup="checkPasswordStrength(this.value)"/>
+
+            <div id="password_strength" style="display: none; margin-top: 5px; margin-left:70px;">
+                <div style="width: 130px; border: #CCCCCC 1px solid;">
+                    <div id="progress_bar"
+                         style="height: 5px; border: #FFFFFF 0px solid; font-size: 1px; background-color: #FFD700;"></div>
+                </div>
+                <span id="strength_text" style="font-family: Arial; font-size: 10px; color: #888888;">Weak</span>
+                <input type="hidden" name="strength_id" id="strength_id" value="1"/>
+            </div>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="auth_level">Auth Level</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="auth_level" name="auth_level">
+                <option value="1">PBX Admin</option>
+                <option value="2">Extension User</option>
+                <option value="3">Billing & Reports</option>
+            </select>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="company_id">Company</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="companyStore" value="" searchAttr="name"
+                   id="company_id" name="company_id"/>
+        </li>
+    </ul>
+
+</div>
+</html>

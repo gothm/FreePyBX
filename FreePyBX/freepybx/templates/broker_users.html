@@ -1,0 +1,110 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+      
+<script type="text/javascript" charset="UTF-8">
+ //<![CDATA[
+
+    var ub = null;
+    var chat_user = {}
+    var chats = [];    
+    var chatDialog = null;
+    
+ 
+    var swfVersionStr = "10.0.0";
+    var xiSwfUrlStr = "";
+    var flashvars = {};
+    flashvars.sid = sid;
+    flashvars.my_name = my_name;
+    flashvars.user_id = uid;
+    flashvars.murl = location.hostname;
+    var params = {};
+    params.quality = "high";
+    params.bgcolor = "#ffffff";
+    params.allowscriptaccess = "always";
+    params.allownetworking = "all"
+    var attributes = {};
+    attributes.id = "user_broker";
+    attributes.name = "user_broker";
+    attributes.align = "middle";
+    swfobject.embedSWF("/js/voiceware/flex/UserList/bin/user_list.swf", "userBroker", "100%", "100%", swfVersionStr, "expressInstall.swf", flashvars, params, attributes,  function(e) { ub = e.ref;});
+
+
+
+    function incomingIMsg(data) {
+        //var chat_data = getChatTranscript(data.id);
+        document.getElementById("im_from").innerHTML = 'Conversation with '+ data.name;
+        document.getElementById("chatWndFrom").innerHTML = data.message;
+        var im = dijit.byId("fromImMsg");      
+        im.show();
+    }    
+    
+    function outboundIMsg(data) {     
+        console.log('To name: ' + dojo.toJson(data));
+        dijit.byId("toImMsg").show();  
+        document.getElementById("im_to").innerHTML = 'Conversation with '+ data.name;
+        document.getElementById("im_recip").value = data.id;
+        document.getElementById("im_ext").value = data.ext;
+        document.getElementById("im_msg").value = '';        
+    }
+    
+    function sendIMsg(data) {
+        console.log('Sending: ' + dojo.toJson(data));
+        smsg = {}
+        smsg
+        ub.sendIm("FROM:"+uid+":TO:"+document.getElementById("im_recip").value+":INSTANTMESSAGE:"+document.getElementById("im_msg").value+":EXT:"+document.getElementById("im_ext").value);
+        // var im = dijit.byId("toImMsg");    
+        // im.connect(im, 'onHide', function() {
+                // setTimeout(function() { im.destroyRecursive(); }, 0);
+            // });
+        // im.hide();      
+    }    
+        
+    function getChatTranscript(id) {
+        var chatTranscript = document.getElementById("chat_log_"+id);
+        var chatLog = "";
+        if(chatTranscript == null){
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "chat_log_"+id);
+            input.setAttribute("id", "chat_log_"+id);
+            document.getElementById("chat_log").appendChild(input);
+            return chatLog;
+        } else {
+            chatLog = document.getElementById("chat_log_"+id).value;
+        }
+        return chatLog;
+    }
+          
+//]]>                     
+</script>
+
+<div id="userBroker"></div>
+
+</html>

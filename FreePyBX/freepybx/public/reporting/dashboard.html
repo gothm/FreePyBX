@@ -1,0 +1,341 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript">
+
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Textarea");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
+    dojo.require("dojox.grid.EnhancedGrid");
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dojox.grid.enhanced.plugins.exporter.CSVWriter");
+    dojo.require("dojox.grid.enhanced.plugins.Pagination");
+    dojo.require("dojox.grid.enhanced.plugins.Filter");
+
+    var cdrByExt;
+    var cur_num = null;
+
+    var cdrByExtStore = new dojo.data.ItemFileWriteStore({url:'/pbx/cdr_ext_summary', clearOnClose:true});
+
+    function exportAll(){
+        dijit.byId("cdrByExt").exportGrid("csv", function(str){
+            dojo.byId("output").value = str;
+        });
+    };
+
+    function downloadCSVReportByExt() {
+        var ext_from_date = dojo.byId("ext_from_date").value;
+        var ext_to_date = dojo.byId("ext_to_date").value;
+        var ext = dojo.byId("by_extensionfs").value;
+        if (ext_from_date.length==0 || ext_to_date.length==0 || ext.length==0) {
+            alert("Choose you date range and extension first!");
+        }
+
+        var w = window.open('/pbx/cdr_ext_download?sdate='+ext_from_date+'&edate='+ext_to_date+'&ext='+ext,'CSV');
+    }
+
+    function setCDRByExtStore() {
+        var from_date = dojo.byId("cdr_ext_from_date").value;
+        var to_date = dojo.byId("cdr_ext_to_date").value;
+        var cdrByExtStoreDateRange = new dojo.data.ItemFileReadStore({url: '/pbx/cdr_ext_summary?sdate='+from_date+'&edate='+to_date});
+        cdrByExtStoreDateRange.close();
+        cdrByExt.setStore(cdrByExtStoreDateRange);
+        cdrByExt._refresh();
+    }
+
+    var plugins = {
+        pagination: true,
+        filter: true,
+        indirectSelection: false
+    };
+
+    function callFromCDR(e) {
+        console.log('Debug Info: Cell Content: '+e.cellNode.innerHTML+" Row: "+e.rowIndex+" Col: "+e.cellIndex);
+        cur_num = e.cellNode.innerHTML;
+        cdrByExt.currentRow = e.rowIndex;
+        cdrByExt.currentCol = e.cellIndex;
+    }
+
+    function callNowCDR(e) {
+        callNumber(e.cellNode.innerHTML);
+    }
+
+    function exportCDRAll(){
+        dijit.byId("cdrExt").exportGrid("csv", function(str){
+            dojo.byId("csv_out").value = str;
+        });
+    };
+
+    function selectCell(){
+        console.log('Your onClick method to go here. FYI the row is '+cdrByExt.currentRow+' and the col is '+cdrByExt.currentCol);
+        callNumber(cur_num);
+        cdrByExt.currentRow = null; //then clear them
+        cdrByExt.currentCol = null;
+    }
+
+    cdr_ext_grid = function () {
+        var cdrByExtLayout = [{
+            name: 'Extension',
+            field: 'extension',
+            width: '10%'
+        },{
+            name: 'User',
+            field: 'agent',
+            width: '15%'
+        },{
+            name: 'From',
+            field: 'from',
+            width: '15%'
+        },{
+            name: 'To',
+            field: 'to',
+            width: '15%'
+        },{
+            name: 'Incoming',
+            field: 'call_count_in',
+            width: '10%'
+        },{
+            name: 'Outgoing',
+            field: 'call_count_out',
+            width: '10%'
+        },{
+            name: 'Time Incoming',
+            field: 'time_on_call_in',
+            width: '10%'
+        },{
+            name: 'Time Outgoing',
+            field: 'time_on_call_out',
+            width: '10%'
+        },{
+            name: 'Details',
+            field: 'qstring',
+            width: '5%',
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(dat)
+                {
+                    return '<a onclick=getCDRViewExtension("'+dat+'") href="#">view</a>';
+                }
+                else
+                {
+                    return ret;
+                }
+
+            }
+        }];
+
+        cdrByExt = new dojox.grid.EnhancedGrid({
+            id: 'cdrByExt',
+            jsid: 'cdrByExt',
+            query: {id: '*'},
+            selectionMode: 'single',
+            store: cdrByExtStore,
+            structure: cdrByExtLayout,
+            region: "center",
+            style: "width: 100%; height: 100%;",
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            autoHeight: true,
+        },document.createElement('div'));
+        dojo.byId("cdrByExtGridDiv").appendChild(cdrByExt.domNode);
+        cdrByExt.startup();
+    }
+
+    var cdrExtStore;
+
+    function getDetailByExtension() {
+        var ext_from_date = dojo.byId("ext_from_date").value;
+        var ext_to_date = dojo.byId("ext_to_date").value;
+        var ext = dojo.byId("by_extensionfs").value;
+        var cdrExtStoreDateRange = new dojo.data.ItemFileReadStore({url: '/pbx/cdr_ext?sdate='+ext_from_date+'&edate='+ext_to_date+'&ext='+ext});
+        cdrExtStoreDateRange.close();
+        cdrExt.setStore(cdrExtStoreDateRange);
+        cdrExt._refresh();
+    }
+
+    function getCDRViewExtension(qstring) {
+        var cdrExtStoreDateRange = new dojo.data.ItemFileReadStore({url: '/pbx/cdr_ext'+qstring});
+        cdrExtStoreDateRange.close();
+        cdrExt.setStore(cdrExtStoreDateRange);
+        cdrExt._refresh();
+    }
+
+    var cdrExtensions = new dojo.data.ItemFileWriteStore({url: '/pbx/extensions'});
+
+    var pluginsExt = {
+        pagination: true,
+        filter: true,
+        indirectSelection: false,
+        exporter: true
+    };
+
+
+    cdr_by_ext_grid = function () {
+        var cdrExtLayout = [{
+            name: 'Name',
+            field: 'caller_id_name',
+            width: 'auto'
+        },{
+            name: 'Number',
+            field: 'caller_id_number',
+            width: 'auto'
+        },{
+            name: 'Destination',
+            field: 'destination_number',
+            width: 'auto'
+        },{
+            field: 'start_stamp',
+            name: 'Start Time',
+            width: 'auto'
+        },{
+            field: 'end_stamp',
+            name: 'End Time',
+            width: 'auto'
+        },{
+            field: 'duration',
+            name: 'Duration Seconds',
+            width: 'auto'
+        },{
+            field: 'hangup_cause',
+            name: 'Hangup Cause',
+            width: 'auto'
+        }];
+
+        cdrExt = new dojox.grid.EnhancedGrid({
+            id: 'cdrExt',
+            jsid: 'cdrExt',
+            query: {id: '*'},
+            selectionMode: 'single',
+            store: cdrExtStore,
+            structure: cdrExtLayout,
+            region: "center",
+            style: "width: 100%; height: 100%;",
+            plugins: pluginsExt,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            autoHeight: true,
+        },document.createElement('div'));
+        dojo.byId("cdrExtGridDiv").appendChild(cdrExt.domNode);
+        cdrExt.startup();
+    }
+
+    dojo.addOnLoad(function() {
+        cdr_ext_grid();
+        dojo.connect(cdrByExt, "onRowDblClick", null, callNowCDR);
+        cdr_by_ext_grid();
+    });
+
+
+</script>
+
+
+<div id="reportingDashboard" dojoType="dojox.layout.ContentPane">
+    <div dojoType="dojox.widget.Portlet" title="Call Reports By Extension">
+        <div data-dojo-type="dojox.widget.PortletSettings">
+            <table>
+                <tr>
+                    <td><label for="cdr_ext_from_date">From Date:</label>
+                        <input type="text" name="cdr_ext_from_date" id="cdr_ext_from_date" value=""
+                               data-dojo-type="dijit.form.DateTextBox"
+                               required="false"/>
+                    </td>
+                    <td><label for="cdr_ext_to_date">To Date:</label>
+                        <input type="text" name="cdr_ext_to_date" id="cdr_ext_to_date" value=""
+                               data-dojo-type="dijit.form.DateTextBox"
+                               required="false"/>
+                    </td>
+                    <td>
+                        <button data-dojo-type="dijit.form.Button" type="button">Get Date Range
+                            <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
+                                setCDRByExtStore();
+                            </script>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="cdrByExtGridDiv" width="100%" height="100%"></div>
+    </div>
+    <br/>
+    <div dojoType="dojox.widget.Portlet" title="Quick Stats">
+        <div data-dojo-type="dojox.widget.PortletSettings">
+            <table>
+                <tr>
+                    <td><label for="ext_from_date">From Date:</label>
+                        <input type="text" name="ext_from_date" id="ext_from_date" value=""
+                               data-dojo-type="dijit.form.DateTextBox"
+                               required="false"/>
+                    </td>
+                    <td><label for="ext_to_date">To Date:</label>
+                        <input type="text" name="ext_to_date" id="ext_to_date" value=""
+                               data-dojo-type="dijit.form.DateTextBox"
+                               required="false"/>
+                    </td>
+                    <td>Extension:</td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="cdrExtensions" value=""
+                               id="by_extensionfs" searchAttr="extension" name="extension">
+                    </td>
+                    <td>
+                        <button data-dojo-type="dijit.form.Button" type="button">Get Date Range
+                            <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
+                                getDetailByExtension();
+                            </script>
+                        </button>
+                    </td>
+                    <td>
+                        <button data-dojo-type="dijit.form.Button" type="button">Export
+                            <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
+                                exportCDRAll();
+                            </script>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="cdrExtGridDiv" width="100%" height="100%"></div>
+    </div>
+</div>
+<div dojoType="dojox.widget.Portlet" title="Export">
+    <div data-dojo-type="dojox.widget.PortletSettings">
+        <button data-dojo-type="dijit.form.Button" type="button">Download
+            <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
+                downloadCSVReport();
+            </script>
+        </button>
+    </div>
+    <textarea id="csv_out" data-dojo-type="dijit.form.SimpleTextarea"
+              data-dojo-props='name:"csv_out", style:{height:"100%", width:"100%"}, rows:"", cols:""'></textarea>
+</div>
+

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public 
+    License, v. 2.0. If a copy of the MPL was not distributed with this 
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is PythonPBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan, 
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+    
+    http://www.vwci.com/ 
+    
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations 
+    of liability) contained within the Source Code Form of the Covered Software, 
+    except that You may alter any license notices to the extent required to 
+    remedy known factual inaccuracies.    
+-->
+
+<document type="freeswitch/xml"
+    xmlns:py="http://genshi.edgewall.org/"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml">
+    <section name="directory">
+        <domain name='${c.domain}'>
+            <groups>
+                <group name="default">
+                    <users>
+                        <py:if test="c.endpoints is not None">
+                            <py:for each="endpoint in c.endpoints">
+                                <?python
+                                    attch_vm = str(endpoint.vm_attach_email).lower()
+                                    em_all = str(endpoint.vm_delete).lower()
+                                    keep_vm = True if endpoint.vm_delete == False else False
+                                ?>
+                                <user id='${endpoint.auth_id}' mailbox='${endpoint.auth_id}'>
+                                    <params>
+                                        <param name='password' value='${endpoint.password}'/>
+                                        <param name='vm-password' value='${endpoint.vm_password}'/>
+                                        <param py:if="endpoint.vm_email" name="vm-mailto" value="${endpoint.vm_email}"/>
+                                        <param py:if="endpoint.vm_delete" name="vm-email-all-messages" value="${em_all}"/>
+                                        <param py:if="endpoint.vm_attach_email" name="vm-attach-file" value="${attch_vm}"/>
+                                        <param py:if="endpoint.vm_email" name="vm-keep-local-after-email" value="${keep_vm}"/>
+                                        <param name="vm-message-ext" value="mp3"/>
+                                        <param name="dial-string" value="{presence_id=$${dialed_user}@$${dialed_domain}}$${sofia_contact($${dialed_user}@$${dialed_domain})}"/>
+                                    </params>
+                                    <variables>
+                                        <variable py:if="endpoint.outbound_caller_id_name" name="outbound_caller_id_name" value="${endpoint.outbound_caller_id_name}"/>
+                                        <variable py:if="endpoint.outbound_caller_id_number" name="outbound_caller_id_number" value="${endpoint.outbound_caller_id_number}"/>
+                                        <variable py:if="endpoint.internal_caller_id_name" name="internal_caller_id_name" value="${endpoint.internal_caller_id_name}"/>
+                                        <variable py:if="endpoint.internal_caller_id_number" name="internal_caller_id_number" value="${endpoint.internal_caller_id_number}"/>
+                                        <variable py:if="endpoint.user_context" name="user_context" value="${endpoint.user_context}"/>
+                                        <variable py:if="endpoint.force_transfer_context" name="force_transfer_context" value="${endpoint.force_transfer_context}"/>
+                                        <variable name="user_originated" value="true"/>
+                                        <variable name="toll_allow" value="domestic,international,local"/>
+                                        <variable py:if="endpoint.accountcode" name="accountcode" value="${endpoint.accountcode}"/>
+                                        <variable py:if="endpoint.sip_force_contact" name='sip-force-contact' value='${endpoint.sip_force_contact}'/>
+                                        <variable name="record_stereo" value="false"/>
+                                        <variable name="sip-allow-multiple-registrations" value="false"/>                                        
+                                        <variable name="default_gateway" value="voipinnovations"/>
+                                        <variable name="presence_id" value="${endpoint.auth_id}@${c.domain}"/>
+                                        <variable py:if="endpoint.transfer_fallback_extension"  name="transfer_fallback_extension" value="${endpoint.transfer_fallback_extension}"/>
+                                    </variables>
+                                </user>
+                            </py:for>
+                        </py:if>
+                        <py:for each="vm in c.voicemailboxes">
+                            <user id='${vm.extension}' mailbox='${vm.extension}'>
+                                     <params>
+                                        <param name='password' value='PBX2345234524'/>
+                                        <param name='vm-password' value='${vm.pin}'/>
+<!--                                         <param py:if="endpoint.vm_email" name="vm-mailto" value="${endpoint.vm_email}"/>
+                                        <param py:if="endpoint.vm_delete" name="vm-email-all-messages" value="${endpoint.vm_delete}"/>
+                                        <param py:if="endpoint.vm_attach_email" name="vm-attach-file" value="${endpoint.vm_attach_email}"/> -->
+                                        <param name="vm-message-ext" value="mp3"/>
+                                    </params>
+                            </user>
+                        </py:for>                        
+                    </users>
+                </group>
+                <py:for each="group in c.groups">
+                    <group name="${group.name}">
+                        <users>
+                            <py:for each="ext in group.extensions">
+                                <user id="${ext.ext}" type="pointer"/>
+                            </py:for>
+                        </users>
+                    </group>
+                </py:for>
+            </groups>
+        </domain>
+    </section>
+</document>

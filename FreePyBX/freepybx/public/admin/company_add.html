@@ -1,0 +1,257 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dojox.widget.Wizard");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+
+    function showHelp(category) {
+        dijit.byId('help_dlg').set('href', '/help/'+category)
+        dijit.byId('help_dlg').show();
+
+    }
+
+    var gatewayStore = new dojo.data.ItemFileWriteStore({url: '/admin/gateways'});
+    var profileStore = new dojo.data.ItemFileWriteStore({url: '/admin/profiles_id'});
+
+
+    function companyFormHandler() {
+        if(dijit.byId("company_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/add_company",
+                handleAs: "text",
+                form: dojo.byId("company_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message:res});
+                        dijit.byId("adminContent").set("href", "/admin/company_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }    
+    
+</script>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Company',legend:'Company Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'company_add_form',helpCategory:'add_company', submitFunc:'companyFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="name">Company Name</label>
+            <input type="text" required="true" name="name" id="name" placeholder="Company Name"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a company name!"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="contact_name">Contact Name</label>
+            <input type="text" required="true" name="contact_name" id="contact_name" placeholder="Contact Name"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a contact name!"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="contact_phone">Contact Phone</label>
+            <input type="text" required="true" name="contact_phone" id="contact_phone" placeholder="Contact Phone"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a contact phone!"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="contact_mobile">Contact Mobile</label>
+            <input type="text" required="true" name="contact_mobile" id="contact_mobile" placeholder="Contact Mobile"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a contact mobile!"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="contact_title">Contact Title</label>
+            <input type="text" required="true" name="contact_title" id="contact_title" placeholder="Contact Title"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a contact title!"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="contact_email">Contact Email</label>
+            <input type="text" id="contact_email" name="contact_email" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Email"
+                   required="true"
+                   regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid email address."
+                   invalidMessage="Invalid email."
+                   trim="true"
+                    />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="address">Address</label>
+            <input type="text" name="address" id="address" dojoType="dijit.form.TextBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="address_2">Address 2</label>
+            <input type="text" name="address_2" id="address_2" dojoType="dijit.form.TextBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="city">City</label>
+            <input type="text" name="city" id="city" dojoType="dijit.form.TextBox"
+                   validator="dijit.form.TextBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="state">State</label>
+            <input type="text" name="state" id="state" dojoType="dijit.form.TextBox"
+                   validator="dijit.form.TextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="zip">Zip</label>
+            <input type="text" name="zip" id="zip" dojoType="dijit.form.TextBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="url">URL</label>
+            <input type="text" name="url" id="url" dojoType="dijit.form.TextBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="tel">Telephone</label>
+            <input type="text" name="tel" id="tel" dojoType="dijit.form.TextBox"
+                   validator="dijit.form.TextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="mobile">Mobile</label>
+            <input type="text" name="mobile" id="mobile" dojoType="dijit.form.TextBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="active">Active</label>
+            <input type="text" name="active" id="active" value="true" checked="false" dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="has_crm">CRM</label>
+            <input type="text" name="has_crm" id="has_crm" value="true" checked="false" dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="has_call_center">Call Center</label>
+            <input type="text" name="has_call_center" id="has_call_center" value="true" checked="false"
+                   dojoType="dijit.form.CheckBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="max_extensions">Max Extensions</label>
+            <input type="text" id="max_extensions" name="max_extensions" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Max Extensions"
+                   required="true"
+                   regExp="[0-9]{1,4}"
+                   promptMessage="Please enter the number of extensions for this account"
+                   invalidMessage="Invalid number of extensions."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="max_minutes">Max Minutes</label>
+            <input type="text" id="max_minutes" name="max_minutes" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Max Minutes"
+                   required="true"
+                   regExp="[0-9]{1,6}"
+                   promptMessage="Please enter the number of minutes for this account"
+                   invalidMessage="Invalid number of minutes."
+                   trim="true"
+                    />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="max_queues">Max Queues</label>
+            <input type="text" id="max_queues" name="max_queues" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Max Queues"
+                   required="false"
+                   regExp="[0-9]{1,4}"
+                   invalidMessage="Invalid number of queues."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="max_agents">Max Agents</label>
+            <input type="text" id="max_agents" name="max_agents" size="30"
+                   dojoType="dijit.form.ValidationTextBox" placeholder="Max Agents"
+                   required="false"
+                   regExp="[0-9]{1,4}"
+                   invalidMessage="Invalid number of agents."
+                   trim="true"
+                    />
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="default_gateway">Sip Gateway</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="gatewayStore" value="" id="default_gateway"
+                   searchAttr="name" name="default_gateway"/>
+        </li>
+        <hr>
+        <legend>DID Context and Gateway Settings</legend>
+        <li class="odd">
+            <label class="fieldlabel" for="did">DID</label>
+            <input type="text" name="did" id="did" dojoType="dijit.form.TextBox"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="add_t38">T38</label>
+            <input type="text" name="t38" id="add_t38" value="true" checked="false" dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="add_e911">e911</label>
+            <input type="text" name="e911" id="add_e911" value="true" checked="false" dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="add_cnam">CNAM</label>
+            <input type="text" name="cnam" id="add_cnam" value="true" checked="false" dojoType="dijit.form.CheckBox"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="context">Context</label>
+            <input type="text" required="true" name="context" id="context" placeholder="e.g. xxx.vwna.com"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a context"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="domain">Domain</label>
+            <input type="text" required="true" name="domain" id="domain" placeholder="e.g. xxx.vwna.com"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a domain"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="profile">SIP Profile</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value=""
+                   id="profile" searchAttr="name" name="profile"/>
+        </li>
+
+    </ul>
+</div>
+
+</html>

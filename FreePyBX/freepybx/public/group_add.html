@@ -1,0 +1,116 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public 
+    License, v. 2.0. If a copy of the MPL was not distributed with this 
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+    
+    The Original Code is FreePyBX/VoiceWARE.
+    
+    The Initial Developer of the Original Code is Noel Morgan, VoiceWARE, Inc.
+    Copyright (c) 2011-2012 VoiceWARE, Inc. All Rights Reserved.
+    
+    http://www.vwna.com/
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dijit.form.RadioButton");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    
+    function groupFormHandler() {
+        
+        dojo.xhrPost({
+            url: "/pbx/group_add",
+            handleAs: "text",
+            form: dojo.byId("group_add_form"),
+    
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: "Group successfully created."});
+                    dijit.byId("mainContent").set("href", "/group_list.html");
+                } else {
+                    new voiceware.notice.Error({message: res});
+                    dijit.byId("mainContent").set("href", "/group_add.html");
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });    
+    }
+    
+</script>
+
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Group',legend:'Group Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'group_add_form',helpCategory:'add_group', submitFunc:'groupFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Group Name</label>
+            <input type="text" required="true" name="group_name" id="group_name" placeholder="e.g. Sales"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add a group name."
+                   regExp="\b[a-zA-Z0-9_]{2,16}\b"
+                   promptMessage="Please enter a valid group name."
+                   invalidMessage="Invalid group."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Group Members</label>
+            <input type="text" required="true" name="group_extensions" id="group_extensions" placeholder="Comma separated. e.g. 101, 102"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please add members for this group."  />
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Ring Simultaneously</label>
+            <input type="radio" name="group_ring_strategy"
+                   data-dojo-type="dijit.form.RadioButton"
+                   data-dojo-props="name: 'group_ring_strategy', value: 'sim', checked: true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Ring Sequentially</label>
+            <input type="radio" name="group_ring_strategy"
+                   data-dojo-type="dijit.form.RadioButton"
+                   data-dojo-props="name: 'group_ring_strategy', value: 'seq'"/>
+            <br />
+            <div style="font-size: 10px; color: #55555;">
+                <i>Note: The "virtual" extensions in this group will be forwarded to after 10 second delay of ringing extension device endpoints in the same group.</i>
+            </div>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Timeout (seconds)</label>
+            <input type="text" id="timeout" name="timeout" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  value="13"
+                   required="true"
+                   regExp="\b[0-9]{1,2}\b"
+                   promptMessage="Please enter a number."
+                   invalidMessage="Invalid email."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Timeout Destination</label>
+            <div dojoType="dojo.data.ItemFileReadStore" jsId="destinationsStore" url="/pbx/routes"></div>
+            <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" searchAttr="name" name="no_answer_destination" />
+        </li>
+    </ul>
+</div>
+

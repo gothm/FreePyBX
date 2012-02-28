@@ -1,0 +1,161 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.RadioButton");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+
+    var companyStore = new dojo.data.ItemFileWriteStore({url: '/admin/companies'});
+    var profileStore = new dojo.data.ItemFileWriteStore({url: '/admin/profiles'});
+    var didStore = new dojo.data.ItemFileWriteStore({url: '/admin/dids'});
+
+    function setContextForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("context_id").value = obj.id;
+        dijit.byId("company_name").set("value", obj.company_name);
+        dijit.byId("domain").set("value", obj.context);
+        dijit.byId("profile").set("value", obj.profile);
+        dijit.byId("context").set("value", obj.context);
+        dijit.byId("caller_id_name").set("value", obj.caller_id_name);
+        dijit.byId("caller_id_number").set("value", obj.caller_id_number);
+    }
+
+    function getContextByID() {
+        dojo.xhrGet({
+            url: "/admin/context_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setContextForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: "Failed to retrieve company."});
+                return err;
+            }
+        });
+    }
+
+    function contextEditHandler() {
+        if(dijit.byId("context_edit_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/edit_context",
+                handleAs: "text",
+                form: dojo.byId("context_edit_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("adminContent").set("href", "/admin/context_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+    dojo.addOnLoad(function () {
+        getContextByID();
+    });
+
+
+</script>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Edit Context',legend:'Context Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'context_edit_form',helpCategory:'edit_context', submitFunc:'contextEditHandler();',
+     delFunc:'this.form.rest();'">
+    <input type="hidden" name="id" id="context_id" value=""/>
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel" for="company_name">Company</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="companyStore" value="" id="company_name"
+                   searchAttr="name" name="company_name"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="domain">Domain</label>
+            <input disabled="true" type="text" required="true" name="domain" id="domain" placeholder="sip.myco.com"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add a group name."
+                   regExp="\b(?:www\.)?[a-zA-Z0-9]+(?:(?:\-|_)[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+(?:(?:\-|_)[a-zA-Z0-9]+)*)*\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid domain."
+                   invalidMessage="Invalid domain."
+                   trim="true"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="context">Context</label>
+            <input type="text" required="true" name="context" id="context" disabled="true"
+                   placeholder="Same as SIP domain"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add a context name."
+                   regExp="\b(?:www\.)?[a-zA-Z0-9]+(?:(?:\-|_)[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+(?:(?:\-|_)[a-zA-Z0-9]+)*)*\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid context."
+                   invalidMessage="Invalid context."
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="caller_id_name">CallerID Name</label>
+            <input type="text" required="true" name="caller_id_name" id="caller_id_name" placeholder="Company Name."
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add a caller id name."
+                   regExp="\b[0-9_a-zA-Z]{2,64}\b"
+                   promptMessage="Please enter a valid caller id name."
+                   invalidMessage="Invalid name."
+                   trim="true"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel" for="caller_id_number">CallerID Number</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="didStore" value="" id="caller_id_number"
+                   searchAttr="did" name="caller_id_number"/>
+
+        </li>
+        <li class="odd">
+            <label class="fieldlabel" for="profile">SIP Profile</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value=""
+                   id="profile" searchAttr="name" name="profile"/>
+        </li>
+    </ul>
+</div>
+</html>
