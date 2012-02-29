@@ -42,6 +42,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 import transaction
 from itertools import chain
 from freepybx.model import *
+from util import *
 from freepybx.model.meta import Session as db
 
 import re
@@ -58,6 +59,224 @@ __all__=['CompanyForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm',
          'UniqueAgent','UniqueTier', 'QueueForm', 'AgentForm', 'TierForm',
          'QueueEditForm','AgentEditForm', 'DIDForm', 'GatewayForm', 'ProfileForm',
          'ContextEditForm','ContextForm']
+
+
+
+def get_mimetype(path):
+    type, encoding = mimetypes.guess_type(path)
+    return type or 'application/octet-stream'
+
+def make_file_response(path):
+    res = Response(content_type=get_mimetype(path))
+    res.body = open(path, 'rb').read()
+    return res
+
+
+def escapeSpecialCharacters (text, characters):
+    for character in characters:
+        text = text.replace(character, '\\' + character)
+    return text
+
+def get_presence_hosts():
+    import socket
+    hosts=[]
+    hosts.append(socket.gethostname())
+    hosts.append(socket.gethostbyname(socket.gethostname()))
+    return ','.join(hosts)
+
+def has_method(obj, name):
+    v = vars(obj.__class__)
+    return name in v and inspect.isroutine(v[name])
+
+def pack_ip(ip_dot_str):
+    if not ip_dot_str:
+        return None
+    return struct.unpack('!L', inet_aton(str(ip_dot_str)))[0]
+
+def unpack_ip(ip_int):
+    if not ip_int:
+        return None
+    return socket.inet_ntoa(struct.pack('!L', long(ip_int)))
+
+def has_queue(name):
+    return True if CallCenterQueue.query.filter(CallCenterQueue.name==name).filter(CallCenterQueue.context==session['context']).count()>0 else False
+
+def has_agent(extension):
+    return True if CallCenterAgent.query.filter(CallCenterAgent.extension==extension).filter(CallCenterAgent.context==session['context']).count()>0 else False
+
+def has_tier(name):
+    return True if CallCenterTier.query.join(CallCenterQueue).filter(CallCenterTier.name==name).filter(CallCenterQueue.context==session['context']).count()>0 else False
+
+def has_agent_tier(name, agent):
+    return True if CallCenterTier.query.join(CallCenterQueue).join(CallCenterAgent).\
+                   filter(CallCenterTier.name==name).filter(CallCenterAgent.extension==agent).filter(CallCenterQueue.context==session['context']).count()>0 else False
+
+def get_agent(id):
+    return CallCenterAgent.query.filter(CallCenterAgent.id==id).filter(CallCenterAgent.context==session['context']).first()
+
+def get_tier(id):
+    return CallCenterTier.query.filter(CallCenterTier.id==id).filter(CallCenterTier.context==session['context']).first()
+
+def get_queue(id):
+    return CallCenterQueue.query.filter(CallCenterQueue.id==id).first()
+
+def get_agent_status(id):
+    agent = CallCenterAgent.query.filter(CallCenterAgent.id==id).filter(CallCenterAgent.context==session['context']).first()
+    return FSCallCenterAgent.status.query.filter(FSCallCenterAgent.name==str(agent.extension)+"@"+session['context']).first()
+
+def queue_delete(q):
+    for queue in CallCenterQueue.query.filter(CallCenterQueue.id==q.id).filter(CallCenterQueue.context==session['context']).all():
+        PbxRoute.query.filter(PbxRoute.pbx_route_type_id==10).filter(PbxRoute.pbx_to_id==queue.id).delete()
+        CallCenterTier.query.filter(CallCenterTier.queue_id==queue.id).delete()
+    CallCenterQueue.query.filter(CallCenterQueue.id==q.id).filter(CallCenterQueue.context==session['context']).delete()
+    db.commit()
+    db.flush()
+    return True
+
+def tier_delete(q):
+    for queue in CallCenterQueue.query.filter(CallCenterQueue.id==q.id).filter(CallCenterQueue.context==session['context']).all():
+        CallCenterTier.query.filter(CallCenterTier.queue_id==queue.id).delete()
+    return True
+
+def get_context(self):
+    context = PbxContext.query.filter(PbxContext.company_id==session['company_id']).first()
+    db.remove()
+    return context.context
+
+def check_for_remaining_admin(company_id):
+    return len(Company.query.filter(Company.id==company_id).all())
+
+def get_queue_directory():
+    dirs = []
+
+    dir = path_dir+session['context']+"/queue-recordings/"
+    for i in os.listdir(dir):
+        dirs.append(i)
+
+    return dirs
+
+def get_campaigns():
+    return db.execute("SELECT crm_campaigns.name FROM crm_campaigns "
+                      "INNER JOIN crm_campaign_groups ON crm_campaigns.id = crm_campaign_groups.crm_campaign_id "
+                      "INNER JOIN crm_group_members ON crm_group_members.crm_group_id  = crm_campaign_groups.id "
+                      "WHERE crm_group_members.extension = :ext", {'ext': session['ext']}).fetchall()
+
+def get_route_labels_ids():
+    route_labels = []
+    route_ids = []
+
+    for row in db.execute("SELECT sr.id, srt.name|| ':' ||sr.name AS name "
+                          "FROM pbx_routes sr "
+                          "INNER JOIN pbx_route_types srt ON sr.pbx_route_type_id = srt.id "
+                          "WHERE sr.context = :context", {'context': session['context']}):
+        route_labels.append(row.name)
+        route_ids.append(row.id)
+    db.remove()
+    return (route_labels,route_ids)
+
+def make_response(obj, _content_type='application/json'):
+    res = Response(content_type=_content_type)
+    if _content_type=="application/json":
+        res.body = dumps(obj)
+    else:
+        res.body = obj
+    return res
+
+def get_profile():
+    ''' TODO: multiple profiles. unnecessary for now.'''
+    p = PbxProfile.query.first()
+    return p.name
+
+def dir_modification_date(filename):
+    t = os.path.getmtime(filename)
+    return json.dumps(datetime.datetime.utcfromtimestamp(t), cls=PbxEncoder)
+
+def get_children(top):
+    children = []
+    for f in os.listdir(top):
+        children.append(f)
+    children.sort()
+    return children
+
+def modification_date(filename):
+    return time.strftime("%m/%d/%Y %I:%M:%S %p", time.localtime(os.path.getmtime(filename)))
+
+def convert(number):
+    if not number:
+        return '0 Bytes'
+    assert 0 < number < 1 << 110, 'number out of range'
+    ordered = reversed(tuple(format_bytes(partition_number(number, 1 << 10))))
+    cleaned = ', '.join(item for item in ordered if item[0] != '0')
+    return cleaned
+
+def partition_number(number, base):
+    div, mod = divmod(number, base)
+    yield mod
+    while div:
+        div, mod = divmod(div, base)
+        yield mod
+
+def format_bytes(parts):
+    for power, number in enumerate(parts):
+        yield '{0}'.format(number)
+
+def format_suffix(power, number):
+    PREFIX = ' k m g tera peta exa zetta yotta bronto geop'.split(' ')
+    return (PREFIX[power] + 'byte').capitalize() + ('s' if number != 1 else '')
+
+def generateFileObject(filename, dir, rootDir, expand=False, showHiddenFiles=False):
+    path = dir+"/"+filename
+    fullPath = rootDir+"/"+path
+
+    fObj = {}
+    fObj["name"] = filename
+    fObj["parentDir"] = dir
+    fObj["path"] = path
+    fObj["directory"] = os.path.isdir(fullPath)
+    fObj["size"] = os.path.getsize(fullPath)
+    fObj["modified"] = str(modification_date(fullPath)).strip("\"")
+    fObj["tpath"] = "/vm/"+session['context']+"/recordings/"+filename
+
+    children = []
+    if os.path.isdir(fullPath):
+        for o in os.listdir(fullPath):
+            if os.path.isdir(os.path.join(fullPath, o)):
+                fullpath =  os.path.join(fullPath, o)
+                path_arr = fullpath.split("/")
+                pts = path_arr[:-1]
+                dir = '/'.join(pts[5:])
+                children.append(generateFileObject(o, dir, rootDir))
+            else:
+                children.append(o)
+    fObj["children"] = children
+    return fObj
+
+def fix_date(t):
+    if not t:
+        return ""
+    return t.strftime("%m/%d/%Y %I:%M:%S %p")
+
+def get_default_gateway():
+    co = Company.query.filter_by(id=session['company_id']).first()
+    return co.default_gateway
+
+def get_type(id):
+    t = PbxRouteType.query.filter_by(id=id).first()
+    return t.name
+
+def get_talk_time(ext):
+    rows =  db.execute("select coalesce(sum(billsec)/60,0) as mins from cdr where (caller_id_number=:ext or destination_number=:ext) "
+                       "and start_stamp between CURRENT_DATE and CURRENT_TIMESTAMP and bleg_uuid is not null and context = :context",{'ext':ext, 'context': session['context']})
+    r = rows.fetchone()
+    return r.mins
+
+def get_volume(ext):
+    rows =  db.execute("select count(*) as ct "
+                       "from cdr where  (caller_id_number=:ext or destination_number=:ext) "
+                       "and start_stamp between CURRENT_DATE "
+                       "and CURRENT_TIMESTAMP and bleg_uuid is not null and context = :context",{'ext':ext, 'context': session['context']})
+    r = rows.fetchone()
+    return r.ct
 
 
 def get_ivr(name):
@@ -540,6 +759,14 @@ class AdminUserForm(formencode.Schema):
     first_name = validators.String(not_empty=True)
     last_name = validators.String(not_empty=True)
     username = formencode.All(UniqueUsername())
+    password = SecurePassword()
+
+class AdminEditUserForm(formencode.Schema):
+    allow_extra_fields = True
+    ignore_key_missing = True
+    id = validators.Number(not_empty=True)
+    first_name = validators.String(not_empty=True)
+    last_name = validators.String(not_empty=True)
     password = SecurePassword()
 
 class VirtualExtensionForm(formencode.Schema):

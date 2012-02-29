@@ -43,7 +43,7 @@ def setup_app(command, conf, vars):
 
     # Create the tables if they don't already exist        
     # uncomment and adjust for initial setup..
-    insert_data()
+    #insert_data()
     
 def insert_data():
 
@@ -76,23 +76,34 @@ def insert_data():
         al.description = value
         Session.add(al)
 
+
+    # Add initial admin with admin login rights
+    admin_user = AdminUser(u'admin@freepybx.org',u'secretpass1',u'Admin',u'User')
+    Session.add(admin_user)
+
     admin_group = AdminGroup(u'system_admin',u'System administrators')
+    admin_group.admin_users.append(admin_user)
     Session.add(admin_group)
-    admin = AdminUser(u'admin@freepybx.org',u'secretpass1',u'Admin',u'User')
-    Session.add(admin)
-    admin.admin_groups.append(admin_group)
 
-    g = Group(u'user')
-    Session.add(g)
-    p = Permission(u'extension_user')
-    g.group_permissions.append(p)
+    admin_perm = AdminPermission(u'superuser',u'all access')
+    admin_perm.admin_groups.append(admin_group)
+    Session.add(admin_perm)
+
+    pba = Group(u'pbx_admin', u'PBX Admins')
+    pba.permissions.append(Permission(u'pbx_admin'))
+    Session.add(pba)
+
+    pbe = Group(u'pbx_extension', u'PBX Extension Users')
+    pbe.permissions.append(Permission(u'pbx_extension'))
+    Session.add(pbe)
+
+    pbb = Group(u'billing', u'Billing Administrators')
+    pbb.permissions.append(Permission(u'pbx_admin'))
+    Session.add(pbb)
+
     Session.commit()
     Session.flush()
 
-    ag = Group(u'admin_user')
-    Session.add(ag)
-    ag.group_permissions.append(Permission(u'pbx_admin'))
-    ag.group_permissions.append(Permission(u'billing'))
-    ag.group_permissions.append(Permission(u'reporting'))
-    Session.commit()
-    Session.flush()
+
+
+

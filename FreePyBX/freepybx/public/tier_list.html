@@ -160,8 +160,6 @@
         ];
 
         tierGrid = new dojox.grid.EnhancedGrid({
-            id:'tierGrid',
-            jsid:'tierGrid',
             query:{id:'*'},
             store:tierStore,
             structure:tierLayout,
@@ -199,12 +197,12 @@
         var del_tier = tierGrid.selection.getSelected()[0];
 
         dojo.xhrGet({
-            url:"/call_center/del_tier?id=" + del_agent.id,
+            url:"/call_center/del_tier?id=" + del_tier.id,
             handleAs:"text",
             load:function (res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message:res});
-                    dijit.byId("mainContent").set("href", "/tier_list.html")
+                    dijit.byId("callCenterContent").set("href", "/tier_list.html")
                 } else {
                     new voiceware.notice.Error({message:res});
                 }

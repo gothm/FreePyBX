@@ -58,6 +58,7 @@ class CallCenterQueue(Base):
     announce_position = Column(Boolean, default=False)
     announce_sound = Column(Unicode(1024))
     announce_frequency = Column(Integer, default=60)
+    approx_hold_time = Column(Integer, default=300)
 
     def __str__(self):
         return self.id

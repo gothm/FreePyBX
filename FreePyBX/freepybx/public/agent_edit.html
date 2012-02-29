@@ -97,6 +97,10 @@
  
 
 </script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="ccRouteStore" url="/pbx/routes"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="agentAvailStore" url="/call_center/agent_avail_endpoints"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="ccAudioStore" url="/call_center/agent_audio"></div>
 <div dojoType="voiceware.PbxForm"
      data-dojo-props="title:'Edit Agent',legend:'Agent Settings',delStyle:'display:none', noticeClass: 'noNotice',
      formName:'agent_edit_form',helpCategory:'edit_profile', submitFunc:'agentEditFormHandler();',
@@ -105,7 +109,7 @@
     <ul class="field_list">
         <li class="even">
             <label class="fieldlabel" for="agent_extension">Extension</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="agentAvailStore" value="" id="agent_extension" searchAttr="extension" name="extension">
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="agentStore" value="" id="agent_extension" searchAttr="name" name="extension">
         </li>
         <li class="odd">
             <label class="fieldlabel" for="agent_timeout">Timeout</label>

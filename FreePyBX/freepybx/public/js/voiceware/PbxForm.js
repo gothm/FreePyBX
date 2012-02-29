@@ -9,6 +9,7 @@ dojo.require("dijit._Templated");
 dojo.require("dijit._WidgetsInTemplateMixin");
 dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
+dojo.require("dijit._TemplatedMixin");
 dojo.require("dijit.form.Form");
 dojo.require("dijit.form.DateTextBox");
 dojo.require("dojox.form.BusyButton");
@@ -20,7 +21,6 @@ dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
 
 
-// Declare Dojo widget name. This widget extends the Label widget
 dojo.declare("voiceware.PbxForm", [dijit._Widget, dijit._Templated], {
     title: "",
     heading: "",

@@ -150,15 +150,13 @@ class HasCredential(object):
         self.credentials = args
 
     def check(self):
-        perms=[]
         if 'user' in session:
             row = User.query.filter(User.id==session['user_id']).filter_by(session_id=session.id).first()
-            for i in row.permissions:
-                perms.append(str(i))
-            c.perms = perms
-            for cred in self.credentials:
-                if cred in perms:
-                    return True
+            c.perms = row.permissions
+            for p in c.perms:
+                for cred in self.credentials:
+                    if str(cred) == str(p):
+                        return True
             raise AuthenticationError(self.error_msg)
         else:
             raise AuthenticationError("You're not even logged in!")
@@ -173,15 +171,15 @@ class IsLoggedIn(object):
 
 class IsSuperUser(object):
     def check(self):
-        try:
-            if 'user' in session:
-                user = session['user']
-                if 'sysadmin' in user.perms:
+        if 'user' in session:
+            row = AdminUser.query.filter_by(id=session['user_id']).filter_by(session_id=session.id).first()
+            c.perms = row.permissions
+            for p in c.perms:
+                if 'superuser' in p:
                     return True
-            else:
-                raise AuthenticationError("You have no rights here Sancho Panza.")
-        except:
-            raise AuthenticationError("You have no rights here Sancho Panza.")
+            raise AuthenticationError("You have no rights here.")
+        else:
+            raise AuthenticationError("You're not even logged in!")
 
 
 def authorize(valid):

@@ -23,6 +23,7 @@
     remedy known factual inaccuracies.
 -->
 
+
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude">
@@ -169,17 +170,21 @@
                 </div>
             <br/>
             <div dojoType="dijit.Menu" id="adminControlNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
-                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="reloadIcon"
                      onClick='sofiaStatus();'>
                     Sofia Status
                 </div>
-                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="reloadIcon"
                      onClick='reloadXML();'>
                     Reload XML
                 </div>
-                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="reloadIcon"
                      onClick='reloadACL();'>
                     Reload ACL
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="warnIcon"
+                     onClick='reloadCallCenter()'>
+                    Reload Call Center
                 </div>
                 <div dojoType="dijit.MenuSeparator"></div>
                 <div dojoType="dijit.PopupMenuItem">
@@ -238,7 +243,7 @@
     <div dojoType="dijit.Dialog" style="width:350px;" data-dojo-props="title:'FreePyBX Help',href: '', loadingMessage:'Please wait while help is loaded...'" id="help_dlg"></div>
 </div>
 <div class="dijitHidden">
-    <div dojoType="dijit.Dialog" data-dojo-props="title:'FreePyBX Controls', content: '', loadingMessage:'Please wait while help is loaded...'" id="control_return"></div>
+    <div dojoType="dijit.Dialog" data-dojo-props="title:'FreePyBX Reload Results', content: '', loadingMessage:'Please wait while help is loaded...'" id="control_return"></div>
 </div>
 </body>
 </html>

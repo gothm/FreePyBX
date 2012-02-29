@@ -55,8 +55,7 @@ def make_map(config):
     map.connect('message', '/pymp/{action}/{folder}/{uid}', controller='pymp', action='get_message')
     map.connect('message', '/pymp/{action}/{folder}/{uid}/{filename}', controller='pymp', action='get_attachment')
     map.connect('message', '/pymp/{action}/{folder}', controller='pymp', action='get_message_headers')    
-    map.connect('root', '/user_edit.html', controller='root', action='user_edit')
-    map.connect('root', '/user_add.html', controller='root', action='user_add')
+
     map.connect('admin', '/admin/', controller='admin', action='index')
     map.connect('admin', '/admin/add_gateway', controller='admin', action='add_gateway')
     map.connect('admin', '/admin/add_context', controller='admin', action='add_context')
@@ -67,8 +66,11 @@ def make_map(config):
     map.connect('admin', '/admin/billing', controller='admin', action='billing')
     map.connect('admin', '/admin/login', controller='admin', action='login')
     map.connect('/flash_gateway', controller='flash_gateway')
+    map.connect('root', '/user_edit.html', controller='root', action='user_edit')
+    map.connect('root', '/ext_edit.html', controller='root', action='ext_edit')
+    map.connect('root', '/user_add.html', controller='root', action='user_add')
     map.connect('root', '/broker_users.html', controller='root', action='broker_users')
-    map.connect('pbx', '/pbx/extension_add', controller='pbx', action='extension_add')
+    map.connect('pbx', '/extension_add.html', controller='root', action='extension_add')
     map.connect('pbx', '/pbx/cdr_ext_summary', controller='pbx', action='cdr_ext_summary')
 
     map.connect('/{controller}/{action}')

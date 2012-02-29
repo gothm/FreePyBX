@@ -25,16 +25,6 @@
               </condition>
             </extension>                     
         </py:for>
-        <extension name="9723872806">
-              <condition field="destination_number" expression="^(9723872806)$">
-                <action application="bridge" data="sofia/gateway/voipinnovations/9724990448" />
-              </condition>
-            </extension>
-            <extension name="8003715248">
-              <condition field="destination_number" expression="^(8003715248)$">
-                  <action application="bridge" data="sofia/gateway/voipinnovations/9724990448" />
-              </condition>
-            </extension>
         </context>
         <py:for each="account in c.contexts">
             <context name="${account.domain}">
@@ -73,10 +63,11 @@
                 <extension name="leave-${vm.extension}">
                     <condition field="destination_number" expression="^(${vm.extension})$$">
                         <action application="set" data="skip_greeting=${str(vm.skip_greeting).lower()}"/>
+                        <action  py:if="vm.audio_file" application="playback" data="${account.recordings_dir}${vm.audio_file}"/>
                         <action application="answer"/>
                         <action application="voicemail" data="${c.profile} ${account.domain} ${vm.extension}"/>
                         <action application="hangup"/>
-                    </condition>                                                                                                                                                
+                    </condition>
                 </extension>              
                 </py:for>     
                 <py:for each="fax in account.faxes">

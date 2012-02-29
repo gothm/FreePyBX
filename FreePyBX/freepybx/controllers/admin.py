@@ -51,6 +51,7 @@ import os
 import simplejson as json
 from simplejson import loads, dumps
 import cgitb; cgitb.enable()
+import urllib
 
 logged_in = IsLoggedIn()
 super_user = IsSuperUser()
@@ -61,9 +62,6 @@ fs_vm_dir = config['app_conf']['fs_vm_dir']
 fs_profile = config['app_conf']['fs_profile']
 
 
-def delete_company():
-    return
-
 class CredentialError(Exception):
     message=""
 
@@ -71,26 +69,32 @@ class CredentialError(Exception):
         Exception.__init__(self, message or self.message)
 
 class AdminController(BaseController):
+    """ this is a test of the comment system """
 
     @authorize(super_user)
     def index(self, **kw):
         c.sid = session.id
         c.my_name = session["name"]
         c.profiles = PbxProfile.query.all()
-
-        for p in c.profiles:
-            log.debug("############################### %s #######################################################" % p.name)
-
         return render('admin/admin.html')
 
     def logout(self, **kw):
-        if 'user' in session:
-            del session['user']
-        session.clear()
-        session.delete()
+        try:
+            if 'user' in session:
+                session.invalidate()
+                del session['user']
+        except:
+            pass
         return self.login()
 
     def login(self, **kw):
+        try:
+            if 'user' in session:
+                session.invalidate()
+                del session['user']
+        except:
+            pass
+            session.invalidate()
         return render('admin/login.html')
 
     @restrict("POST")
@@ -108,8 +112,6 @@ class AdminController(BaseController):
         c.sid = session.id
         c.my_name = session["name"]
         c.profiles = PbxProfile.query.all()
-        for p in c.profiles:
-            log.debug("############################### %s #######################################################" % p.name)
         return render('admin/admin.html')
 
     @authorize(super_user)
@@ -117,8 +119,6 @@ class AdminController(BaseController):
         c.sid = session.id
         c.my_name = session["name"]
         c.profiles = PbxProfile.query.all()
-        for p in c.profiles:
-            log.debug("############################### %s #######################################################" % p.name)
 
         return render('admin/admin.html')
 
@@ -225,6 +225,15 @@ class AdminController(BaseController):
             co.has_call_center = True if form_result.get('has_call_center')=="true" else False
             co.default_gateway = form_result.get('default_gateway')
             co.pbx_profile_id = form_result.get('pbx_profile_id')
+
+            try:
+                os.makedirs(fs_vm_dir+str(co.context)+'/recordings')
+                os.makedirs(fs_vm_dir+str(co.context)+'/queue-recordings')
+                os.makedirs(fs_vm_dir+str(co.context)+'/extension-recordings')
+                os.makedirs(fs_vm_dir+str(co.context)+'/faxes')
+            except:
+                pass
+
 
             db.add(co)
             db.commit()
@@ -383,8 +392,9 @@ class AdminController(BaseController):
 
             for i in w['modified']:
                 gw = PbxGateway.query.filter_by(id=i['id']).first()
+                pro = PbxProfile.query.filter_by(name=i['profile']).first()
                 gw.register = i['register']
-                gw.pbx_profile_id = i['profile']
+                gw.pbx_profile_id = pro.id
 
                 db.commit()
                 db.flush()
@@ -447,8 +457,9 @@ class AdminController(BaseController):
     def gateways(self, **kw):
         items=[]
         for row in PbxGateway.query.all():
+            profile = PbxProfile.query.filter_by(id=row.pbx_profile_id).first()
             items.append({'id': row.id,'name': row.name, 'proxy': row.proxy, 'mask': row.mask, 'register': row.register,
-                          'profile': row.pbx_profile_id})
+                          'profile': profile.name})
 
         out = dict({'identifier': 'name', 'label': 'name', 'items': items})
         response = make_response(out)
@@ -786,10 +797,12 @@ class AdminController(BaseController):
             first_name = form_result.get('first_name')
             last_name = form_result.get('last_name')
 
-            admin_group = AdminGroup.query.filter(AdminGroup.id==1).first()
-            au = AdminUser(username, password, first_name, last_name)
-            db.add(au)
-            au.admin_groups.append(admin_group)
+            admin_user = AdminUser(username,password,first_name,last_name)
+            Session.add(admin_user)
+
+            admin_group = AdminGroup.query.filter_by(id=1).first()
+            admin_group.admin_users.append(admin_user)
+            Session.add(admin_group)
 
             db.commit()
             db.flush()
@@ -803,7 +816,7 @@ class AdminController(BaseController):
 
     @authorize(super_user)
     def edit_admin(self, **kw):
-        schema = AdminUserForm()
+        schema = AdminEditUserForm()
 
         try:
             form_result = schema.to_python(request.params)
@@ -834,11 +847,12 @@ class AdminController(BaseController):
             first_name = form_result.get('first_name')
             last_name = form_result.get('last_name')
 
-            co = Company.query.filter_by(name=form_result.get('company_id')).first()
-            u = User(first_name, last_name, username, password, 1, co.id, True)
+            u = User(first_name, last_name, username, password, 1, form_result.get('company_id'), True)
             db.add(u)
-            g = Group.query.filter(Group.name=='admin_user').first()
-            u.user_groups.append(g)
+
+            g = Group.query.filter(Group.name=='pbx_admin').first()
+            g.users.append(u)
+            db.add(u)
 
             db.commit()
             db.flush()
@@ -990,3 +1004,23 @@ class AdminController(BaseController):
         return "Successfully edited context."
 
 
+    @authorize(super_user)
+    def delete_admin(self, **kw):
+
+        if not len(AdminUser.query.all())>1:
+            return "You only have one admin! Create another, then delete this one."
+        try:
+            if request.params.get('id', 0) == session['user_id']:
+                logout=True
+            au = AdminUser.query.filter(AdminUser.id==request.params.get('id', 0)).delete()
+            db.commit()
+            db.flush()
+            if logout:
+                del session
+                return self.login()
+        except Exception, e:
+            db.remove()
+            return "Error deleting admin: %s" % e
+
+        db.remove()
+        return  "Successfully deleted admin."

@@ -28,11 +28,14 @@ from datetime import datetime
 from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.types import Integer, DateTime, Boolean, Unicode, UnicodeText
 from sqlalchemy.orm import relation, synonym, relationship, backref
+from freepybx.model import user_groups, group_permissions, admin_user_groups, admin_group_permissions, \
+        company_contexts, condition_actions
 from freepybx.model.meta import Base, Session as db
-from freepybx.model import admin_user_groups, admin_group_permissions,\
-    user_groups, group_permissions, company_contexts, user_endpoints, user_contacts
 from freepybx.model.pbx import PbxEndpoint, PbxContext
 from freepybx.model.call_center import CallCenterAgent
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class AdminUser(Base):
@@ -50,8 +53,6 @@ class AdminUser(Base):
     session_id =  Column(Unicode(128), nullable=True)
     active = Column(Boolean, default=True)
 
-    admin_groups = relationship('AdminGroup', secondary=admin_user_groups, backref='admin_users')
-
     def __unicode__(self):
         return self.name or self.username
 
@@ -61,9 +62,8 @@ class AdminUser(Base):
 
     @property
     def permissions(self):
-        perms = set()
         for g in self.admin_groups:
-            perms = perms | set(g.admin_group_permissions)
+            perms = g.permissions
         return perms
 
     def __init__(self, username, password, first_name, last_name):
@@ -71,7 +71,6 @@ class AdminUser(Base):
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
-        self.perms = None
 
     @classmethod
     def register_login(class_, username, session, request):
@@ -101,7 +100,15 @@ class AdminGroup(Base):
     description = Column(UnicodeText)
     created_date = Column(DateTime, default=datetime.now)
 
-    admin_group_permissions = relationship('AdminPermission', secondary=admin_group_permissions, backref='admin_groups')
+    admin_users = relationship("AdminUser", secondary=admin_user_groups, backref='admin_groups')
+
+    @property
+    def permissions(self):
+        perms = []
+        for perm in self.admin_permissions:
+            perms.append(perm.name)
+        return perms
+
 
     def __init__(self, name, description):
         self.name = name
@@ -215,6 +222,7 @@ class Company(Base):
 
     company_contexts = relationship('PbxContext', secondary=company_contexts, backref='companies')
 
+
     def __init__(self, name='Acme VoIP'):
         self.name = name
 
@@ -254,11 +262,7 @@ class User(Base):
     session_id =  Column(Unicode(128), nullable=True)
     portal_extension = Column(Unicode(15), default=u'Unknown')
     has_crm = Column(Boolean, default=False)
-
     company_id =  Column(Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE"))
-    user_groups = relationship('Group', secondary=user_groups, backref='users')
-    user_endpoints = relationship('PbxEndpoint', secondary=user_endpoints, backref='users')
-    user_contacts = relationship('Contact', secondary=user_contacts, backref='users')
 
     def __unicode__(self):
         return self.name or self.username
@@ -275,9 +279,8 @@ class User(Base):
 
     @property
     def permissions(self):
-        perms = set()
-        for g in self.user_groups:
-            perms = perms | set(g.group_permissions)
+        for g in self.groups:
+            perms = g.permissions
         return perms
 
     def get_name(self):
@@ -353,7 +356,14 @@ class Group(Base):
     description = Column(UnicodeText)
     created_date = Column(DateTime, default=datetime.now)
 
-    group_permissions = relationship('Permission', secondary=group_permissions, backref='groups')
+    users = relationship("User", secondary=user_groups, backref='groups')
+
+    @property
+    def permissions(self):
+        perms = []
+        for perm in self.permissions:
+            perms.append(perm.name)
+        return perms
 
     def __init__(self, name, description=None, date=None):
         self.name = name
@@ -376,6 +386,8 @@ class Permission(Base):
     name = Column(Unicode(32), default=u'Unknown')
     description = Column(Unicode(255), default=u'Unknown')
 
+    groups =  relationship("Group", secondary=group_permissions, backref='permissions')
+
     def __unicode__(self):
         return self.name
 
@@ -395,6 +407,8 @@ class AdminPermission(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     name = Column(Unicode(32), default=u'Unknown')
     description = Column(Unicode(255), default=u'Unknown')
+
+    admin_groups =  relationship("AdminGroup", secondary=admin_group_permissions, backref='admin_permissions')
 
     def __unicode__(self):
         return self.name
@@ -449,7 +463,6 @@ class Contact(Base):
     active = Column(Boolean, default=True)
     status = Column(Integer, default=1)
     lat_lon = Column(Unicode(100), default=u"0,0")
-
     user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE"))
 
     def __str__(self):
@@ -534,3 +547,4 @@ class AuthLevel(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     name = Column(Unicode(64))
     description = Column(Unicode(128))
+

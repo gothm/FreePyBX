@@ -181,10 +181,10 @@
         });
     }
 
-    function delete_company() {
-        var del_user = userGrid.selection.getSelected()[0];
+    function delete_admin() {
+        var del_admin = adminGrid.selection.getSelected()[0];
         dojo.xhrGet({
-            url: "/admin/del_company?id="+del_company.id,
+            url: "/admin/delete_admin?id="+del_admin.id,
             handleAs: "text",
             load: function(res) {
                 if (res.indexOf("Error") == -1) {

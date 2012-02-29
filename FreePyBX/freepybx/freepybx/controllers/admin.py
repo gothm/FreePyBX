@@ -800,7 +800,7 @@ class AdminController(BaseController):
 
     @authorize(super_user)
     def edit_admin(self, **kw):
-        schema = AdminUserForm()
+        schema = AdminEditUserForm()
 
         try:
             form_result = schema.to_python(request.params)
@@ -986,4 +986,20 @@ class AdminController(BaseController):
 
         return "Successfully edited context."
 
+    @restrict("GET")
+    @authorize(super_user)
+    def del_admin(self, **kw):
 
+        if not len(AdminUser.query.all())>1:
+            return "You only have one admin! Create another, then delete this one."
+
+        try:
+            AdminUser.query.filter(User.id==request.params.get('id', 0)).delete()
+            db.commit()
+            db.flush()
+        except:
+            db.remove()
+            return "Error deleting admin."
+
+        db.remove()
+        return  "Successfully deleted admin."

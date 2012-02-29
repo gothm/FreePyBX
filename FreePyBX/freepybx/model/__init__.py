@@ -43,70 +43,58 @@ __all__ = ['Company','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxCo
            'CrmNote','CrmLog','PbxCdr','HelpCategory','Help','PbxConferenceBridge','PbxRegistration','PbxFax',
            'CallCenterQueue', 'CallCenterAgent', 'CallCenterTier', 'CallCenterCaller', 'VoiceMail', 'PbxChannel', 'PbxDialog',
            'CrmAccountStatusType', 'CrmGroup', 'CrmGroupMember', 'CrmCampaign','CrmLeadType', 'CrmCampaignGroup','CrmAccount',
-           'Base', 'Session', 'PbxAclBlacklist', 'Provider', 'e911Address', 'e911DirectionalType', 'company_contexts', 'condition_actions',
-           'e911UnitType', 'e911StreetType', 'CompanyNote', 'Ticket', 'TicketPriority', 'TicketType', 'AdminGroup','admin_user_groups',
-           'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'user_endpoints', 'user_contacts']
+           'Base', 'Session', 'PbxAclBlacklist', 'Provider', 'e911Address', 'e911DirectionalType', 'admin_user_groups','admin_group_permissions',
+           'e911UnitType', 'e911StreetType', 'CompanyNote', 'Ticket', 'TicketPriority', 'TicketType', 'AdminGroup',
+           'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'company_contexts','condition_actions']
 
 
-admin_user_groups = Table('admin_user_groups', metadata,
-    Column('admin_id', Integer, ForeignKey('admin_users.id')),
-    Column('admin_group_id', Integer, ForeignKey('admin_groups.id'))
-)
-
-admin_group_permissions = Table('admin_group_permissions', metadata,
-    Column('admin_group_id', Integer, ForeignKey('admin_groups.id')),
-    Column('admin_permission_id', Integer, ForeignKey('admin_permissions.id'))
-)
 
 user_groups = Table('user_groups', metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('group_id', Integer, ForeignKey('groups.id'))
+    Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
+    Column('group_id', Integer, ForeignKey('groups.id', onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 group_permissions = Table('group_permissions', metadata,
-    Column('group_id', Integer, ForeignKey('groups.id')),
-    Column('permission_id', Integer, ForeignKey('permissions.id'))
+    Column('group_id', Integer, ForeignKey('groups.id', onupdate="CASCADE", ondelete="CASCADE")),
+    Column('permission_id', Integer, ForeignKey('permissions.id', onupdate="CASCADE", ondelete="CASCADE"))
+)
+
+admin_user_groups = Table('admin_user_groups', metadata,
+    Column('admin_id', Integer, ForeignKey('admin_users.id', onupdate="CASCADE", ondelete="CASCADE")),
+    Column('admin_group_id', Integer, ForeignKey('admin_groups.id', onupdate="CASCADE", ondelete="CASCADE"))
+)
+
+admin_group_permissions = Table('admin_group_permissions', metadata,
+    Column('admin_group_id', Integer, ForeignKey('admin_groups.id', onupdate="CASCADE", ondelete="CASCADE")),
+    Column('admin_permission_id', Integer, ForeignKey('admin_permissions.id', onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 company_contexts = Table('company_contexts', metadata,
-    Column('company_id', Integer, ForeignKey('companies.id')),
+    Column('company_id', Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE")),
     Column('pbx_context_id', Integer, ForeignKey('pbx_contexts.id'))
 )
 
 condition_actions = Table('condition_actions', metadata,
-    Column('pbx_condition_id', Integer, ForeignKey('pbx_conditions.id')),
+    Column('pbx_condition_id', Integer, ForeignKey('pbx_conditions.id', onupdate="CASCADE", ondelete="CASCADE")),
     Column('pbx_action_id', Integer, ForeignKey('pbx_actions.id'))
 )
 
-user_endpoints = Table('user_endpoints', metadata,
-    Column('endpoint_id', Integer, ForeignKey('pbx_endpoints.id')),
-    Column('user_id', Integer, ForeignKey('users.id'))
-)
 
-user_contacts = Table('user_contacts', metadata,
-    Column('contact_id', Integer, ForeignKey('contacts.id')),
-    Column('user_id', Integer, ForeignKey('users.id'))
-)
+from freepybx.model.core import AdminUser, AdminGroup, Provider, Company, User, Group, Permission, \
+    AdminPermission, EmailAccount, Contact, CompanyNote, Ticket, TicketPriority, TicketType, Shift, AuthLevel
 
-
-
-from freepybx.model.core import AdminUser, AdminGroup, Provider, Company, \
-    User, Group, Permission, AdminPermission, EmailAccount, Contact, CompanyNote, \
-    Ticket, TicketPriority, TicketType, Shift, AuthLevel
-
-from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExtension, \
-    PbxCallerIDRoute, PbxBlacklistedNumber, PbxVirtualMailbox, PbxTTS, PbxTODRoute, \
-    PbxRecording, PbxDid, PbxProfile, PbxGateway, PbxAclBlacklist, PbxRoute, \
-    PbxRouteType, PbxCondition, PbxConditionTmpl,PbxAction, PbxActionTmpl, PbxGroup, \
-    PbxGroupMember, PbxEndpoint, PbxDeviceType, DeviceManufacturer, PbxCdr, \
-    PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog, \
+from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExtension,\
+    PbxCallerIDRoute, PbxBlacklistedNumber, PbxVirtualMailbox, PbxTTS, PbxTODRoute,\
+    PbxRecording, PbxDid, PbxProfile, PbxGateway, PbxAclBlacklist, PbxRoute,\
+    PbxRouteType, PbxCondition, PbxConditionTmpl, PbxAction, PbxActionTmpl, PbxGroup,\
+    PbxGroupMember, PbxEndpoint, PbxDeviceType, DeviceManufacturer, PbxCdr,\
+    PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog,\
     PbxChannel, e911Address, e911DirectionalType, e911UnitType, e911StreetType
 
-from freepybx.model.call_center import CallCenterAgent, CallCenterAgentLog, \
+from freepybx.model.call_center import CallCenterAgent, CallCenterAgentLog,\
     CallCenterCaller, CallCenterQueue, CallCenterTier
 
-from freepybx.model.crm import CrmAccountStatusType, CrmGroup, CrmCampaignGroup, \
+from freepybx.model.crm import CrmAccountStatusType, CrmGroup, CrmCampaignGroup,\
     CrmCampaign, CrmGroupMember, CrmLeadType, CrmAccount, CrmLog, CrmNote
 
 from freepybx.model.help import Help, HelpCategory
-

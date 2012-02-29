@@ -9,17 +9,13 @@
     License for the specific language governing rights and limitations
     under the License.
 
-    The Original Code is PythonPBX/VoiceWARE.
+    The Original Code is FreePyBX/VoiceWARE.
 
     The Initial Developer of the Original Code is Noel Morgan, VoiceWARE, Inc.
     Copyright (c) 2011-2012 VoiceWARE, Inc. All Rights Reserved.
     
-    http://www.vwna.com/ 
- 
-*/
-
-    /* Why dojo? Because it's cool and ninjas love it.*/
-
+    http://www.vwci.com/
+ */
     dojo.require("dojo.parser");
     dojo.require("dojo.data.ItemFileWriteStore");
     dojo.require("dojo.data.ItemFileReadStore");    
@@ -136,27 +132,27 @@
     function showFax(img) {
         myWindow=window.open(img,'Fax Received','toolbar=yes,location=no,width=600,height=800');
     }
-        
+
     function checkPasswordStrength(pwd) {
         // Borrowed from somewhere, but forgot where :(
         // Needs Fixing...
         var strength_text = document.getElementById('strength_text');
         var strength_id = document.getElementById('strength_id');
         var progress_bar = document.getElementById('progress_bar');
-     
+
         var strong = new RegExp('^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$', 'g');
         var medium = new RegExp('^(?=.{6,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$', 'g');
         var enough = new RegExp('(?=.{6,}).*', 'g');
-     
+
         if (strength_text == null)
         {
             return;
         }
-     
+
         strength_id.value = 0;
-     
+
         var width = pwd.length * 10;
-     
+
         if (pwd.length == 0)
         {
             strength_text.innerHTML = '&nbsp;';
@@ -188,12 +184,12 @@
             progress_bar.style.backgroundColor = '#FFD700';
             strength_id.value = 1;
         }
-     
+
         progress_bar.style.width = width + '%';
-     
+
         document.getElementById('password_strength').style.display = (pwd.length == 0)?'none':'';
-    }    
-    
+    }
+
     
     function userEditFormHandler() {
         var output_msg = dojo.byId("output_message");

@@ -88,6 +88,62 @@
     dojo.require("voiceware.PbxForm");
 
 
+    function checkPasswordStrength(pwd) {
+        // Borrowed from somewhere, but forgot where :(
+        // Needs Fixing...
+        var strength_text = document.getElementById('strength_text');
+        var strength_id = document.getElementById('strength_id');
+        var progress_bar = document.getElementById('progress_bar');
+
+        var strong = new RegExp('^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$', 'g');
+        var medium = new RegExp('^(?=.{6,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$', 'g');
+        var enough = new RegExp('(?=.{6,}).*', 'g');
+
+        if (strength_text == null) {
+            return;
+        }
+
+        strength_id.value = 0;
+
+        var width = pwd.length * 10;
+
+        if (pwd.length == 0) {
+            strength_text.innerHTML = '&nbsp;';
+            progress_bar.style.backgroundColor = '#FFFFFF';
+        }
+        else if (false == enough.test(pwd)) {
+            strength_text.innerHTML = 'Too short';
+            progress_bar.style.backgroundColor = '#DC143C';
+        }
+        else if (strong.test(pwd)) {
+            strength_text.innerHTML = 'Strong';
+            width = 100;
+            progress_bar.style.backgroundColor = '#228B22';
+            strength_id.value = 3;
+        }
+        else if (medium.test(pwd)) {
+            strength_text.innerHTML = 'Medium';
+            width = 70;
+            progress_bar.style.backgroundColor = '#FF8C30';
+            strength_id.value = 2;
+        }
+        else {
+            width = 60;
+            strength_text.innerHTML = 'Weak';
+            progress_bar.style.backgroundColor = '#FFD700';
+            strength_id.value = 1;
+        }
+
+        progress_bar.style.width = width + '%';
+
+        dojo.byId('password_strength').style.display = (pwd.length == 0) ? 'none' : '';
+    }
+
+    function reloadCallCenter() {
+        vwb.reloadCallCenter();
+        return false;
+    }
+
     function reloadXML() {
         vwb.reloadXML();
         return false;
@@ -117,7 +173,6 @@
         vwb.showRegUsers(profile);
         return false;
     }
-
 
 
 dojo.ready(function() {

@@ -100,14 +100,14 @@
                    required="true"
                    regExp="\b[0-9]{1,2}\b"
                    promptMessage="Please enter a number."
-                   invalidMessage="Invalid email."
+                   invalidMessage="Invalid number."
                    trim="true"
                     />
         </li>
         <li class="odd">
             <label class="fieldlabel">Timeout Destination</label>
             <div dojoType="dojo.data.ItemFileReadStore" jsId="destinationsStore" url="/pbx/routes"></div>
-            <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" searchAttr="name" name="no_answer_destination" />
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="destinationsStore" value="" searchAttr="name" name="no_answer_destination" />
         </li>
     </ul>
 </div>

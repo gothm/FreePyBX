@@ -42,7 +42,7 @@ from freepybx.lib.forms import *
 from freepybx.lib.util import *
 from freepybx.lib.validators import *
 from decorator import decorator
-from pylons.decorators.rest import restrict
+from pylons.decorators import jsonify
 import formencode
 from formencode import validators
 from pylons.decorators import validate
@@ -63,8 +63,6 @@ import cgitb; cgitb.enable()
 from ESL import *
 import re
 import csv
-
-
 
 
 
@@ -210,7 +208,11 @@ class PbxController(BaseController):
                     db.remove()
                     return render('xml/gateways.xml')
 
-            domain = request.params['domain']
+            domain = request.params.get('domain', None)
+
+            if not db.query(Company.active).join(PbxContext).filter(PbxContext.domain==domain).filter(Company.active==True).first():
+                return render('xml/notfound.xml')
+
             c.groups = []
             c.voicemailboxes = []
 
@@ -303,8 +305,8 @@ class PbxController(BaseController):
         c.profile = request.params.get('variable_sofia_profile_name','default')
 
         try:
-            c.dids = PbxDid.query.all()
-            for context in PbxContext.query.distinct(PbxContext.context):
+            c.dids = PbxDid.query.join(Company).filter(Company.active==True).filter(PbxDid.active==True).all()
+            for context in PbxContext.query.join(Company).filter(Company.active==True).distinct(PbxContext.context):
                 conference_bridges = PbxConferenceBridge.query.filter_by(context=context.context).all()
                 voicemailboxes = PbxVirtualMailbox.query.filter_by(context=context.context).all()
                 faxes = PbxFax.query.filter_by(context=context.context).all()
@@ -345,7 +347,7 @@ class PbxController(BaseController):
                 c.contexts.append({'domain': context.domain, 'context': context.context, 'routes': routes, 'effective_caller_id_name': context.caller_id_name,
                                    'effective_caller_id_number': context.caller_id_number, 'origination_caller_id_name': context.caller_id_name,
                                    'origination_caller_id_number': context.caller_id_number, 'gateway': gateway.name, 'conference_bridges': conference_bridges,
-                                   'voicemailboxes': voicemailboxes, 'faxes': faxes})
+                                   'voicemailboxes': voicemailboxes, 'faxes': faxes, 'recordings_dir': fs_vm_dir+context.domain+"/recordings/"})
 
                 routes = []
             db.remove()
@@ -731,6 +733,12 @@ class PbxController(BaseController):
 
         return response(request.environ, self.start_response)
 
+    @jsonify
+    @authorize(logged_in)
+    def route_id_names(self):
+        return db.query(PbxRoute.name, PbxRoute.id).filter_by(context=session['context']).all()
+
+
     @authorize(logged_in)
     def dids(self):
         items=[]
@@ -756,7 +764,8 @@ class PbxController(BaseController):
     def vextensions(self):
         items=[]
         for extension in PbxVirtualExtension.query.filter_by(context=session['context']).all():
-            items.append({'id': extension.id, 'extension': extension.extension, 'did': extension.did})
+            items.append({'id': extension.id, 'extension': extension.extension, 'did': extension.did,
+                          'timeout': extension.timeout, 'pbx_route_id': extension.pbx_route_id})
 
         db.remove()
 
@@ -902,6 +911,8 @@ class PbxController(BaseController):
             svm.extension = form_result.get('vmbox_number')
             svm.pin = form_result.get('vmbox_pin')
             svm.context = session['context']
+            svm.skip_greeting =  True if form_result.get('skip_greeting')=="true" else False
+            svm.audio_file = form_result.get('audio_file', None)
 
             db.add(svm)
             db.commit()
@@ -920,17 +931,12 @@ class PbxController(BaseController):
             db.add(r)
             db.commit()
             db.flush()
-            db.remove()
 
         except validators.Invalid, error:
-            msg='Validation Error: %s' % error
+            return 'Validation Error: %s' % error
 
-        finally:
-            if len(msg)>0:
-                return msg
-            else:
-                return "Successfully added extension %s" % form_result.get('extension')
             db.remove()
+            return "Successfully added virtual voicemail."
 
     @authorize(logged_in)
     def group_add(self, **kw):
@@ -1368,6 +1374,9 @@ class PbxController(BaseController):
             sve.extension = form_result.get('vextension_number')
             sve.did = form_result.get('vextension_did')
             sve.context = session['context']
+            sve.timeout = form_result.get('timeout')
+            sve.pbx_route_id = form_result.get('no_answer_destination')
+
 
             db.add(sve)
             db.commit()
@@ -1393,40 +1402,6 @@ class PbxController(BaseController):
         db.remove()
         return "Successfully created virtual extension."
 
-    @authorize(logged_in)
-    def vmbox_add(self, **kw):
-        schema = VirtualMailboxForm()
-        try:
-            form_result = schema.to_python(request.params)
-            svm = PbxVirtualMailbox()
-            svm.extension = form_result.get('vmbox_number')
-            svm.pin = form_result.get('vmbox_pin')
-            svm.context = session['context']
-
-            db.add(svm)
-            db.commit()
-            db.flush()
-
-            r = PbxRoute()
-            r.context = session['context']
-            r.domain = session['context']
-            r.name = form_result.get('vmbox_number')
-            r.continue_route = True
-            r.voicemail_enable = True
-            r.voicemail_ext = form_result.get('vmbox_number')
-            r.pbx_route_type_id = 3
-            r.pbx_to_id = svm.id
-
-            db.add(r)
-            db.commit()
-            db.flush()
-
-        except validators.Invalid, error:
-            return 'Validation Error: %s' % error
-
-        finally:
-            db.remove()
-            return "OK"
 
     @authorize(logged_in)
     def tod_route_add(self, **kw):
@@ -1636,8 +1611,11 @@ class PbxController(BaseController):
     def recordings(self):
         files = []
         dir = fs_vm_dir+session['context']+"/recordings/"
-        for i in os.listdir(dir):
-            files.append(generateFileObject(i, "",  dir))
+        try:
+            for i in os.listdir(dir):
+                files.append(generateFileObject(i, "",  dir))
+        except:
+            os.makedirs(dir)
 
         out = dict({'identifier': 'name', 'label': 'name', 'items': files})
         response = make_response(out)
@@ -1649,9 +1627,13 @@ class PbxController(BaseController):
     def ivr_audio(self):
         items = []
         dir = fs_vm_dir+session['context']+"/recordings/"
-        for i in os.listdir(dir):
-            fo = generateFileObject(i, "",  dir)
-            items.append({'id': '1,'+fo["name"], 'name': 'Recording: '+fo["name"] , 'data': fo["path"], 'type': 1, 'real_id': ""})
+
+        try:
+            for i in os.listdir(dir):
+                fo = generateFileObject(i, "",  dir)
+                items.append({'id': '1,'+fo["name"], 'name': 'Recording: '+fo["name"] , 'data': fo["path"], 'type': 1, 'real_id': ""})
+        except:
+            os.makedirs(dir)
 
         for row in PbxTTS.query.filter_by(context=session['context']).all():
             items.append({'id': '2,'+str(row.id), 'name': 'TTS: '+row.name, 'data': row.text, 'type': 2, 'real_id': row.id})
@@ -1668,18 +1650,22 @@ class PbxController(BaseController):
         files = []
 
         dir = fs_vm_dir+session['context']+"/"+session['ext']
-        for i in os.listdir(dir):
-            if i.startswith("greeting_"):
-                continue
-            id = i.split("_")[1].split(".")[0].strip()
-            row = PbxCdr.query.filter(PbxCdr.uuid==id).first()
-            path = dir+"/"+i
-            tpath = "/vm/"+session['context']+"/"+session['ext']+"/"+i
-            received = str(modification_date(path)).strip("\"")
-            fsize = str(os.path.getsize(path))
-            caller = row.caller_id_number[len(row.caller_id_number)-10:]
-            files.append({'name': caller, 'path': tpath, 'received': received, 'size': fsize})
-        out = dict({'identifier': 'path', 'label': 'name', 'items': files})
+
+        try:
+            for i in os.listdir(dir):
+                if i.startswith("greeting_"):
+                    continue
+                id = i.split("_")[1].split(".")[0].strip()
+                row = PbxCdr.query.filter(PbxCdr.uuid==id).first()
+                path = dir+"/"+i
+                tpath = "/vm/"+session['context']+"/"+session['ext']+"/"+i
+                received = str(modification_date(path)).strip("\"")
+                fsize = str(os.path.getsize(path))
+                caller = row.caller_id_number[len(row.caller_id_number)-10:]
+                files.append({'name': caller, 'path': tpath, 'received': received, 'size': fsize})
+        except:
+            os.makedirs(dir)
+            out = dict({'identifier': 'path', 'label': 'name', 'items': files})
         response = make_response(out)
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
@@ -1725,7 +1711,7 @@ class PbxController(BaseController):
             dir = fs_vm_dir+"/"+session['context']+"/"+session['ext']
             os.remove(os.path.join(dir, file_name))
         except:
-            return "Error: OS Path problem."
+            return "Error: did not delete correctly.."
 
         return "Deleted voicemail."
 
@@ -1852,6 +1838,8 @@ class PbxController(BaseController):
                     return "A virtual extension needs to be exactly 10 digits."
                 ve = PbxVirtualExtension.query.filter_by(id=i['id']).filter_by(context=session['context']).first()
                 ve.did = i['did'].strip()
+                ve.timeout = i['timeout'].strip()
+                ve.pbx_route_id = i['pbx_route_id'].strip()
                 db.commit()
                 db.flush()
                 db.remove()
@@ -1971,7 +1959,10 @@ class PbxController(BaseController):
             u.notes = form_result.get("notes")
             u.portal_extension = form_result.get("extension")
 
-            db.add(u)
+            g = Group.query.filter(Group.id==form_result.get("group_id",2)).first()
+            g.users.append(u)
+            db.add(g)
+
             db.commit()
             db.flush()
 
@@ -2016,8 +2007,8 @@ class PbxController(BaseController):
                 e = PbxEndpoint()
                 e.auth_id = form_result.get("extension")
                 e.password = form_result.get("extension_password")
-                e.outbound_caller_id_name = context.origination_caller_id_name
-                e.outbound_caller_id_number = context.origination_caller_id_number
+                e.outbound_caller_id_name = context.caller_id_name
+                e.outbound_caller_id_number = context.caller_id_number
                 e.internal_caller_id_name = u.first_name + ' ' + u.last_name
                 e.internal_caller_id_number = form_result.get("extension")
                 e.user_context = context.context
@@ -2025,7 +2016,7 @@ class PbxController(BaseController):
                 e.user_originated = u'true'
                 e.toll_allow = u'domestic'
                 e.call_timeout = form_result.get("call_timeout", 20)
-                e.accountcode = context.origination_caller_id_number
+                e.accountcode = context.caller_id_number
                 e.pbx_force_contact =  form_result.get("pbx_force_contact", u'nat-connectile-dysfunction')
                 e.vm_email = form_result.get("vm_email")
                 e.vm_password = form_result.get("vm_password")
@@ -2130,9 +2121,13 @@ class PbxController(BaseController):
             u.active = True if form_result.get("active", None) is not None else False
             u.company_id = session["company_id"]
             u.notes = form_result.get("notes")
-
             db.commit()
             db.flush()
+
+            db.execute("UPDATE user_groups set group_id = :group_id where user_id = :user_id", \
+                        {'group_id': form_result.get('group_id', 3) , 'user_id': u.id})
+
+
             db.remove()
 
         except validators.Invalid, error:
@@ -2488,28 +2483,32 @@ class PbxController(BaseController):
     def faxes(self):
         files = []
         dir = fs_vm_dir+session['context']+"/faxes"
-        for i in os.listdir(dir):
-            if not i.endswith(".png"):
-                continue
-            path = dir+"/"+i
-            uuid = i.split("_")[0].strip()
-            name = i.split("_")[1].strip().split(".")[0]
-            if name.find("-") == -1:
-                page_num = "Single Page"
-            else:
-                page_num = name.split("-")[1].split(".")[0].strip()
-                name = name.split("-")[0].strip()
-                page_num = int(page_num)+1
 
-            tpath = "/vm/" +session['context']+"/faxes/"+i
-            received = str(modification_date(path)).strip("\"")
-            fsize = str(os.path.getsize(path))
-            row = PbxCdr.query.filter(PbxCdr.uuid==uuid).first()
-            if row:
-                caller = row.caller_id_number[len(row.caller_id_number)-10:]
-            else:
-                caller = "Unknown"
-            files.append({'uuid': uuid, 'name': name, 'caller_id': caller, 'path': tpath, 'received': received, 'size': fsize, 'page_num': page_num})
+        try:
+            for i in os.listdir(dir):
+                if not i.endswith(".png"):
+                    continue
+                path = dir+"/"+i
+                uuid = i.split("_")[0].strip()
+                name = i.split("_")[1].strip().split(".")[0]
+                if name.find("-") == -1:
+                    page_num = "Single Page"
+                else:
+                    page_num = name.split("-")[1].split(".")[0].strip()
+                    name = name.split("-")[0].strip()
+                    page_num = int(page_num)+1
+
+                tpath = "/vm/" +session['context']+"/faxes/"+i
+                received = str(modification_date(path)).strip("\"")
+                fsize = str(os.path.getsize(path))
+                row = PbxCdr.query.filter(PbxCdr.uuid==uuid).first()
+                if row:
+                    caller = row.caller_id_number[len(row.caller_id_number)-10:]
+                else:
+                    caller = "Unknown"
+                files.append({'uuid': uuid, 'name': name, 'caller_id': caller, 'path': tpath, 'received': received, 'size': fsize, 'page_num': page_num})
+        except:
+            os.makedirs(dir)
         db.remove()
         out = dict({'identifier': 'path', 'label': 'name', 'items': files})
         response = make_response(out)
@@ -2631,7 +2630,5 @@ class PbxController(BaseController):
             return "Error deleting fax extension."
 
         return  "Successfully deleted fax extension."
-    
-    
-    
-        
+
+

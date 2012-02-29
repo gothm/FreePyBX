@@ -65,7 +65,7 @@
 
 </script>
 
-<div dojoType="dojo.data.ItemFileReadStore" jsId="company_store" url="/admin/companies"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="company_store" url="/admin/companies_id"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="profileStore" url="/admin/profiles"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="contextStore" url="/admin/context_store"></div>
 <div dojoType="voiceware.PbxForm"
@@ -119,7 +119,7 @@
         </li>
         <li class="odd">
             <label class="fieldlabel" for="company_id">Company</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="companyStore" value="" searchAttr="name"
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="company_store"  searchAttr="name"
                    id="company_id" name="company_id"/>
         </li>
     </ul>

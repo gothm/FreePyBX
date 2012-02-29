@@ -44,6 +44,7 @@
     
     var vextGrid;
     var vextStore = new dojo.data.ItemFileWriteStore({url: '/pbx/vextensions'});
+    var didStore = new dojo.data.ItemFileWriteStore({url: '/pbx/dids'});
 
     var plugins = {
         pagination: true,
@@ -134,17 +135,43 @@
         return js;
     };
 
-    vextension_grid = function () {      
+    vextension_grid = function (data) {
         var vextensionLayout = [{
             name: 'Extension',
             field: 'extension',
-            width: '50%',
+            width: 'auto'
         },{
             field: 'did',
-            name: 'Forwards to',
+            name: 'DID',
             editable: 'true',
-            width: '50%'
-        }];            
+            width: 'auto'
+        },{
+            field: 'timeout',
+            name: 'Timeout',
+            editable: 'Timeout Destination',
+            width: 'auto'
+        },{
+            field: 'pbx_route_id',
+            name: 'Final Destination',
+            editable: 'true',
+            options: data.did_labels,
+            values: data.did_ids,
+            width: 'auto',
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        }];
 
         vextGrid = new dojox.grid.EnhancedGrid({
             id: 'vextGrid',
@@ -182,9 +209,20 @@
         });            
     }
 
-    dojo.addOnLoad(function() {   
-        vextension_grid();
+    dojo.addOnLoad(function() {
+        dojo.xhrGet({
+            url:"/pbx/dids",
+            handleAs:"json",
+            load: function(data) {
+                for(var i in data){
+                    console.log("key", i, "value", data[i]);
+                }
+                vextension_grid(data);
+            }
+        });
+
     });
+
 </script>
 <div style="border: 1px solid #c0c0c0;">
         <div dojoType="dijit.Toolbar" region="top">

@@ -39,6 +39,7 @@ import formencode
 from formencode import validators
 from freepybx.lib.pymap.imap import Pymap
 from freepybx.lib.auth import *
+from freepybx.lib.validators import *
 from decorator import decorator
 from pylons.decorators.rest import restrict
 import formencode
@@ -196,13 +197,13 @@ class CallCenterController(BaseController):
     def ccq_by_id(self, id, **kw):
         items=[]
         for ccq in CallCenterQueue.query.filter_by(context=session['context']).filter_by(id=id).all():
-            items.append({'id': ccq.id, 'name': ccq.name, 'audio_type': ccq.audio_type, 'audio_name': str(ccq.audio_type)+","+str(ccq.audio_name), \
-                          'moh_sound': ccq.moh_sound, 'time_base_score': ccq.time_base_score, 'max_wait_time': ccq.max_wait_time, \
-                          'max_wait_time_with_no_agent': ccq.max_wait_time_with_no_agent, 'max_wait_time_with_no_agent_reached': ccq.max_wait_time_with_no_agent_reached, \
-                          'tier_rules_apply': ccq.tier_rules_apply, 'tier_rule_wait_second': ccq.tier_rule_wait_second, 'tier_rule_wait_multiply_level': ccq.tier_rule_wait_multiply_level, \
-                          'tier_rule_agent_no_wait': ccq.tier_rule_agent_no_wait, 'discard_abandoned_after': ccq.discard_abandoned_after, \
-                          'abandoned_resume_allowed': ccq.abandoned_resume_allowed, 'strategy': ccq.strategy, 'failed_route_id': ccq.failed_route_id, \
-                          'record_calls': ccq.record_calls, 'announce_position': ccq.announce_position, 'announce_sound': "1,"+ccq.announce_sound, \
+            items.append({'id': ccq.id, 'name': ccq.name, 'audio_type': ccq.audio_type, 'audio_name': str(ccq.audio_type)+","+str(ccq.audio_name),
+                          'moh_sound': ccq.moh_sound, 'time_base_score': ccq.time_base_score, 'max_wait_time': ccq.max_wait_time,
+                          'max_wait_time_with_no_agent': ccq.max_wait_time_with_no_agent, 'max_wait_time_with_no_agent_reached': ccq.max_wait_time_with_no_agent_reached,
+                          'tier_rules_apply': ccq.tier_rules_apply, 'tier_rule_wait_second': ccq.tier_rule_wait_second, 'tier_rule_wait_multiply_level': ccq.tier_rule_wait_multiply_level,
+                          'tier_rule_agent_no_wait': ccq.tier_rule_agent_no_wait, 'discard_abandoned_after': ccq.discard_abandoned_after,
+                          'abandoned_resume_allowed': ccq.abandoned_resume_allowed, 'strategy': ccq.strategy, 'failed_route_id': ccq.failed_route_id,
+                          'record_calls': ccq.record_calls, 'announce_position': ccq.announce_position, 'announce_sound': "1,"+ccq.announce_sound,
                           'announce_frequency': ccq.announce_frequency})
         
         out = dict({'identifier': 'id', 'label': 'name', 'items': items})
@@ -403,45 +404,45 @@ class CallCenterController(BaseController):
         response = make_response(out)
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
-        return response(request.environ, self.start_response)    
-    
-    
+        return response(request.environ, self.start_response)
+
+
     @authorize(logged_in)
     def tier_add(self):
         schema = TierForm()
         try:
             form_result = schema.to_python(request.params)
-            
-            a = get_agent(form_result.get('extension'))
-            q = get_queue(form_result.get('name'))
-            t = CallCenterTier.query.filter_by(agent=str(a.extension)+"@"+session['context']).filter_by(queue=q.name).first()
-            
-            if t:
+
+            cca = CallCenterAgent.query.filter_by(id=form_result.get('extension')).filter_by(context=session['context']).first()
+            cur_cct = CallCenterTier.query.filter_by(agent=cca.name).first()
+            ccq = CallCenterQueue.query.filter_by(name=form_result.get('name'))
+
+            if cur_cct:
                 return "Agent in tier already exists!"
-            
+
             cct = CallCenterTier()
-            
-            cct.extension = a.extension           
-            cct.queue_id = q.id
-            cct.agent_id = a.id
-            cct.queue = str(q.name)+"@"+session['context']
-            cct.agent = str(a.extension)+"@"+session['context']
+
+            cct.extension = cca.extension
+            cct.queue_id = ccq.id
+            cct.agent_id = cca.id
+            cct.queue = str(ccq.name)+"@"+session['context']
+            cct.agent = str(cca.extension)+"@"+session['context']
             cct.level = form_result.get('level', 1)
             cct.state = 'Ready'
             cct.position = form_result.get('position', 1)
             cct.context = session['context']
             cct.domain = session['context']
-                
+
             db.add(cct)
             db.commit()
-            db.flush()    
-                        
+            db.flush()
+
         except validators.Invalid, error:
             db.remove()
             return 'Error: %s.' % error
 
-        db.remove() 
-        return "Successfully created agent tier."
+        db.remove()
+        return "Successfully created tier agent."
         
     @authorize(logged_in)
     def update_tier_grid(self):
@@ -504,7 +505,7 @@ class CallCenterController(BaseController):
             os.remove(os.path.join(dir, file_name))
                         
         except:
-            return "Error"
+            return "Error..."
         
         return "Deleted queue recording."
 
@@ -537,11 +538,14 @@ class CallCenterController(BaseController):
     def ad_audio(self):
         items = []
         dir = fs_vm_dir+session['context']+"/recordings/"
-        for i in os.listdir(dir):
-            fo = generateFileObject(i, "",  dir)            
-            items.append({'id': '1,'+fo["name"], 'name': 'Recording: '+fo["name"] , 'data': fo["path"], 'type': 1, 'real_id': ""})
-        
-        db.remove()        
+        try:
+            for i in os.listdir(dir):
+                fo = generateFileObject(i, "",  dir)
+                items.append({'id': '1,'+fo["name"], 'name': 'Recording: '+fo["name"] , 'data': fo["path"], 'type': 1, 'real_id': ""})
+
+            db.remove()
+        except:
+            pass
         out = dict({'identifier': 'id', 'label': 'name', 'items': items})
         
         response = make_response(out)
@@ -565,11 +569,15 @@ class CallCenterController(BaseController):
     def del_tier(self, **kw):
         
         try:
-            del_tier(request.params['id'])                            
+            CallCenterTier.query.filter_by(id=request.params.get('id', 0)).delete()
+            db.commit()
+            db.flush()
+            db.remove()
+
         except:
-            return "Error deleting tier."
+            return "Error deleting tier agent."
         
-        return  "Successfully deleted tier."         
+        return  "Successfully deleted tier agent."
         
 
         

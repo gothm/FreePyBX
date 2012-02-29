@@ -89,7 +89,7 @@
         dijit.byId("mobile").set("value", obj.mobile);
         dijit.byId("notes").set("value", obj.notes);
         dijit.byId("active").set("checked", obj.active);
-        dijit.byId("auth_level").set("value", obj.auth_level);
+        dijit.byId("group_id").set("value", obj.auth_level);
     }
 
     function getUserByID() {
@@ -192,9 +192,12 @@
             <input type="text" name="active" id="active" dojoType="dijit.form.CheckBox"/>
         </li>
         <li class="even">
-            <label class="fieldlabel">Notes</label>
-            <textarea id="notes" name="notes" dojoType="dijit.form.Textarea" cols="60" rows="10"
-                      style="width:350px;height: 80px;"></textarea>
+            <label class="fieldlabel" for="group_id">Admin Group</label>
+            <select dojoType="dijit.form.FilteringSelect"  id="group_id" name="group_id">
+                <option value="2">Extension User</option>
+                <option value="1">PBX Admin</option>
+                <option value="3">Billing &amp; Reports</option>
+            </select>
         </li>
         <li class="odd">
             <label class="fieldlabel">Portal Extension</label>
@@ -202,14 +205,10 @@
                    id="portal_extension" searchAttr="extension" name="extension" />
         </li>
         <li class="even">
-            <label class="fieldlabel" for="auth_level">Auth Level</label>
-            <select dojoType="dijit.form.FilteringSelect" id="auth_level" name="auth_level">
-                <option value="2" >Extension User</option>
-                <option value="1">PBX Admin</option>
-                <option value="3" >Billing &amp; Reports</option>
-            </select>
+            <label class="fieldlabel">Notes</label>
+            <textarea id="notes" name="notes" dojoType="dijit.form.Textarea" cols="60" rows="10"
+                      style="width:350px;height: 80px;"></textarea>
         </li>
-
     </ul>
 </div>
 </html>

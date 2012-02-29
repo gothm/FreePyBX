@@ -66,7 +66,7 @@
         dijit.byId("audio_name").set("value", obj.audio_name);
         
         dojo.forEach(obj.options, function(option) {
-            dijit.byId("option_"+option.option).set("value", option.sip_route_id);
+            dijit.byId("option_"+option.option).set("value", option.pbx_route_id);
         });
         
         dijit.byId("timeout").set("value", obj.timeout);
@@ -93,7 +93,6 @@
     dojo.addOnLoad(function() { 
          getIVRByID();
     });
- 
 
 </script>
 

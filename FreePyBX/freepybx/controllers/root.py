@@ -62,13 +62,22 @@ class RootController(BaseController):
         return self.login()
 
     def logout(self, **kw):
-        session.clear()
-        session.delete()
+        try:
+            if 'user' in session:
+                session.invalidate()
+                del session['user']
+        except:
+            pass
         return self.login()
 
     def login(self, **kw):
-        session.clear()
-        session.delete()
+        try:
+            if 'user' in session:
+                session.invalidate()
+                del session['user']
+        except:
+            pass
+            session.invalidate()
         return render('login.html')
 
     @restrict("POST")
@@ -119,12 +128,23 @@ class RootController(BaseController):
         return render('broker_users.html')      
     
     @authorize(credential('pbx_admin'))
+    def ext_edit(self, **kw):
+        c.has_crm  = session['has_crm']
+        c.has_call_center = session['has_call_center']
+        return render('ext_edit.html')
+
+    @authorize(credential('pbx_admin'))
+    def extension_add(self, **kw):
+        c.has_crm  = session['has_crm']
+        c.has_call_center = session['has_call_center']
+        return render('extension_add.html')
+
+    @authorize(credential('pbx_admin'))
     def user_edit(self, **kw):
         c.has_crm  = session['has_crm']
         c.has_call_center = session['has_call_center']
         return render('user_edit.html')
-    
-    
+
 
     
 
