@@ -1016,7 +1016,7 @@ class AdminController(BaseController):
             db.commit()
             db.flush()
             if logout:
-                del session
+                redirect("/admin/logout")
                 return self.login()
         except Exception, e:
             db.remove()
