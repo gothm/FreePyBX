@@ -49,7 +49,7 @@ import re
 
 
 __all__=['CompanyForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm',
-         'IVRForm', 'IVREditForm','ConferenceForm', 'CIDForm', 'ExytensionForm',
+         'IVRForm', 'IVREditForm','ConferenceForm', 'CIDForm', 'ExtensionForm',
          'VirtualExtensionForm', 'VirtualMailboxForm', 'TODForm', 'UserForm',
          'UserEditForm', 'ExtEditForm', 'CrmAccountForm', 'CrmCampaignForm',
          'Username', 'Login', 'get_extensions', 'get_ivr','AdminUserForm','CustUserAdminForm',
