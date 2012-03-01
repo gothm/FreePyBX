@@ -16,10 +16,10 @@ setup(
         "Pylons>=1.0",
         "SQLAlchemy>=0.5",
         "Genshi>=0.4",
-	"Psycopg2",
+	    "Psycopg2",
         "beautifulsoup",
         "zope.sqlalchemy",
-
+        "pyamf"
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),
