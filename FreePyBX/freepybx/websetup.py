@@ -43,7 +43,7 @@ def setup_app(command, conf, vars):
 
     # Create the tables if they don't already exist        
     # uncomment and adjust for initial setup..
-    #insert_data()
+    insert_data()
     
 def insert_data():
 
