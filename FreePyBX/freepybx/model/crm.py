@@ -107,7 +107,7 @@ class CrmAccount(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     first_name = Column(Unicode(64))
     last_name = Column(Unicode(64))
-    company = Column(Unicode(255))
+    customer = Column(Unicode(255))
     title = Column(Unicode(32))
     created = Column(DateTime,default=datetime.date(datetime.now()))
     last_modified = Column(DateTime,default=datetime.date(datetime.now()))
@@ -127,7 +127,7 @@ class CrmAccount(Base):
     crm_campaign_id = Column(Integer, ForeignKey('crm_campaigns.id', onupdate="CASCADE"))
 
     user_id = Column(Integer)
-    company_id = Column(Integer, ForeignKey('companies.id', onupdate="CASCADE"))
+    customer_id = Column(Integer, ForeignKey('customers.id', onupdate="CASCADE"))
     crm_account_status_type_id = Column(Integer, ForeignKey('crm_account_status_types.id', onupdate="CASCADE"))
     crm_lead_type_id = Column(Integer, ForeignKey('crm_lead_types.id', onupdate="CASCADE"))
 

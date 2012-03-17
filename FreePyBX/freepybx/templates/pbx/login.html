@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<head>
+    <title>FreePyBX</title>
+    <style>
+        body
+        {
+            background-color: #d1e7ff;
+            font-family: sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/js/dijit/themes/claro/claro.css" />
+    <script src="/js/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        dojo.require("dojox.form.BusyButton");
+        dojo.require("dijit.Dialog");
+        dojo.require("dijit.form.TextBox");
+        dojo.require("dijit.form.Form");
+        dojo.require("dijit.form.CheckBox");
+        dojo.require("dojo.cookie");
+
+
+        dojo.addOnLoad(function() {
+            authorizeHandler();
+            dijit.byId("formLogin").show();
+            var un = dojo.cookie("pUser");
+            if (un!=null||un!=undefined){
+                dijit.byId("username").set("value", un);
+            }
+
+        });
+
+        function authorizeHandler() {
+            var form = dojo.byId("loginForm");
+
+            dojo.connect(form, "onsubmit", function(event) {
+                dojo.stopEvent(event);
+
+                dojo.xhrPost({
+                    url: "/auth_user",
+                    handleAs: "text",
+                    form: dojo.byId("loginForm"),
+
+                    load: function(res) {
+                        if(res.indexOf("OK"))
+                            if (dojo.byId("susername").value=="true") {
+                                dojo.cookie("pUser", dojo.byId("username").value,  { expires: 30});
+                            }
+                        document.location.href = "/";
+                        return res;
+                    },
+                    error: function(err, ioArgs) {
+                        console.log(err)
+                    }
+                });
+            });
+        }
+
+        //]]>
+    </script>
+</head>
+<body class="claro">
+<div dojoType="dijit.Dialog" id="formLogin" title="FreePyBX Login" style="margin-top: 100px; margin-right: auto; margin-left: auto;"
+     execute="authorizeHandler();">
+    <form action="postIt" id="loginForm">
+        <table>
+            <tr>
+                <td>
+                    <label for="username">
+                        Username (Email):
+                    </label></td>
+                <td>
+                    <input dojoType="dijit.form.TextBox" type="text" name="username" id="username" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="password">
+                        Password:
+                    </label>
+                </td>
+                <td>
+                    <input dojoType="dijit.form.TextBox" type="password" name="password" id="password"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="susername">
+                        Save Username:
+                    </label>
+
+                </td>
+                <td>
+                    <input dojoType="dijit.form.CheckBox" name="susername" id="susername" value="true" checked="checked" />
+                </td>
+            </tr>
+            <tr>
+                <td align="center" colspan="2">
+                    <input type="submit" value=" Login " label=" Login " dojoType="dojox.form.BusyButton"
+                           busyLabel="Logging in..." timeout="6000" data-dojo-attach-point="submitNode" onclick="authorizeHandler()"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
+

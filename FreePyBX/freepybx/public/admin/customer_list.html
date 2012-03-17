@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script type="text/javascript">
+//<![CDATA[
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
+    dojo.require("dojox.grid.EnhancedGrid");        
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dojox.grid.enhanced.plugins.Pagination");
+    dojo.require("dojox.grid.enhanced.plugins.Filter");    
+    
+    var customerGrid;
+    var customerStore = new dojo.data.ItemFileWriteStore({url: '/admin/customers'});
+        
+    var plugins = {
+        pagination: true,
+        indirectSelection: false
+    };
+
+    customerStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = customerStore._pending;
+        var changes = {};
+        changes.modified = [];
+
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (customerStore._itemsByIdentity) {
+                item = customerStore._itemsByIdentity[i];
+            } else {
+                item = customerStore._arrayOfAllItems[i];
+            }
+            changes.modified.push(itemToJS(customerStore, item));
+        }
+
+        if (changes.modified.length==0) {
+            alert("Nothing to save!");
+            saveComplete();
+            return;
+        }
+        update_customer_grid(dojo.toJson(changes, true));
+        console.log(dojo.toJson(changes, true));
+        saveComplete();
+    };
+
+    itemToJS = function(store, item) {
+        var js = {};
+        if (item && store) {
+            var attributes = store.getAttributes(item);
+            if (attributes && attributes.length > 0) {
+                var i;
+                for (i = 0; i < attributes.length; i++) {
+                    var values = store.getValues(item, attributes[i]);
+                    if (values) {
+                        if (values.length > 1) {
+                            var j;
+                            js[attributes
+                                    [i]] = [];
+                            for (j = 0; j < values.length; j++) {
+                                var value = values[j];
+                                if (store.isItem(value)) {
+                                    js[attributes
+                                            [i]].push(itemToJS(store, value));
+                                } else {
+                                    js[attributes
+                                            [i]].push(value);
+                                }
+                            }
+                        } else { if (store.isItem(values[0])) {
+                            js[attributes
+                                    [i]] = itemToJS(store, values[0]);
+                        } else {
+                            js[attributes
+                                    [i]] = values[0];
+                        }
+                        }
+                    }
+                }
+            }
+        }
+        return js;
+    };
+
+    customer_grid = function () {
+        var customerLayout = [{
+            name: 'Customer Name',
+            field: 'name',
+            width: 'auto'
+        },{
+            name: 'Telephone',
+            field: 'tel',
+            width: 'auto'
+        },{            
+            name: 'Active',
+            field: 'active',
+            editable: 'true',
+            width: 'auto',
+            type: dojox.grid.cells.Bool,
+            formatter: function(value) {
+                console.log(value);
+                return value;
+            }
+        }];            
+                
+        customerGrid = new dojox.grid.EnhancedGrid({
+            query: {id:'*'},
+            selectionMode: 'single',
+            store: customerStore,
+            structure: customerLayout,
+            region: "center",
+            autoHeight: true,
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false
+        },document.createElement('div'));
+                
+        dojo.byId("customerGridDiv").appendChild(customerGrid.domNode);
+        customerGrid.startup();
+    }    
+
+    function editCustomer() {
+        var item = customerGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("customerContent").set("href", "/admin/customer_edit.html");
+    }
+
+    function update_customer_grid(obj) {
+        dojo.xhrGet({
+            url: "/admin/update_customer_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    function delete_customer() {
+        var del_user = userGrid.selection.getSelected()[0];
+        dojo.xhrGet({
+            url: "/admin/del_customer?id="+del_customer.id,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("customerContent").set("href", "/admin/customer_list.html");
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }             
+
+    dojo.addOnLoad(function() {   
+        customer_grid();
+    });
+//]]>
+</script>
+
+<div style="border: 1px solid #c0c0c0;">
+    <div dojoType="dijit.Toolbar" region="top">
+        <button id="addCustomerBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add Customer
+            <script type="dojo/method" event="onClick">
+                dijit.byId("customerContent").set("href", "/admin/customer_add.html");
+            </script>
+        </button>
+        <button id="editCustomerBtn" dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit Customer
+            <script type="dojo/method" event="onClick">
+                if (customerGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select a customer to edit!");
+                    return false;
+                }
+                editCustomer();
+            </script>
+        </button>
+        <button id="saveCustomerBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+            Save
+            <script type="dojo/method" event="onClick">
+                customerStore.save();
+            </script>
+        </button>
+        <button id="delCustomerBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            &nbsp;Delete
+            <script type="dojo/method" event="onClick">
+                delete_customer();
+            </script>
+        </button>
+    </div>
+    <div id="customerGridDiv" style="width:100%;height:100%"></div>
+</div>
+
+</html>
+

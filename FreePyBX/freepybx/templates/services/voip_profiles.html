@@ -1,0 +1,245 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script type="text/javascript">
+    //<![CDATA[
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
+    dojo.require("dojox.grid.EnhancedGrid");
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dojox.grid.enhanced.plugins.Pagination");
+    dojo.require("dojox.grid.enhanced.plugins.Filter");
+
+    var voipProfileGrid;
+    var voipProfileStore = new dojo.data.ItemFileWriteStore({url: '/services/voip_profiles'});
+
+    var plugins = {
+        pagination: true,
+        indirectSelection: false
+    };
+
+    voipProfileStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = voipProfileStore._pending;
+        var changes = {};
+        changes.modified = [];
+
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (voipProfileStore._itemsByIdentity) {
+                item = voipProfileStore._itemsByIdentity[i];
+            } else {
+                item = voipProfileStore._arrayOfAllItems[i];
+            }
+            changes.modified.push(itemToJS(voipProfileStore, item));
+        }
+
+        if (changes.modified.length==0) {
+            alert("Nothing to save!");
+            saveComplete();
+            return;
+        }
+        update_admin_grid(dojo.toJson(changes, true));
+        console.log(dojo.toJson(changes, true));
+        saveComplete();
+    };
+
+    itemToJS = function(store, item) {
+        var js = {};
+        if (item && store) {
+            var attributes = store.getAttributes(item);
+            if (attributes && attributes.length > 0) {
+                var i;
+                for (i = 0; i < attributes.length; i++) {
+                    var values = store.getValues(item, attributes[i]);
+                    if (values) {
+                        if (values.length > 1) {
+                            var j;
+                            js[attributes
+                                    [i]] = [];
+                            for (j = 0; j < values.length; j++) {
+                                var value = values[j];
+                                if (store.isItem(value)) {
+                                    js[attributes
+                                            [i]].push(itemToJS(store, value));
+                                } else {
+                                    js[attributes
+                                            [i]].push(value);
+                                }
+                            }
+                        } else { if (store.isItem(values[0])) {
+                            js[attributes
+                                    [i]] = itemToJS(store, values[0]);
+                        } else {
+                            js[attributes
+                                    [i]] = values[0];
+                        }
+                        }
+                    }
+                }
+            }
+        }
+        return js;
+    };
+
+    voip_profile_grid = function () {
+        var voipProfileLayout = [{
+            name: 'Name',
+            field: 'name',
+            width: 'auto'
+        },{
+            name: 'Username',
+            field: 'username',
+            width: 'auto'
+        },{
+            name: 'Password',
+            field: 'password',
+            width: 'auto'
+        },{
+            name: 'Active',
+            field: 'active',
+            editable: 'true',
+            width: 'auto',
+            type: dojox.grid.cells.Bool,
+            formatter: function(value) {
+                console.log(value);
+                return value;
+            }
+        }];
+
+        voipProfileGrid = new dojox.grid.EnhancedGrid({
+            id: 'voipProfileGrid',
+            jsid: 'voipProfileGrid',
+            query: {id: '*'},
+            selectionMode: 'single',
+            store: voipProfileStore,
+            structure: voipProfileLayout,
+            region: "center",
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            autoHeight: true
+        },document.createElement('div'));
+
+        dojo.byId("voipProfileGridDiv").appendChild(voipProfileGrid.domNode);
+        voipProfileGrid.startup();
+    }
+
+    function editVoipService() {
+        var item = voipProfileGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("servicesContent").set("href", "/services/voip_profile_edit.html");
+    }
+
+    function update_voip_profile_grid(obj) {
+        dojo.xhrGet({
+            url: "/services/update_voip_profile_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    function delete_voip_profile() {
+        var del_svc = voipProfileGrid.selection.getSelected()[0];
+        dojo.xhrGet({
+            url: "/services/delete_voip_profile?id="+del_svc.id,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("servicesContent").set("href", "/services/voip_profiles.html")
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        voip_profile_grid();
+    });
+    //]]>
+</script>
+<div style="border: 1px solid #c0c0c0;">
+    <div dojoType="dijit.Toolbar" region="top">
+        <button dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add Admin
+            <script type="dojo/method" event="onClick">
+                dijit.byId("servicesContent").set("href", "/admin/admin_add.html")
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit Admin
+            <script type="dojo/method" event="onClick">
+                if (voipProfileGrid.selection.getSelected()[0] == undefined) {
+                alert("Please select a admin to edit!");
+                return false;
+                }
+                editVoipService();
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
+            Save
+            <script type="dojo/method" event="onClick">
+                voipProfileStore.save();
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            &nbsp;Delete
+            <script type="dojo/method" event="onClick">
+                delete_voip_profile();
+            </script>
+        </button>
+    </div>
+    <div id="voipProfileGridDiv" style="width:100%;height:100%"></div>
+</div>
+
+</html>
+

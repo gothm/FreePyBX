@@ -54,7 +54,7 @@
                 load: function(res) {
                     if (res.indexOf("Error") == -1) {
                         new voiceware.notice.Notice({message: res});
-                        dijit.byId("adminContent").set("href", "/admin/did_list.html");
+                        dijit.byId("customerContent").set("href", "/admin/did_list.html");
                     } else {
                         new voiceware.notice.Error({message: res});
                     }
@@ -106,11 +106,11 @@
 
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="company_name">Company</label>
+            <label class="fieldlabel" for="customer_name">Customer</label>
 
-            <div dojoType="dojo.data.ItemFileReadStore" jsId="company_store" url="/admin/companies"></div>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="companyStore" value="" searchAttr="name"
-                   name="company_name"/>
+            <div dojoType="dojo.data.ItemFileReadStore" jsId="customer_store" url="/admin/customers"></div>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="customerStore" value="" searchAttr="name"
+                   name="customer_name"/>
         </li>
     </ul>
 </div>

@@ -1,5 +1,5 @@
 """The application's model objects"""
-from freepybx.model.meta import Session, Base, User, Company, Shift, EmailAccount, PbxAccount, PbxDid, PbxProfile, PbxGateway, \
+from freepybx.model.meta import Session, Base, User, Customer, Shift, EmailAccount, PbxAccount, PbxDid, PbxProfile, PbxGateway, \
     PbxRoute, PbxEndpoint, PbxCondition, PbxGroup, PbxGroupMember, PbxAction, PbxCdr
 
 

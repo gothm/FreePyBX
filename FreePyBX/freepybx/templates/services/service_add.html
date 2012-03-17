@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dojox.widget.Wizard");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+
+    var services;
+    var serviceStore;
+
+    dojo.addOnLoad(function () {
+
+        services = new dijit.form.FilteringSelect({
+            store: new dojo.data.ItemFileWriteStore({
+                url: '/services/services'
+            }),
+            autoComplete: true,
+            style: "width: 200px;",
+            required: true,
+            searchAttr: "name",
+            query: {id: '*'},
+            id: "services",
+            onChange: function(id){
+                dijit.byId("step2").set("href", "/admin/service_forms/"+this.item.billing_service_type_id+"-"+this.item.service_id+".html");
+            }
+        }, "services");
+
+
+        new dijit.form.FilteringSelect({
+            store: new dojo.data.ItemFileWriteStore({
+                url: '/services/billing_service_types'
+            }),
+            autoComplete: true,
+            style: "width: 200px;",
+            required: true,
+            id: "service_type",
+            onChange: function(id){
+                dijit.byId('services').query.billing_service_type_id = id || /.*/;
+            }
+        }, "billing_service_type_id");
+
+    });
+
+
+    function serviceAddFormHandler() {
+        if(dijit.byId("service_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/services/add_service",
+                handleAs: "text",
+                form: dojo.byId("service_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("mainContent").set("href", "/services/service_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+</script>
+<style>
+#add_service_wizard {
+    padding-left: 50px;
+}
+
+#add_service_wizard li{
+    padding-top: 4px;
+}
+</style>
+
+<form id="service_add_form" enctype="multipart/form-data">
+    <div id="add_service_wizard" dojoType="dojox.widget.Wizard" nextButtonLabel="Next" previousButtonLabel="Prev" doneButtonLabel="Save">
+        <div dojoType="dojox.widget.WizardPane" id="step1" title="Step 1">
+            <h1>Choose Service Type</h1>
+            <h2>Step 1:</h2>
+            <ul>
+                <li>
+                    <label class="fieldlabel" for="billing_service_type_id">Service Type</label>
+                    <select dojoType="dijit.form.FilteringSelect" id="billing_service_type_id" name="billing_service_type_id" />
+                </li>
+                <li>
+                    <label class="fieldlabel" for="services">Services</label>
+                    <select dojoType="dijit.form.FilteringSelect" searchAttr="name"  id="services" name="services" />
+                </li>
+            </ul>
+
+            <div class="spacer"></div>
+        </div>
+        <div dojoType="dojox.widget.WizardPane" id="step2" title="Step 2" refreshOnShow="true">
+
+            <script type='dojo/method' event="doneFunction">
+                userFormHandler(this);
+                console.log('inline done function called');
+            </script>
+        </div>
+        <script type="dojo/method" event="cancelFunction">
+            this.destroy();
+        </script>
+    </div>
+</form>
+</html>

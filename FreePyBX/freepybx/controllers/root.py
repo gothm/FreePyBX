@@ -78,7 +78,7 @@ class RootController(BaseController):
         except:
             pass
             session.invalidate()
-        return render('login.html')
+        return render('pbx/login.html')
 
     @restrict("POST")
     def auth_user(self, **kw):
@@ -101,49 +101,49 @@ class RootController(BaseController):
 
     @authorize(logged_in)
     def main(self, **kw):
-        c.is_admin = True if session['auth_level'] < 4 else False
+        c.is_admin = True if session['group_id'] == 1 else False
         c.has_crm = session['has_crm']
         c.has_call_center = session['has_call_center']            
         c.queues = get_queue_directory()    
         if c.has_crm:
             c.campaigns = get_campaigns()
-        return render('main.html')  
+        return render('pbx/main.html')
     
     @authorize(credential('pbx_admin'))
     def user_add(self, **kw):
         c.has_crm = session['has_crm']
         c.has_call_center = session['has_call_center']
-        return render('user_add.html')    
+        return render('pbx/user_add.html')
     
     @authorize(logged_in)
     def pbx_users_list(self, **kw):
-        return render('pbx_users_list.html')    
+        return render('pbx/pbx_users_list.html')
     
     @authorize(logged_in)
     def broker_users(self, **kw):
-        c.is_admin = True if session['auth_level'] == 1 else False
+        c.is_admin = True if session['group_id'] == 1 else False
         c.has_crm = session['has_crm']
         c.has_call_center = session['has_call_center']
         c.flashvars = "sid="+session.id+"&user_id="+str(session['user_id'])+"&my_name="+session['name']
-        return render('broker_users.html')      
+        return render('pbx/broker_users.html')
     
     @authorize(credential('pbx_admin'))
     def ext_edit(self, **kw):
         c.has_crm  = session['has_crm']
         c.has_call_center = session['has_call_center']
-        return render('ext_edit.html')
+        return render('pbx/ext_edit.html')
 
     @authorize(credential('pbx_admin'))
     def extension_add(self, **kw):
         c.has_crm  = session['has_crm']
         c.has_call_center = session['has_call_center']
-        return render('extension_add.html')
+        return render('pbx/extension_add.html')
 
     @authorize(credential('pbx_admin'))
     def user_edit(self, **kw):
         c.has_crm  = session['has_crm']
         c.has_call_center = session['has_call_center']
-        return render('user_edit.html')
+        return render('pbx/user_edit.html')
 
 
     

@@ -98,56 +98,13 @@ class CrmController(BaseController):
             members = []
         
         db.remove()
-        headers = [("Content-type", 'application/json'),]
+
         out = dict({'identifier': 'id', 'label': 'name', 'items': items})
         response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
 
         return response(request.environ, self.start_response)
 
-    @authorize(logged_in)
-    def accounts(self):
-        items=[]
-        for account in CrmAccount.query.filter(company_id=session['company_id']).filter(user_id=session['user_id']).all():
-            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
-                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
-                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)
-    
-    @authorize(logged_in)
-    def accounts_by_campaign(self, id):
-        items=[]
-        for account in CrmAccount.query.join(CrmCampaign).filter(CrmAccount.company_id==session['company_id'])\
-                    .filter(CrmAccount.user_id==session['user_id']).filter(CrmCampaign.name==id).all():        
-            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
-                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
-                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)    
-    
-    @authorize(logged_in)
-    def account_by_id(self, id):
-        items=[]
-        for account in CrmAccount.query.join(CrmCampaign).filter(CrmAccount.company_id==session['company_id'])\
-                    .filter(CrmAccount.user_id==session['user_id']).filter(CrmCampaign.name==id).all():        
-            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
-                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
-                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)        
-    
     @authorize(logged_in)
     def campaigns_ids(self):
         names=[]
@@ -163,6 +120,128 @@ class CrmController(BaseController):
         return response(request.environ, self.start_response)
 
     @authorize(logged_in)
+    def campaign_add(self, **kw):
+        schema = CrmCampaignForm()
+        try:
+            form_result = schema.to_python(request.params)
+            cc = CrmCampaign()
+            cc.name = form_result.get('campaign_name')
+            cc.context = session['context']
+
+            db.add(cc)
+            db.commit()
+            db.flush()
+
+            cg = CrmGroup()
+            cg.name = form_result.get('campaign_name')
+            db.add(cg)
+            db.commit()
+            db.flush()
+
+            ccg = CrmCampaignGroup()
+            ccg.name = form_result.get('campaign_name')
+            ccg.crm_group_id = cg.id
+            ccg.crm_campaign_id = cc.id
+            ccg.context = session['context']
+            db.add(ccg)
+            db.commit()
+            db.flush()
+
+            for i in form_result.get('campaign_extensions').split(","):
+                if not i.isdigit():
+                    continue
+                gm = CrmGroupMember()
+                gm.crm_group_id = cg.id
+                gm.context = session['context']
+                gm.extension = i
+
+                db.add(gm)
+                db.commit()
+                db.flush()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Error: %s' % error
+
+        db.remove()
+        return "Successfully added CRM Campaign."
+
+    @authorize(logged_in)
+    def update_campaign_grid(self, **kw):
+
+        w = loads(urllib.unquote_plus(request.params.get("data")))
+
+        try:
+            for i in w['modified']:
+                sg = CrmCampaignGroup.query.filter(CrmCampaignGroup.crm_campaign_id==i['id']).filter(CrmCampaignGroup.context==session['context']).first()
+                CrmGroupMember.query.filter(CrmGroupMember.crm_group_id==sg.crm_group_id).delete()
+
+                for gm in i['members'].split(","):
+                    if not gm.strip().isdigit():
+                        continue
+                    sm = CrmGroupMember()
+                    sm.crm_group_id = sg.crm_group_id
+                    sm.extension = gm.strip()
+                    sm.context = session['context']
+
+                    db.add(sm)
+                    db.commit()
+                    db.flush()
+        except:
+            db.remove()
+            return "Error updating campaign."
+
+        return "Successfully updated campaign."
+
+    @authorize(logged_in)
+    def accounts(self):
+        items=[]
+        for account in CrmAccount.query.filter(customer_id=session['customer_id']).filter(user_id=session['user_id']).all():
+            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
+                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
+                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+
+        return response(request.environ, self.start_response)
+    
+    @authorize(logged_in)
+    def accounts_by_campaign(self, id):
+        items=[]
+        for account in CrmAccount.query.join(CrmCampaign).filter(CrmAccount.customer_id==session['customer_id'])\
+                    .filter(CrmAccount.user_id==session['user_id']).filter(CrmCampaign.name==id).all():        
+            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
+                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
+                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)    
+    
+    @authorize(logged_in)
+    def account_by_id(self, id):
+        items=[]
+        for account in CrmAccount.query.join(CrmCampaign).filter(CrmAccount.customer_id==session['customer_id'])\
+                    .filter(CrmAccount.user_id==session['user_id']).filter(CrmCampaign.name==id).all():        
+            items.append({'id': account.id, 'name': str(account.first_name)+" "+str(account.last_name), 'address': account.address, \
+                          'city': account.city, 'state': account.state, 'zip': account.zip, 'tel': account.tel, 'mobile': account.mobile, \
+                          'email': account.email, 'crm_campaign_id': account.crm_campaign_id})        
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)        
+
+    @authorize(logged_in)
     def account_add(self, **kw):
         schema = CrmAccountForm()
         try:
@@ -170,7 +249,7 @@ class CrmController(BaseController):
             ca = CrmAccount()
             ca.first_name = form_result.get("first_name", "Unknown")
             ca.last_name = form_result.get("last_name", "Unknown")
-            ca.company = form_result.get("company")
+            ca.customer = form_result.get("customer")
             ca.title = form_result.get("title")
             ca.email = form_result.get("email")
             ca.address = form_result.get("address")
@@ -185,7 +264,7 @@ class CrmController(BaseController):
                 ca.active = True 
             else:
                 ca.active = False              
-            ca.company_id = session["company_id"]
+            ca.customer_id = session["customer_id"]
             ca.user_id = session["user_id"]
             ca.crm_campaign_id = form_result.get("crm_campaign_name")
             ca.crm_account_status_type_id = form_result.get("status_type_name")
@@ -197,17 +276,74 @@ class CrmController(BaseController):
         except validators.Invalid, error:
              return 'Error: %s' % error
         
-        return "Successfully added CRM account."        
+        return "Successfully added CRM account."
+
+    @authorize(logged_in)
+    def account_status_types(self):
+        items=[]
+        for act in CrmAccountStatusType.query.filter(context=session['context']).all():
+            items.append({'id': act.id, 'name': act.name, 'desc': act.description})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def account_lead_types(self):
+        items=[]
+        for act in CrmLeadType.query.filter(context=session['context']).all():
+            items.append({'id': act.id, 'name': act.name, 'desc': act.description})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def account_by_id(self, id, **kw):
+        items=[]
+        for crm in CrmAccount.query.filter(CrmAccount.customer_id==session['customer_id']).filter(CrmAccount.id==id).all():
+            items.append({'id': crm.id, 'first_name': crm.first_name, 'last_name': crm.last_name, 'address': crm.address, 'address_2': crm.address_2,\
+                          'city': crm.city, 'state': crm.state, 'zip': crm.zip, 'title': crm.title, 'tel': crm.tel, 'mobile': crm.mobile,\
+                          'tel_ext': crm.tel_ext, 'customer': crm.customer, 'email': crm.email, 'url': crm.url, 'crm_account_status_type_id': crm.crm_account_status_type_id,\
+                          'crm_lead_type_id': crm.crm_lead_type_id, 'crm_campaign_id': crm.crm_campaign_id, 'created': crm.created.strftime("%m/%d/%Y %I:%M:%S %p"),\
+                          'last_modified': crm.last_modified.strftime("%m/%d/%Y %I:%M:%S %p"), 'active': crm.active})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def account_notes_by_id(self, id, **kw):
+        items=[]
+        for note in CrmNote.query.filter(CrmNote.crm_account_id==id).all():
+            items.append({'id': note.id, 'created': note.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'note': note.note , 'crm_account_id': note.crm_account_id})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+
+        return response(request.environ, self.start_response)
 
     @authorize(logged_in)
     def edit_crm_account(self, **kw):
         schema = CrmAccountForm()
         try:
             form_result = schema.to_python(request.params)
-            ca = CrmAccount.query.filter(id=form_result['id']).filter(company_id=session['company_id']).first()
+            ca = CrmAccount.query.filter(id=form_result['id']).filter(customer_id=session['customer_id']).first()
             ca.first_name = form_result.get("first_name", "Unknown")
             ca.last_name = form_result.get("last_name", "Unknown")
-            ca.company = form_result.get("company")
+            ca.customer = form_result.get("customer")
             ca.title = form_result.get("title")
             ca.email = form_result.get("email")
             ca.address = form_result.get("address")
@@ -222,7 +358,7 @@ class CrmController(BaseController):
                 ca.active = True 
             else:
                 ca.active = False              
-            ca.company_id = session["company_id"]
+            ca.customer_id = session["customer_id"]
             ca.user_id = session["user_id"]
             ca.crm_campaign_id = form_result.get("crm_campaign_name")
             ca.crm_account_status_type_id = form_result.get("status_type_name")
@@ -235,134 +371,6 @@ class CrmController(BaseController):
              return 'Error: %s' % error
         
         return "Successfully edited CRM account."     
-      
-    
-    @authorize(logged_in)
-    def account_status_types(self):
-        items=[]
-        for act in CrmAccountStatusType.query.filter(context=session['context']).all():
-            items.append({'id': act.id, 'name': act.name, 'desc': act.description})
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)
-    
-    @authorize(logged_in)
-    def account_lead_types(self):
-        items=[]
-        for act in CrmLeadType.query.filter(context=session['context']).all():
-            items.append({'id': act.id, 'name': act.name, 'desc': act.description})
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)
-    
-    
-    @authorize(logged_in)
-    def campaign_add(self, **kw):
-        schema = CrmCampaignForm()
-        try:
-            form_result = schema.to_python(request.params)
-            cc = CrmCampaign()
-            cc.name = form_result.get('campaign_name')
-            cc.context = session['context']
-
-            db.add(cc)
-            db.commit()
-            db.flush()          
-            
-            cg = CrmGroup()  
-            cg.name = form_result.get('campaign_name')
-            db.add(cg)
-            db.commit()
-            db.flush()          
-            
-            ccg = CrmCampaignGroup()  
-            ccg.name = form_result.get('campaign_name')
-            ccg.crm_group_id = cg.id
-            ccg.crm_campaign_id = cc.id
-            ccg.context = session['context']
-            db.add(ccg)
-            db.commit()
-            db.flush()       
-            
-            for i in form_result.get('campaign_extensions').split(","):
-                if not i.isdigit():
-                    continue
-                gm = CrmGroupMember()
-                gm.crm_group_id = cg.id
-                gm.context = session['context']
-                gm.extension = i
-
-                db.add(gm)
-                db.commit()
-                db.flush()
-                        
-        except validators.Invalid, error:
-            db.remove()
-            return 'Error: %s' % error
-
-        db.remove()   
-        return "Successfully added CRM Campaign." 
-
-    @authorize(logged_in)
-    def update_campaign_grid(self, **kw):
-        
-        w = loads(urllib.unquote_plus(request.params.get("data")))
-
-        try:
-            for i in w['modified']:
-                sg = CrmCampaignGroup.query.filter(CrmCampaignGroup.crm_campaign_id==i['id']).filter(CrmCampaignGroup.context==session['context']).first()
-                CrmGroupMember.query.filter(CrmGroupMember.crm_group_id==sg.crm_group_id).delete()
-                
-                for gm in i['members'].split(","):
-                    if not gm.strip().isdigit():
-                        continue
-                    sm = CrmGroupMember()
-                    sm.crm_group_id = sg.crm_group_id
-                    sm.extension = gm.strip()
-                    sm.context = session['context']                    
-    
-                    db.add(sm)
-                    db.commit()
-                    db.flush()    
-        except:    
-            db.remove()        
-            return "Error updating campaign."
-            
-        return "Successfully updated campaign."    
-    
-    @authorize(logged_in)
-    def account_by_id(self, id, **kw):
-        items=[]        
-        for crm in CrmAccount.query.filter(CrmAccount.company_id==session['company_id']).filter(CrmAccount.id==id).all():
-            items.append({'id': crm.id, 'first_name': crm.first_name, 'last_name': crm.last_name, 'address': crm.address, 'address_2': crm.address_2, \
-                          'city': crm.city, 'state': crm.state, 'zip': crm.zip, 'title': crm.title, 'tel': crm.tel, 'mobile': crm.mobile, \
-                          'tel_ext': crm.tel_ext, 'company': crm.company, 'email': crm.email, 'url': crm.url, 'crm_account_status_type_id': crm.crm_account_status_type_id, \
-                          'crm_lead_type_id': crm.crm_lead_type_id, 'crm_campaign_id': crm.crm_campaign_id, 'created': crm.created.strftime("%m/%d/%Y %I:%M:%S %p"), \
-                          'last_modified': crm.last_modified.strftime("%m/%d/%Y %I:%M:%S %p"), 'active': crm.active})
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)
-    
-    @authorize(logged_in)
-    def account_notes_by_id(self, id, **kw):
-        items=[]        
-        for note in CrmNote.query.filter(CrmNote.crm_account_id==id).all():
-            items.append({'id': note.id, 'created': note.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'note': note.note , 'crm_account_id': note.crm_account_id})
-        db.remove()
-        headers = [("Content-type", 'application/json'),]
-        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
-        response = make_response(out)
-
-        return response(request.environ, self.start_response)     
 
     @authorize(logged_in)
     def add_crm_account_note(self, **kw):

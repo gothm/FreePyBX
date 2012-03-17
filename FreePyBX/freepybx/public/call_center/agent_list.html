@@ -1,0 +1,195 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript">
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Textarea");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+    dojo.require("dijit.layout.TabContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
+    dojo.require("dojox.grid.EnhancedGrid");
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dojox.grid.enhanced.plugins.Pagination");
+    dojo.require("dojox.grid.enhanced.plugins.Filter");    
+    
+    var agentGrid;
+    var agentStore = new dojo.data.ItemFileWriteStore({url: '/call_center/agents'});
+    
+    var plugins = {
+        pagination: true
+    };     
+    
+    
+    agentStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = agentStore._pending;
+        var changes = {};
+        changes.modified = [];
+        
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (agentStore._itemsByIdentity) {
+                item = agentStore._itemsByIdentity[i];
+            } else {
+                item = agentStore._arrayOfAllItems[i];
+            }
+                changes.modified.push(itemToJS(agentStore, item));
+            }
+
+            if (changes.modified.length==0) {
+                alert("Nothing to save!");
+                saveComplete();
+                return;
+            }
+            update_agent_grid(dojo.toJson(changes, true));
+            console.log(dojo.toJson(changes, true));            
+            saveComplete();
+    };  
+        
+    function update_agent_grid(obj) {
+        dojo.xhrGet({
+            url: "/call_center/update_agent_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }       
+        
+    
+    function editAgent() {
+        var item = agentGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("callCenterContent").set("href", "/call_center/agent_edit.html");
+    }
+
+    agent_grid = function () {      
+        var agentLayout = [{
+            name: 'Extension',
+            field: 'extension',
+            width: '50%',        
+        },{
+            name: 'Status',
+            field: 'status',            
+            width: '50%',       
+            editable: true,
+            type: dojox.grid.cells.Select, 
+            options: ['Available', 'Logged Out', 'On Break'],         
+        }];            
+                
+        agentGrid = new dojox.grid.EnhancedGrid({
+            id: 'agentGrid',
+            jsid: 'agentGrid',
+            query: {id: '*'},
+            store: agentStore,
+            structure: agentLayout,
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            region: "center",
+            autoHeight: true
+        },document.createElement('div'));
+                
+        dojo.byId("agentGridDiv").appendChild(agentGrid.domNode);
+        agentGrid.startup();
+    }    
+
+    function delete_agent() {
+        var del_agent = agentGrid.selection.getSelected()[0];
+        
+        dojo.xhrGet({
+            url: "/call_center/del_agent?id="+del_agent.id,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("callCenterContent").set("href", "/call_center/agent_list.html")
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }   
+
+    dojo.addOnLoad(function() {   
+        agent_grid()
+    });
+</script>
+
+<div style="border: 1px solid #c0c0c0;">
+        <div dojoType="dijit.Toolbar"  region="top">
+            <button id="addAgentBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+                Add Agent
+                <script type="dojo/method" event="onClick">
+                    dijit.byId("callCenterContent").set("href", "/call_center/agent_add.html")
+                </script>
+            </button>
+            <button id="editAgentBtn" dojoType="dijit.form.Button" iconClass="editIcon">
+                Edit
+                <script type="dojo/method" event="onClick">
+                    if (agentGrid.selection.getSelected()[0] == undefined) {
+                        alert("Please select aa agent to edit!");
+                        return false;
+                    }
+                    editAgent();
+                </script>
+            </button>                 
+            <button id="savAgentBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+                Save
+                <script type="dojo/method" event="onClick">
+                    agentStore.save();
+                </script>
+            </button>            
+            <button id="delAgentBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+                &nbsp;Delete
+                <script type="dojo/method" event="onClick">
+                    delete_agent();
+                </script>
+            </button>
+        </div>
+    <div id="agentGridDiv" style="width: 100%; height: 100%;"></div>
+</div>
+
+

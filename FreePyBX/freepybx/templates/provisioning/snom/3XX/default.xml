@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+    <phone-settings>
+
+        <web_language perm="RW">English</web_language>
+        <timezone perm="RW">USA-5</timezone>
+        <tone_scheme perm="RW">USA</tone_scheme>
+        <date_us_format perm="R">on</date_us_format>
+        <time_24_format perm="R">off</time_24_format>
+
+        <!-- the following parameters are only required to provide automated firmware updates-->
+        <!-- IMPORTANT: define the URL of the firmware setting file-->
+
+        <!--http://provisioning.snom.com/download/fw/snom300-8.4.35-SIP-f.bin-->
+        <!--http://provisioning.snom.com/download/fw/snom320-8.4.35-SIP-f.bin-->
+        <!--http://provisioning.snom.com/download/fw/snom360-8.4.35-SIP-f.bin-->
+        <!--http://provisioning.snom.com/download/fw/snom370-8.4.35-SIP-f.bin-->
+
+
+        <firmware_status perm="R">${c.firmware_url}</firmware_status>
+        <update_policy perm="R">auto_update</update_policy>
+        <firmware_interval perm="R">2880</firmware_interval>
+
+        <py:for each="ep in c.ep">
+            <user_pname idx="1" perm="R">${ep.auth_id}</user_pname>
+            <user_pass idx="1" perm="R">${ep.password}</user_pass>
+            <user_name idx="1" perm="R">${ep.auth_id}</user_name>
+            <user_realname idx="1" perm="R">${ep.internal_caller_name}</user_realname>
+            <user_host idx="1" perm="R">${ep.user_context}</user_host>
+            <user_srtp idx="1" perm="RW">off</user_srtp>
+            <user_dp_str idx="1" perm="">!([^#]%2b)#!sip:\1@\d!d</user_dp_str>
+        </py:for>
+
+
+
+
+    </phone-settings>
+</settings>

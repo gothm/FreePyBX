@@ -22,8 +22,6 @@
     except that You may alter any license notices to the extent required to
     remedy known factual inaccuracies.
 -->
-
-
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude">
@@ -38,18 +36,15 @@
 <link rel="stylesheet" href="/css/main.css" type="text/css"/>
 <link rel="stylesheet" href="/css/admin.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="/js/dijit/themes/claro/claro.css" />
-<link rel="stylesheet" href="/js/dojox/form/resources/CheckedMultiSelect.css" type="text/css"/> 
 <link rel="stylesheet" href="/js/voiceware/resources/notice.css" type="text/css" media="screen" charset="utf-8"/>
 <link rel="stylesheet" href="/js/voiceware/resources/error.css" type="text/css" media="screen" charset="utf-8"/>
-<link rel="stylesheet" href="/js/voiceware/PyForm/css/PyForm.css" type="text/css" media="screen" charset="utf-8"/>
 <link rel="stylesheet" href="/js/voiceware/PbxForm/css/PbxForm.css" type="text/css" media="screen" charset="utf-8"/>
 <link rel="stylesheet" href="/js/dojo/resources/dojo.css" media="screen"/>
 <link rel="stylesheet" href="/js/dojox/grid/resources/Grid.css" media="screen"/>
 <link rel="stylesheet" href="/js/dojox/grid/resources/claroGrid.css" media="screen"/>
 <link rel="stylesheet" href="/js/dojox/widget/Portlet/Portlet.css" media="screen"/>
-<link rel="stylesheet" href="/js/dojox/layout/resources/GridContainer.css" media="screen"/>
 <link rel="stylesheet" href="/js/dojox/widget/Wizard/Wizard.css" media="screen"/>
-<link rel="stylesheet" href="/js/dijit/themes/claro/claro.css" media="screen"/>    
+<link rel="stylesheet" href="/js/dojox/layout/resources/GridContainer.css" media="screen"/>
 <link rel="stylesheet" href="/js/dojox/grid/enhanced/resources/claro/EnhancedGrid.css" type="text/css"/>
 <style type="text/css">
     @import "/js/dojox/widget/Portlet/Portlet.css";
@@ -59,6 +54,17 @@
         border: 2px dashed #99BBE8;
         cursor: default;
         margin-bottom: 5px;
+    }
+
+    #preloader {
+        width:100%; height:100%; margin:0; padding:0;
+        background:#fff
+        url('/js/dojox/image/resources/images/loading.gif')
+        no-repeat center center;
+        position:absolute;
+        z-index:999;
+        color: #c0c0c0;
+        text-align: center;
     }
 </style>
 <script type="text/javascript">    
@@ -112,10 +118,26 @@
         return true;
     }
 
+    function hidePreloader(){
+        dojo.fadeOut({
+            node:"preloader",
+            duration:700,
+            onEnd: function(){
+                dojo.style("preloader", "display", "none");
+            }
+        }).play();
+    };
+
+    dojo.addOnLoad(function() {
+        hidePreloader();
+    });
+
 </script>
+
 <script src="/js/voiceware-admin.js"></script>
-<!--[if gte IE 9]>
+<!--[if gte IE 9]
 <style type="text/css">
+
     .gradient {
         filter: none;
     }
@@ -123,50 +145,30 @@
 <![endif]-->
 </head>
 <body class="claro">
+<div id="preloader"><h2>Loading...</h2></div>
 <div dojoType="dijit.layout.BorderContainer" id="main" gutters="false">
     <div dojoType="dojox.layout.ContentPane" region="top" id="logo">
-        <img id="logo_img" src="../images/logo.png" width="190px" height="43px"/>
-
+        <img class="logo_img" src="../images/logo.png" width="190px" height="43px"/>
         <div id="mnuLogin" style="float: right">
             <div id="quick_links"></div>
         </div>
     </div>
     <div dojoType="dijit.layout.TabContainer" id="tabs" jsId="tabs" style="border-top: 1px solid #000000;" region="center">
-        <div dojoType="dijit.layout.BorderContainer" title="Administration" gutters="true" class="admin_context">
+        <div dojoType="dijit.layout.BorderContainer" title="PBX Administration" gutters="true" class="admin_context">
             <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px;" style="width:195px; background-color: #E0E4EA;" spliter="true">
                 <div dojoType="dijit.Menu" id="adminNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
-                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
-                        onClick='dijit.byId("adminContent").set("href", "/admin/company_list.html");'>
-                        Customers
-                    </div>     
-                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="didIcon"
-                        onClick='dijit.byId("adminContent").set("href", "/admin/did_list.html");'>
-                        DIDs
-                    </div>
-                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="contextIcon"
-                         onClick='dijit.byId("adminContent").set("href", "/admin/context_list.html");'>
-                        Contexts
-                    </div>
                     <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="profileIcon"
                          onClick='dijit.byId("adminContent").set("href", "/admin/profile_list.html");'>
-                        Profiles
+                        Switch Profiles
                     </div>
                     <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="gatewayIcon"
-                        onClick='dijit.byId("adminContent").set("href", "/admin/gateway_list.html");'>
-                        Gateways
-                    </div>
-                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="adminIcon"
-                         onClick='dijit.byId("adminContent").set("href", "/admin/cust_admin_list.html");'>
-                        Customer Admins
+                         onClick='dijit.byId("adminContent").set("href", "/admin/gateway_list.html");'>
+                        Trunks/Gateways
                     </div>
                     <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="adminIcon"
                         onClick='dijit.byId("adminContent").set("href", "/admin/admin_list.html");'>
-                        Admins
-                    </div>  
-                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="companyIcon"
-                        onClick='dijit.byId("adminContent").set("href", "/admin/company_list.html");'>
-                        Customer Reports
-                    </div>                                                                                      
+                        System Administrators
+                    </div>
                 </div>
             <br/>
             <div dojoType="dijit.Menu" id="adminControlNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
@@ -221,24 +223,82 @@
                 </div>
             </div>
         </div>
-            <div id="adminContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/company_list.html"
+            <div id="adminContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/profile_list.html"
                  minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true" style="background-color: #E0E4EA;">
             </div>
         </div>
-        <div dojoType="dijit.layout.BorderContainer" title="Billing" gutters="true">
-            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:195px;" splitter="true">
-
+        <div dojoType="dijit.layout.BorderContainer" title="Customers" gutters="true">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px;" style="width:195px; background-color: #E0E4EA;" spliter="true">
+                <div dojoType="dijit.Menu" id="customerNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                         onClick='dijit.byId("customerContent").set("href", "/admin/customer_list.html");'>
+                        Customers
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="didIcon"
+                         onClick='dijit.byId("customerContent").set("href", "/admin/did_list.html");'>
+                        DIDs
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="contextIcon"
+                         onClick='dijit.byId("customerContent").set("href", "/admin/context_list.html");'>
+                        Contexts
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="adminIcon"
+                         onClick='dijit.byId("customerContent").set("href", "/admin/cust_admin_list.html");'>
+                        Customer Admins
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="customerIcon"
+                         onClick='dijit.byId("customerContent").set("href", "/admin/customer_list.html");'>
+                        Customer Reports
+                    </div>
+                </div>
             </div>
-            <div id="custBilling" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/billing"
+            <div id="customerContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/customer_list.html"
                  minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
             </div>
         </div>
-        <div id="vwbroker"></div>
+        <div dojoType="dijit.layout.BorderContainer" title="Services" gutters="true">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px;" style="width:195px; background-color: #E0E4EA;" spliter="true">
+                <div dojoType="dijit.Menu" id="servicesNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                         onClick='dijit.byId("servicesContent").set("href", "/services/service_plans.html");'>
+                        Service Plans
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                         onClick='dijit.byId("servicesContent").set("href", "/services/voip_profiles.html");'>
+                        VoIP Service Profiles
+                    </div>
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                         onClick='dijit.byId("servicesContent").set("href", "/services/voip_policies.html");'>
+                        VoIP Service Policies
+                    </div>
+                </div>
+            </div>
+            <div id="servicesContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/services/service_list.html"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+            </div>
+        </div>
+        <div dojoType="dijit.layout.BorderContainer" title="Customer Billing Reports" gutters="true">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:195px;" splitter="true">
+
+            </div>
+            <div id="custBillingReportContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/billing"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+            </div>
+        </div>
+        <div dojoType="dijit.layout.BorderContainer" title="Vendor Billing Reports" gutters="true">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:195px;" splitter="true">
+
+            </div>
+            <div id="vendorBillingReportContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/admin/billing"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+            </div>
+        </div>
     </div>
     <div dojoType="dijit.layout.ContentPane" region="bottom" id="footer" align="left">
         <span>FreePyBX Communications Center</span>
     </div>
 </div>
+<div id="vwbroker" class="dijitHidden"></div>
 <div class="dijitHidden">
     <div dojoType="dijit.Dialog" style="width:350px;" data-dojo-props="title:'FreePyBX Help',href: '', loadingMessage:'Please wait while help is loaded...'" id="help_dlg"></div>
 </div>

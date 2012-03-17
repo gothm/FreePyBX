@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<head>
+    <title>FreePyBX Error ${c.status_code}</title>
+    <style>
+        body
+        {
+            background-color: #d1e7ff;
+            font-family: sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/js/dijit/themes/claro/claro.css" />
+    <script src="/js/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+        dojo.require("dijit.Dialog");
+
+        dojo.addOnLoad(function() {
+            dijit.byId("error_dlg").show();
+        });
+        //]]>
+    </script>
+</head>
+<body class="claro">
+<div dojoType="dijit.Dialog" id="error_dlg" title="Error ${c.status_code}" style="margin: 0 auto; width: 600px;">
+    <table>
+        <tr>
+            <td style="padding: 20px">
+                <p style="font-size: 13px;color: #555;">${c.message}</p>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
+

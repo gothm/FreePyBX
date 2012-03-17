@@ -123,8 +123,8 @@
 
     context_grid = function (data) {
         var contextLayout = [{
-            name: 'Company Name',
-            field: 'company_name',
+            name: 'Customer Name',
+            field: 'customer_name',
             width: 'auto'
         },{
             name: 'Context',
@@ -165,7 +165,7 @@
     function editContext() {
         var item = contextGrid.selection.getSelected();
         tmpObj = item[0];
-        dijit.byId("adminContent").set("href", "/admin/context_edit.html");
+        dijit.byId("customerContent").set("href", "/admin/context_edit.html");
     }
 
     function update_context_grid(obj) {
@@ -187,7 +187,6 @@
         });
     }
 
-
     function delete_context() {
         var del_user = userGrid.selection.getSelected()[0];
         dojo.xhrGet({
@@ -196,7 +195,7 @@
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message: res});
-                    dijit.byId("adminContent").set("href", "/admin/context_list.html")
+                    dijit.byId("customerContent").set("href", "/admin/context_list.html")
                 } else {
                     new voiceware.notice.Error({message: res});
                 }

@@ -1,0 +1,232 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript">
+
+    var extGrid = null;
+    var extStore = new dojo.data.ItemFileWriteStore({url: '/pbx/extensions'});
+        
+    var plugins = {
+        pagination: true,
+    };           
+    
+    extStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = extStore._pending;
+        var changes = {};
+        changes.modified = [];
+        
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (extStore._itemsByIdentity) {
+                item = extStore._itemsByIdentity[i];
+            } else {
+                item = extStore._arrayOfAllItems[i];
+            }
+                changes.modified.push(itemToJS(extStore, item));
+            }
+
+            if (changes.modified.length==0) {
+                alert("Nothing to save!");
+                saveComplete();
+                return;
+            }
+            update_ext_grid(dojo.toJson(changes, true));
+            console.log(dojo.toJson(changes, true));            
+            saveComplete();
+    };        
+
+    extension_grid = function (dbObj) {      
+        var extLayout = [{
+            name: 'Name',
+            field: 'name',
+            editable: 'true',
+            width: 'auto',
+            type: dojox.grid.cells.Select, 
+            options: dbObj.names,         
+            values: dbObj.user_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+           }            
+        },{       
+            name: 'Sip Password',
+            field: 'password',            
+            editable: 'true',
+            width: 'auto'
+        },{
+            name: 'Extension',
+            field: 'extension',            
+            width: 'auto'
+        },{
+            name: 'IP',
+            field: 'ip',            
+            width: 'auto'
+        },{
+            name: 'Port',
+            field: 'port',            
+            width: 'auto'
+        },{
+            name: 'Online',
+            field: 'is_online',            
+            width: 'auto',
+            formatter: function(dat)
+            {
+                if(dat)
+                {
+                    return '<img src="/images/green_circle.png" />';
+                }
+                else
+                {
+                    return '<img src="/images/red_error.png" />';
+                }
+           }                
+        }];            
+                
+        extGrid = new dojox.grid.EnhancedGrid({
+            query: {id: '*'},
+            store: extStore,
+            structure: extLayout,
+            selectionMode: 'single',
+            plugins: plugins,
+            region: "center",       
+            autoHeight: true,
+            columnReordering: true,
+            escapeHTMLInData: false
+        },document.createElement('div'));
+                
+        dojo.byId("extGridDiv").appendChild(extGrid.domNode);
+        extGrid.startup();
+    }    
+    
+    function update_ext_grid(obj) {
+        dojo.xhrGet({
+            url: "/pbx/update_ext_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }
+    
+    function delete_ext() {
+        var del_ext = extGrid.selection.getSelected()[0];
+        
+        dojo.xhrGet({
+            url: "/pbx/del_ext?extension="+del_ext.extension,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                    dijit.byId("mainContent").set("href", "/pbx/extension_list.html")
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }        
+        
+    function editExtData() {
+        var item = extGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("mainContent").set("href", "/pbx/ext_edit.html");
+    }
+
+    dojo.addOnLoad(function() {   
+        dojo.xhrGet({
+            url:"/pbx/names_user_ids",
+            handleAs:"json",
+            load: function(data) {
+                for(var i in data){
+                   console.log("key", i, "value", data[i]);
+                }
+            extension_grid(data);
+            }
+        });
+    });
+    
+</script>
+<style>
+    #borderContainerExt {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div style="border: 1px solid #c0c0c0;">
+<div dojoType="dijit.Toolbar">
+    <button id="addExtBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+        Add Extension
+        <script type="dojo/method" event="onClick">
+            dijit.byId("mainContent").set("href", "/pbx/extension_add.html")
+        </script>
+    </button>
+    <button id="editExtBtn" dojoType="dijit.form.Button" iconClass="editIcon">
+        Edit Extension
+        <script type="dojo/method" event="onClick">
+            if (extGrid.selection.getSelected()[0] == undefined) {
+            alert("Please select an extension to edit!");
+            return false;
+            }
+            editExtData();
+        </script>
+    </button>
+    <button id="saveExtBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+        Save
+        <script type="dojo/method" event="onClick">
+            extStore.save();
+        </script>
+    </button>
+    <button id="deleteExtBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+        &nbsp;Delete
+        <script type="dojo/method" event="onClick">
+            delete_ext();
+        </script>
+    </button>
+</div>
+<div id="extGridDiv" height="100%" width="100%"></div>
+</div>
+

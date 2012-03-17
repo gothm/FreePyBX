@@ -28,14 +28,10 @@ from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 from freepybx.model import *
 from freepybx.model.meta import Session as db
-from genshi import HTML
 from pylons.decorators.rest import restrict
 from genshi import HTML
-import formencode
-from formencode import validators
 from freepybx.lib.auth import *
 from decorator import decorator
-from pylons.decorators.rest import restrict
 import formencode
 from formencode import validators
 from pylons.decorators import validate
@@ -44,7 +40,6 @@ import pylons
 import simplejson as json
 from simplejson import loads, dumps
 import cgitb; cgitb.enable()
-from decorator import decorator
 
 log = logging.getLogger(__name__)
 
@@ -62,16 +57,14 @@ def authenticate(username, password):
         log.debug("database password for user '%s'", username)
         return False
     else:
-        auth_level = auth_user.auth_level
         session['username'] = auth_user.username
         session['password'] = auth_user.password
-        session['company_id'] = auth_user.company_id
-        session['auth_level'] = auth_user.auth_level
+        session['customer_id'] = auth_user.customer_id
         session['user_id'] = auth_user.id
         session['name'] = auth_user.first_name+' '+auth_user.last_name
         session["last_login"] = auth_user.last_login
         session['has_crm'] = auth_user.has_crm 
-        session['company_name'] = auth_user.get_company_name(auth_user.company_id)
+        session['customer_name'] = auth_user.get_customer_name(auth_user.customer_id)
 
         if auth_user.has_crm:
             ea = auth_user.get_email_account()
@@ -96,7 +89,8 @@ def authenticate(username, password):
        
     log.info("authenticated user %s", auth_user.username)
 
-    auth_user.perms = auth_user.permissions
+    session["perms"] = auth_user.permissions
+    session['group_id'] = auth_user.group_id
     session["user"] = auth_user     
     session.save()
     auth_user.register_login(username, session, request)  
@@ -113,7 +107,7 @@ def authenticate_admin(username, password):
         log.debug("No user named: '%s'", username)
         return False        
     elif not auth_user.password:
-        log.error("Bad user/pass:'%s'")
+        log.error("Bad username/pass:'%s'")
         return False
     elif password != auth_user.password:
         log.debug("Database password for user '%s'", username)
@@ -122,8 +116,7 @@ def authenticate_admin(username, password):
         request.environ["REMOTE_USER"] = auth_user.username
         request.environ["HTTP_REMOTE_USER"] = auth_user.username
 
-    auth_user.perms = auth_user.permissions
-
+    session["perms"]= auth_user.permissions
     session["user"] = auth_user
     session["name"] = auth_user.name
     session['user_id'] = auth_user.id
@@ -152,6 +145,9 @@ class HasCredential(object):
     def check(self):
         if 'user' in session:
             row = User.query.filter(User.id==session['user_id']).filter_by(session_id=session.id).first()
+            if not row:
+                session.invalidate()
+                raise AuthenticationError(self.error_msg)
             c.perms = row.permissions
             for p in c.perms:
                 for cred in self.credentials:
@@ -173,6 +169,9 @@ class IsSuperUser(object):
     def check(self):
         if 'user' in session:
             row = AdminUser.query.filter_by(id=session['user_id']).filter_by(session_id=session.id).first()
+            if not row:
+                session.invalidate()
+                redirect("/admin/logout")
             c.perms = row.permissions
             for p in c.perms:
                 if 'superuser' in p:

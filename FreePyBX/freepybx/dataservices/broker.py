@@ -104,8 +104,8 @@ class Broker(Protocol):
         
         self.sid = obj['sid']
         u = Session.query(User.first_name, User.last_name, User.portal_extension, User.tel, \
-                          User.company_id, Company.context).join(Company)\
-                          .filter(Company.id==User.company_id).filter(User.session_id==obj['sid']).first()
+                          User.customer_id, Customer.context).join(Customer)\
+                          .filter(Customer.id==User.customer_id).filter(User.session_id==obj['sid']).first()
         self.name = u[0]+' '+u[1]
         self.extension = u[2]
         self.context = u[5]

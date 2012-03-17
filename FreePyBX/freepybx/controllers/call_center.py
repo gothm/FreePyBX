@@ -354,8 +354,18 @@ class CallCenterController(BaseController):
 
         db.remove()
         return "Successfully edited agent."
-                
-        
+
+    @restrict("GET")
+    @authorize(logged_in)
+    def del_agent(self, **kw):
+
+        try:
+            del_agent(request.params['id'])
+        except:
+            return "Error deleting agent."
+
+        return  "Successfully deleted agent."
+
     def cca_by_id(self, id, **kw):
         items=[]
         for cca in CallCenterAgent.query.filter_by(context=session['context']).filter_by(id=id).all():
@@ -388,8 +398,7 @@ class CallCenterController(BaseController):
             return 'Error: %s' % error
             
         return "Successfully update agent."           
-        
-        
+
     @authorize(logged_in)
     def tiers(self):
         items=[]
@@ -405,7 +414,6 @@ class CallCenterController(BaseController):
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
         return response(request.environ, self.start_response)
-
 
     @authorize(logged_in)
     def tier_add(self):
@@ -465,7 +473,22 @@ class CallCenterController(BaseController):
         except DataInputError, error:
             return 'Error: %s' % error
             
-        return "Sucessfully updated agent tiers."          
+        return "Sucessfully updated agent tiers."
+
+    @restrict("GET")
+    @authorize(logged_in)
+    def del_tier(self, **kw):
+
+        try:
+            CallCenterTier.query.filter_by(id=request.params.get('id', 0)).delete()
+            db.commit()
+            db.flush()
+            db.remove()
+
+        except:
+            return "Error deleting tier agent."
+
+        return  "Successfully deleted tier agent."
         
     def cc_cdr_stats(self):
         pass
@@ -551,40 +574,6 @@ class CallCenterController(BaseController):
         response = make_response(out)
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
-        return response(request.environ, self.start_response)   
-    
-    @restrict("GET")
-    @authorize(logged_in)
-    def del_agent(self, **kw):
-        
-        try:
-            del_agent(request.params['id'])                            
-        except:
-            return "Error deleting agent."
-        
-        return  "Successfully deleted agent." 
-        
-    @restrict("GET")
-    @authorize(logged_in)
-    def del_tier(self, **kw):
-        
-        try:
-            CallCenterTier.query.filter_by(id=request.params.get('id', 0)).delete()
-            db.commit()
-            db.flush()
-            db.remove()
-
-        except:
-            return "Error deleting tier agent."
-        
-        return  "Successfully deleted tier agent."
-        
-
-        
-        
-        
-        
-        
-    
+        return response(request.environ, self.start_response)
     
     

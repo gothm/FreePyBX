@@ -87,6 +87,8 @@
                             <param name='disable-register' value='${str(sipprofile.disable_register).lower()}'/>
                             <param name='log-auth-failures' value='${str(sipprofile.log_auth_failures).lower()}'/>
                             <param name='auth-all-packets' value='${str(sipprofile.auth_all_packets).lower()}'/>
+                            <param name="mailer-app" value="/usr/local/freeswitch/scripts/emailvm.py"/>
+                            <param name="mailer-app-args" value="-i -d -f voicemail@vwna.com -t"/>
                         </settings>
                         <gateways>
                             <py:for each="gateway in sipprofile.get_gateways()">

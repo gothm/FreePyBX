@@ -31,7 +31,7 @@
         <configuration name="voicemail.conf" description="Voicemail">
             <settings></settings>
             <profiles>
-                <py:for each="sipprofile in c.pbx_profiles">
+                <py:for each="sipprofile in c.sip_profiles">
                     <profile name="${sipprofile.name}">
                         <param name="odbc-dsn" value="${c.odbc_credentials}"/>
                         <param name="file-extension" value="mp3"/>

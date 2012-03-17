@@ -44,16 +44,15 @@ from itertools import chain
 from freepybx.model import *
 from util import *
 from freepybx.model.meta import Session as db
-
 import re
 
 
-__all__=['CompanyForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm',
+__all__=['CustomerForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm',
          'IVRForm', 'IVREditForm','ConferenceForm', 'CIDForm', 'ExtensionForm',
          'VirtualExtensionForm', 'VirtualMailboxForm', 'TODForm', 'UserForm',
          'UserEditForm', 'ExtEditForm', 'CrmAccountForm', 'CrmCampaignForm',
          'Username', 'Login', 'get_extensions', 'get_ivr','AdminUserForm','CustUserAdminForm',
-         'get_faxes','get_usernames', 'get_vextensions', 'get_vmbox', 'CompanyEditForm',
+         'get_faxes','get_usernames', 'get_vextensions', 'get_vmbox', 'CustomerEditForm',
          'get_groups', 'get_conf_bridge', 'get_tod_name', 'get_tts', 'GatewayEditForm',
          'get_campaigns', 'LoginForm', 'ObjEncoder', 'UniqueQueue', 'ProfileEditForm',
          'UniqueAgent','UniqueTier', 'QueueForm', 'AgentForm', 'TierForm',
@@ -70,7 +69,6 @@ def make_file_response(path):
     res = Response(content_type=get_mimetype(path))
     res.body = open(path, 'rb').read()
     return res
-
 
 def escapeSpecialCharacters (text, characters):
     for character in characters:
@@ -139,12 +137,12 @@ def tier_delete(q):
     return True
 
 def get_context(self):
-    context = PbxContext.query.filter(PbxContext.company_id==session['company_id']).first()
+    context = PbxContext.query.filter(PbxContext.customer_id==session['customer_id']).first()
     db.remove()
     return context.context
 
-def check_for_remaining_admin(company_id):
-    return len(Company.query.filter(Company.id==company_id).all())
+def check_for_remaining_admin(customer_id):
+    return len(Customer.query.filter(Customer.id==customer_id).all())
 
 def get_queue_directory():
     dirs = []
@@ -257,7 +255,7 @@ def fix_date(t):
     return t.strftime("%m/%d/%Y %I:%M:%S %p")
 
 def get_default_gateway():
-    co = Company.query.filter_by(id=session['company_id']).first()
+    co = Customer.query.filter_by(id=session['customer_id']).first()
     return co.default_gateway
 
 def get_type(id):
@@ -277,7 +275,6 @@ def get_volume(ext):
                        "and CURRENT_TIMESTAMP and bleg_uuid is not null and context = :context",{'ext':ext, 'context': session['context']})
     r = rows.fetchone()
     return r.ct
-
 
 def get_ivr(name):
     return PbxIVR.query.filter(PbxIVR.name==name)\
@@ -329,6 +326,7 @@ def get_campaigns(name):
 def get_context(domain):
     return PbxContext.query.filter(PbxContext.domain==domain).all()
 
+
 class UniqueUsername(formencode.FancyValidator):
      def _to_python(self, value, state):
          if len(get_usernames(value)) > 0:
@@ -337,6 +335,7 @@ class UniqueUsername(formencode.FancyValidator):
                  value, state)
          return value
 
+
 class UniqueProfile(formencode.FancyValidator):
     def _to_python(self, value, state):
         if len(get_profiles(value)) > 0:
@@ -344,6 +343,7 @@ class UniqueProfile(formencode.FancyValidator):
                 'That profile already exists',
                 value, state)
         return value
+
 
 class UniqueIVR(formencode.FancyValidator):
      def _to_python(self, value, state):
@@ -373,6 +373,7 @@ class UniqueExtension(formencode.FancyValidator):
                  value, state)
 
          return value     
+
 
 class UniqueGroup(formencode.FancyValidator):
      def _to_python(self, value, state):
@@ -452,6 +453,7 @@ class UniqueContext(formencode.FancyValidator):
                 value, state)
         return value
 
+
 class UniqueAgent(formencode.FancyValidator):
      def _to_python(self, value, state):
          if has_agent(value):
@@ -459,7 +461,8 @@ class UniqueAgent(formencode.FancyValidator):
                  'That agent already exists',
                  value, state)
          return value
-     
+
+
 class UniqueTier(formencode.FancyValidator):
      def _to_python(self, value, state):
          if has_tier(value):
@@ -530,7 +533,7 @@ class AgentEditForm(formencode.Schema):
     extension = validators.String(not_empty=True)          
 
 
-class CompanyForm(formencode.Schema):
+class CustomerForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
     first_name = validators.String(not_empty=True)
@@ -543,7 +546,8 @@ class CompanyForm(formencode.Schema):
     tel = validators.String(not_empty=False)
     mobile = validators.String(not_empty=False)
 
-class CompanyEditForm(formencode.Schema):
+
+class CustomerEditForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
     first_name = validators.String(not_empty=True)
@@ -635,7 +639,7 @@ class ProfileEditForm(formencode.Schema):
     multiple_registrations = validators.String(not_empty=True)
     vm_from_email = validators.String(not_empty=True)
 
-class CompanyForm(formencode.Schema):
+class CustomerForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
     first_name = validators.String(not_empty=True)
@@ -698,7 +702,7 @@ class DIDForm(formencode.Schema):
     did_name = formencode.All(UniqueDID(), validators.MinLength(10),\
         validators.String(not_empty=True),\
         validators.MaxLength(15))
-    company_name = validators.String(not_empty=True)
+    customer_name = validators.String(not_empty=True)
 
 
 class FaxForm(formencode.Schema):
@@ -847,12 +851,14 @@ class ExtEditForm(formencode.Schema):
     password = validators.String(not_empty=True)
     vm_password = validators.String(not_empty=True)
 
+
 class ContextForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
     profile = validators.String(not_empty=True)
     context = validators.String(not_empty=True)
-    company_id = validators.Number(not_empty=True)
+    customer_id = validators.Number(not_empty=True)
+
 
 class ContextEditForm(formencode.Schema):
     allow_extra_fields = True
@@ -860,7 +866,8 @@ class ContextEditForm(formencode.Schema):
     id = validators.String(not_empty=True)
     profile = validators.String(not_empty=True)
     context = validators.String(not_empty=True)
-    company_id = validators.Number(not_empty=True)
+    customer_id = validators.Number(not_empty=True)
+
 
 class Username(validators.Regex):
     regex = R"^(a)?[\w.-]+(@[\w.-]+)?$"
@@ -869,11 +876,13 @@ class Username(validators.Regex):
 
     messages = {"invalid": '''Alphanumeric characters, "_", "-", "." and "@" are allowed.'''}
 
+
 class LoginForm(formencode.Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     username = formencode.validators.Email(not_empty=True)
     password = formencode.validators.String(not_empty=True)
+
 
 class Login(formencode.Schema):
     allow_extra_fields = True

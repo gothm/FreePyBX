@@ -33,11 +33,9 @@ from paste.debug.profile import *
 
 class BaseController(WSGIController):
 
-
 #    @profile_decorator(logfile='stdout')
 #    def __begin__(self):
 #        pass
-
 
     def __call__(self, environ, start_response):
         """Invoke the Controller"""

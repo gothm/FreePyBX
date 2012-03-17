@@ -1,0 +1,40 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<py:def function="message_grid">
+    <div id="msg_center">
+        <table id="message_headers">
+            <tr><th>subject</th><th>from</th><th>received</th><th>size</th></tr>
+            <tr py:for="i, hdr in enumerate(c.message_headers)" class="${i%2 and 'msg_odd' or 'msg_even'}_${'seen' if hdr['flags']['seen'] is True else 'unseen'}">
+                <td><a href="/mail_do?${hdr['msg_num']}">${hdr['header']['subject']}</a></td><td><a href="/message/compose?to=${hdr['header']['from']}">${hdr['header']['from']}</a></td><td>${hdr['date']}</td><td>${hdr['size']}</td>
+            </tr>
+        </table>
+    </div>
+</py:def>
+
+</html>
+
+

@@ -54,8 +54,24 @@ html, body, #app_main {
 
 #vwbroker {background-color: #13395e;}
 
-#logo_img {
+#add_service_wizard {
+    width: 800px;
+    background-color: rgba(127, 199, 250, 0.36);
+}
+
+.logo_img {
     margin-left: 40px;
+}
+
+.mnu_login {
+    float: right;
+    text-align: center;
+    margin-right: 30px
+}
+
+#email_top h4{
+    margin-left: 20px;
+    color: #777;
 }
 
 .welcome {
@@ -248,7 +264,12 @@ html, body, #app_main {
     background-position: 0px;
 }
 
-.vwbroker {background-color: #13395e;}
+#vwbroker {
+    background-color: #13395e;
+    display: none;
+    width: 1px;
+    height: 1px;
+}
 
 #mini_help
 {

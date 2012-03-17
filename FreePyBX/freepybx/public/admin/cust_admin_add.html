@@ -49,7 +49,7 @@
                 load: function(res) {
                     if (res.indexOf("Error") == -1) {
                         new voiceware.notice.Notice({message: res});
-                        dijit.byId("adminContent").set("href", "/admin/cust_admin_list.html");
+                        dijit.byId("customerContent").set("href", "/admin/cust_admin_list.html");
                     } else {
                         new voiceware.notice.Error({message: res});
                     }
@@ -65,7 +65,7 @@
 
 </script>
 
-<div dojoType="dojo.data.ItemFileReadStore" jsId="company_store" url="/admin/companies_id"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="customer_store" url="/admin/customers_id"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="profileStore" url="/admin/profiles"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="contextStore" url="/admin/context_store"></div>
 <div dojoType="voiceware.PbxForm"
@@ -110,17 +110,17 @@
             </div>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="auth_level">Auth Level</label>
-            <select data-dojo-type="dijit.form.ComboBox" id="auth_level" name="auth_level">
+            <label class="fieldlabel" for="group_id">Auth Level</label>
+            <select data-dojo-type="dijit.form.ComboBox" id="group_id" name="group_id">
                 <option value="1">PBX Admin</option>
                 <option value="2">Extension User</option>
                 <option value="3">Billing & Reports</option>
             </select>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="company_id">Company</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="company_store"  searchAttr="name"
-                   id="company_id" name="company_id"/>
+            <label class="fieldlabel" for="customer_id">Customer</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="customer_store"  searchAttr="name"
+                   id="customer_id" name="customer_id"/>
         </li>
     </ul>
 

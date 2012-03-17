@@ -22,7 +22,6 @@
     remedy known factual inaccuracies.
 """
 
-
 from pylons import request, response, session, tmpl_context as c, url
 
 
@@ -41,7 +40,6 @@ class Flash(object):
             return None
         return message
 
-
     def style(self):
         return session.pop("flash.style", 'notice')
 
@@ -49,7 +47,6 @@ class Flash(object):
         if len(session['flash']) > 0 and session['flash'] is not None:
             return True
         return False
-
 
 
 flash = Flash()

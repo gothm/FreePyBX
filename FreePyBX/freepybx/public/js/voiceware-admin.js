@@ -14,7 +14,7 @@
     The Initial Developer of the Original Code is Noel Morgan, VoiceWARE, Inc.
     Copyright (c) 2011-2012 VoiceWARE, Inc. All Rights Reserved.
     
-    http://www.vwna.com/ 
+    http://www.vwna.com/
  
 */
 
@@ -45,8 +45,7 @@
     dojo.require("dijit.layout.AccordionContainer");    
     dojo.require("dijit._editor.plugins.FontChoice");
     dojo.require("dijit._editor.plugins.LinkDialog");
-    dojo.require("dijit.tree.dndSource");
-    dojo.require("dijit.form.ComboBox");    
+    dojo.require("dijit.form.ComboBox");
     dojo.require("dijit.Menu");
     dojo.require("dijit.MenuItem");
     dojo.require("dijit.MenuSeparator");
@@ -60,14 +59,13 @@
     dojo.require('dojox.form.CheckedMultiSelect');
     dojo.require("dojox.layout.ContentPane");
     dojo.require("dojox.grid.DataGrid");
-    dojo.require("dojox.widget.FisheyeLite");
     dojo.require("dojox.grid.EnhancedGrid");
     dojo.require("dojox.grid.enhanced.plugins.DnD");
     dojo.require("dojox.grid.enhanced.plugins.Menu");
     dojo.require("dojox.grid.enhanced.plugins.NestedSorting");
     dojo.require("dojox.grid.enhanced.plugins.IndirectSelection");    
     dojo.require("dojox.html.entities");
-    
+
     dojo.require("dojox.grid.enhanced.plugins.Menu");
     dojo.require("dojo.data.ItemFileWriteStore");
     dojo.require("dojox.grid.enhanced.plugins.Pagination");
@@ -77,8 +75,8 @@
     dojo.require("dojox.widget.Portlet");
     dojo.require("dojox.widget.FeedPortlet");
     dojo.require("dojox.layout.GridContainer");
-    dojo.require("dojox.widget.Calendar");    
-    
+    dojo.require("dojox.widget.Calendar");
+
     dojo.require("dojox.form.Uploader");
     dojo.require("dojox.form.uploader.FileList");
     dojo.require("dojox.form.uploader.plugins.Flash");    
@@ -192,5 +190,5 @@ dojo.ready(function() {
     attributes.id = "vw_broker";
     attributes.name = "vw_broker";
     attributes.align = "middle";
-    swfobject.embedSWF("/js/voiceware/flex/vwbroker/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf", flashvars, params, attributes, function(e) { vwb = e.ref;});
+    swfobject.embedSWF("/flash/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf", flashvars, params, attributes, function(e) { vwb = e.ref;});
 });

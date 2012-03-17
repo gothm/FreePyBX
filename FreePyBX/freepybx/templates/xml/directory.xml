@@ -9,7 +9,7 @@
     License for the specific language governing rights and limitations
     under the License.
 
-    The Original Code is PythonPBX/VoiceWARE.
+    The Original Code is FreePyBX/VoiceWARE.
 
     The Initial Developer of the Original Code is Noel Morgan, 
     Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
@@ -22,7 +22,6 @@
     except that You may alter any license notices to the extent required to 
     remedy known factual inaccuracies.    
 -->
-
 <document type="freeswitch/xml"
     xmlns:py="http://genshi.edgewall.org/"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -35,19 +34,15 @@
                     <users>
                         <py:if test="c.endpoints is not None">
                             <py:for each="endpoint in c.endpoints">
-                                <?python
-                                    attch_vm = str(endpoint.vm_attach_email).lower()
-                                    em_all = str(endpoint.vm_delete).lower()
-                                    keep_vm = True if endpoint.vm_delete == False else False
-                                ?>
                                 <user id='${endpoint.auth_id}' mailbox='${endpoint.auth_id}'>
                                     <params>
                                         <param name='password' value='${endpoint.password}'/>
                                         <param name='vm-password' value='${endpoint.vm_password}'/>
                                         <param py:if="endpoint.vm_email" name="vm-mailto" value="${endpoint.vm_email}"/>
-                                        <param py:if="endpoint.vm_delete" name="vm-email-all-messages" value="${em_all}"/>
-                                        <param py:if="endpoint.vm_attach_email" name="vm-attach-file" value="${attch_vm}"/>
-                                        <param py:if="endpoint.vm_email" name="vm-keep-local-after-email" value="${keep_vm}"/>
+                                        <param py:if="endpoint.vm_attach_email" name="vm-email-all-messages" value="${str(endpoint.vm_attach_email).lower()}"/>
+                                        <param py:if="endpoint.vm_attach_email" name="vm-attach-file" value="${str(endpoint.vm_attach_email).lower()}"/>
+                                        <param py:if="endpoint.vm_save" name="vm-keep-local-after-email" value="${str(endpoint.vm_save).lower()}"/>
+                                        <param py:if="endpoint.vm_notify_email" name="vm-notify-email-all-messages"  value="${str(endpoint.vm_notify_email).lower()}"/>
                                         <param name="vm-message-ext" value="mp3"/>
                                         <param name="dial-string" value="{presence_id=$${dialed_user}@$${dialed_domain}}$${sofia_contact($${dialed_user}@$${dialed_domain})}"/>
                                     </params>

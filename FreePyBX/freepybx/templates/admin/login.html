@@ -39,7 +39,7 @@
     <script src="/js/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
     <script type="text/javascript">
     //<![CDATA[
-            dojo.require("dijit.form.Button");
+            dojo.require("dojox.form.BusyButton");
             dojo.require("dijit.Dialog");
             dojo.require("dijit.form.TextBox");
             dojo.require("dijit.form.Form");
@@ -123,9 +123,9 @@
                     </tr>
                     <tr>
                         <td align="center" colspan="2">
-                        <button dojoType="dijit.form.Button" type="submit" onClick="authorizeHandler();">
-                            Login
-                        </button></td>
+                            <input type="submit" value=" Login " label=" Login " dojoType="dojox.form.BusyButton"
+                                   busyLabel="Logging in..." timeout="6000" data-dojo-attach-point="submitNode" onclick="authorizeHandler()"/>
+                        </td>
                     </tr>
                 </table>
             </form>

@@ -1,0 +1,107 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    function campaignFormHandler() {
+        if(dijit.byId("campaign_add_form").validate()) { 
+            dojo.xhrPost({
+                url: "/crm/campaign_add",
+                handleAs: "text",
+                form: dojo.byId("campaign_add_form"),
+        
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("mainContent").set("href", "/crm/crm_campaigns.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            }); 
+        }   
+    }    
+
+    
+</script>
+
+<div dojoType="dijit.layout.ContentPane" style="background-color: #ededed; height: 30px; overflow: hidden; margin-bottom: 0px; border-bottom: solid 1px #c0c0c0; border-top: solid 1px #c0c0c0;">
+    <p style="margin-left: 20px; margin-top: 0px; font-weight: bold; font-size: large">Add Campaign</p>
+</div>
+
+<form dojoType="dijit.form.Form" id="campaign_add_form">
+    <fieldset name="group_set" style="margin-top: 20px;border: solid 2px #c0c0c0; padding-top: 30px; padding-left: 30px; padding-bottom: 30px;">
+        <legend style="font-size: large; font-weight: bold; color: #c0c0c0; ">
+            Campaign Information
+        </legend>          
+        <script type="dojo/method" event="onSubmit">
+            if(this.validate()) {
+                return campaignFormHandler();
+            } else {
+                alert('Form contains invalid data.  Please correct and resubmit');
+                return false;
+            }
+            
+            return true;
+            
+        </script>
+        <table cellpadding="0" cellspacing="2" width="500">            
+            <tr>
+                <td valign="top"><strong>Campaign Name: </strong></td>
+                <td>
+                    <input type="text" required="true" name="campaign_name" id="campaign_name" placeholder="e.g. Noodles"
+                        dojoType="dijit.form.ValidationTextBox" 
+                        missingMessage="Please add a campaign name."  
+                        required="true"
+                        regExp="\b[a-zA-Z0-9_]{2,16}\b"
+                        promptMessage="Please enter a valid campaign name."
+                        invalidMessage="Invalid campaign name."
+                        trim="true"                     
+                            
+                        />           
+                </td>
+            </tr>               
+            <tr>
+                <td valign="top" nowrap="true"><strong>Campaign Members: </strong></td>
+                <td>
+                    <input type="text" required="true" name="campaign_extensions" id="campaign_extensions" placeholder="Comma separated. e.g. 101, 102"
+                        dojoType="dijit.form.ValidationTextBox" missingMessage="Please add members for this campaign."  />          
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><br><input type="submit" value="Add Campaign" label="Add Campaign" id="add_campaign_button" dojoType="dojox.form.BusyButton"
+                                    busyLabel="Creating campaign..." timeout="4000" onclick="campaignFormHandler()"/>
+                </td>
+            </tr>
+        </table>
+   </fieldset>
+</form>
+
+

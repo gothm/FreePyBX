@@ -36,16 +36,21 @@ def init_model(engine):
     metadata = Base.metadata
 
 
-__all__ = ['Company','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxContext','PbxIVR','PbxIVROption',
-           'PbxVirtualExtension','PbxCallerIDRoute','PbxBlacklistedNumber','PbxVirtualMailbox','PbxTTS', 'AuthLevel',
+__all__ = ['Customer','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxContext','PbxIVR','PbxIVROption',
+           'PbxVirtualExtension','PbxCallerIDRoute','PbxBlacklistedNumber','PbxVirtualMailbox','PbxTTS',
            'PbxTODRoute','PbxRecording','PbxDid','PbxProfile','PbxGateway','PbxRoute','PbxRouteType','PbxCondition',
            'PbxConditionTmpl','PbxAction','PbxActionTmpl','PbxGroup','PbxGroupMember','PbxEndpoint','Contact','CrmAccount',
            'CrmNote','CrmLog','PbxCdr','HelpCategory','Help','PbxConferenceBridge','PbxRegistration','PbxFax',
            'CallCenterQueue', 'CallCenterAgent', 'CallCenterTier', 'CallCenterCaller', 'VoiceMail', 'PbxChannel', 'PbxDialog',
            'CrmAccountStatusType', 'CrmGroup', 'CrmGroupMember', 'CrmCampaign','CrmLeadType', 'CrmCampaignGroup','CrmAccount',
            'Base', 'Session', 'PbxAclBlacklist', 'Provider', 'e911Address', 'e911DirectionalType', 'admin_user_groups','admin_group_permissions',
-           'e911UnitType', 'e911StreetType', 'CompanyNote', 'Ticket', 'TicketPriority', 'TicketType', 'AdminGroup',
-           'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'company_contexts','condition_actions']
+           'e911UnitType', 'e911StreetType', 'CustomerNote', 'Ticket', 'TicketPriority', 'TicketType', 'AdminGroup',
+           'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'customer_contexts','condition_actions',
+           'PbxDeviceType', 'PbxDeviceManufacturer', 'BillingServiceType', 'VoipServiceType', 'BillingService',
+           'VoipService', 'VoipServicePolicy', 'VoipExtensionServiceProfile', 'VoipTrunkServiceProfile', 'VoipPbxServiceProfile',
+           'BillingServiceFee', 'BillingServiceFeeType', 'BillingCycleType', 'ProviderBillingProfile', 'VoipServicePlan',
+           'ProviderBillingGateway', 'ProviderBillingApiType', 'AuthorizeNetAccount', 'Invoice', 'InvoiceItem', 'Payment',
+           'PaymentType', 'BillingProduct', 'BillingProductType', 'BillingProductFee']
 
 
 
@@ -69,8 +74,8 @@ admin_group_permissions = Table('admin_group_permissions', metadata,
     Column('admin_permission_id', Integer, ForeignKey('admin_permissions.id', onupdate="CASCADE", ondelete="CASCADE"))
 )
 
-company_contexts = Table('company_contexts', metadata,
-    Column('company_id', Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE")),
+customer_contexts = Table('customer_contexts', metadata,
+    Column('customer_id', Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE")),
     Column('pbx_context_id', Integer, ForeignKey('pbx_contexts.id'))
 )
 
@@ -80,14 +85,14 @@ condition_actions = Table('condition_actions', metadata,
 )
 
 
-from freepybx.model.core import AdminUser, AdminGroup, Provider, Company, User, Group, Permission, \
-    AdminPermission, EmailAccount, Contact, CompanyNote, Ticket, TicketPriority, TicketType, Shift, AuthLevel
+from freepybx.model.core import AdminUser, AdminGroup, Provider, Customer, User, Group, Permission, \
+    AdminPermission, EmailAccount, Contact, CustomerNote, Ticket, TicketPriority, TicketType, Shift
 
 from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExtension,\
     PbxCallerIDRoute, PbxBlacklistedNumber, PbxVirtualMailbox, PbxTTS, PbxTODRoute,\
     PbxRecording, PbxDid, PbxProfile, PbxGateway, PbxAclBlacklist, PbxRoute,\
     PbxRouteType, PbxCondition, PbxConditionTmpl, PbxAction, PbxActionTmpl, PbxGroup,\
-    PbxGroupMember, PbxEndpoint, PbxDeviceType, DeviceManufacturer, PbxCdr,\
+    PbxGroupMember, PbxEndpoint, PbxDeviceType, PbxDeviceManufacturer, PbxCdr,\
     PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog,\
     PbxChannel, e911Address, e911DirectionalType, e911UnitType, e911StreetType
 
@@ -98,3 +103,9 @@ from freepybx.model.crm import CrmAccountStatusType, CrmGroup, CrmCampaignGroup,
     CrmCampaign, CrmGroupMember, CrmLeadType, CrmAccount, CrmLog, CrmNote
 
 from freepybx.model.help import Help, HelpCategory
+
+from freepybx.model.billing import BillingService, BillingServiceType, VoipServiceType, VoipServicePlan, \
+    VoipService, VoipServicePolicy, VoipExtensionServiceProfile, VoipTrunkServiceProfile, VoipPbxServiceProfile, \
+    BillingServiceFee, BillingServiceFeeType, BillingCycleType, ProviderBillingProfile, \
+    ProviderBillingGateway, ProviderBillingApiType, AuthorizeNetAccount, Invoice, InvoiceItem, Payment, \
+    PaymentType, BillingProduct, BillingProductType, BillingProductFee

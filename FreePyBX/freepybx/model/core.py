@@ -22,16 +22,15 @@
     remedy known factual inaccuracies.
 """
 
-
 import datetime
 from datetime import datetime
 from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.types import Integer, DateTime, Boolean, Unicode, UnicodeText
 from sqlalchemy.orm import relation, synonym, relationship, backref
 from freepybx.model import user_groups, group_permissions, admin_user_groups, admin_group_permissions, \
-        company_contexts, condition_actions
+        customer_contexts, condition_actions
 from freepybx.model.meta import Base, Session as db
-from freepybx.model.pbx import PbxEndpoint, PbxContext
+from freepybx.model.pbx import PbxEndpoint, PbxContext, PbxProfile
 from freepybx.model.call_center import CallCenterAgent
 
 import logging
@@ -176,19 +175,19 @@ class Provider(Base):
     ip = property(_get_ip, _set_ip)
 
 
-class Company(Base):
-    __tablename__= 'companies'
+class Customer(Base):
+    __tablename__= 'customers'
 
     query = db.query_property()
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     name = Column(Unicode(100),nullable=False)
-    company_type_id = Column(Integer, default=1)
+    customer_type_id = Column(Integer, default=1)
     pbx_profile_id = Column(Integer, ForeignKey('pbx_profiles.id', onupdate="CASCADE", ondelete="CASCADE"))
     tax_id =  Column(Unicode(100))
     start_date = Column(DateTime,default=datetime.date(datetime.now()))
-    last_login = Column(DateTime,default=datetime.date(datetime.now()))
     end_date = Column(DateTime)
+    last_login = Column(DateTime,default=datetime.date(datetime.now()))
     email = Column(Unicode(100))
     address = Column(Unicode(100))
     address_2 = Column(Unicode(100))
@@ -207,31 +206,36 @@ class Company(Base):
     contact_email = Column(Unicode(64))
     has_crm = Column(Boolean, default=False)
     has_call_center = Column(Boolean, default=False)
-    max_extensions = Column(Integer, nullable=False, default=4)
-    max_minutes = Column(Integer, nullable=False, default=10000)
-    max_queues = Column(Integer, nullable=False, default=4)
-    max_agents = Column(Integer, nullable=False, default=16)
     notes = Column(UnicodeText)
     default_gateway = Column(Unicode(64))
 
-    company_users = relationship("User", backref="users")
+    customer_users = relationship("User", backref="users")
     contexts = relationship("PbxContext", backref="pbx_contexts")
     e911_addresses = relationship("e911Address", backref='e911_addresses')
-    company_notes = relationship("CompanyNote", backref='company_notes')
+    customer_notes = relationship("CustomerNote", backref='customer_notes')
     tickets = relationship("Ticket", backref='tickets')
 
-    company_contexts = relationship('PbxContext', secondary=company_contexts, backref='companies')
+    customer_contexts = relationship('PbxContext', secondary=customer_contexts, backref='customers')
 
 
-    def __init__(self, name='Acme VoIP'):
+    def __init__(self, name='Unknown'):
         self.name = name
 
     def __repr__(self):
-        return "<Company({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16}>".format(\
-            self.id,self.name,self.company_type_id,self.tax_id,self.start_date,self.end_date,self.email,self.address,self.address_2,\
-            self.city,self.state,self.zip,self.url,self.tel,self.active,self.lat_lon, self.company_users)
+        return "<Customer({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26},{27}>".format(
+            self.id,self.name,self.customer_type_id,self.pbx_profile_id,self.tax_id,self.start_date,self.end_date,self.last_login,
+            self.email,self.address,self.address_2,self.city,self.state,self.zip,self.url,self.tel,self.active,self.lat_lon,
+            self.context,self.contact_phone,self.contact_mobile,self.contact_name,self.contact_title,self.contact_email,
+            self.has_crm,self.has_call_center,self.notes,self.default_gateway)
+
     def __str__(self):
         return self.name
+
+    @property
+    def profile(self):
+        p = PbxProfile.query.filter_by(id=self.pbx_profile_id).first()
+        if p:
+            return p.name
 
 
 class User(Base):
@@ -240,7 +244,7 @@ class User(Base):
     query = db.query_property()
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    company_name = Column(Unicode(255), nullable=True)
+    customer_name = Column(Unicode(255), nullable=True)
     username = Column(Unicode(128), unique=True, nullable=False)
     password = Column(Unicode(32), nullable=False)
     first_name =  Column(Unicode(64), nullable=True)
@@ -256,25 +260,29 @@ class User(Base):
     created = Column(DateTime,default=datetime.now())
     updated = Column(DateTime,default=datetime.now())
     active = Column(Boolean, default=True)
-    auth_level = Column(Integer, nullable=False, default=4)
     last_login = Column(DateTime, default=datetime.now())
     remote_addr = Column(Unicode(15), nullable=True)
     session_id =  Column(Unicode(128), nullable=True)
     portal_extension = Column(Unicode(15), default=u'Unknown')
     has_crm = Column(Boolean, default=False)
-    company_id =  Column(Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE"))
+    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+
+    def __repr__(self):
+        return "<User({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22})>".format(
+            self.id,self.customer_name,self.username,self.password,self.first_name,self.last_name,self.address,self.address_2,self.city,self.state,self.zip,self.tel,
+            self.mobile,self.notes, self.created, self.updated, self.active, self.last_login, self.remote_addr, self.session_id, self.portal_extension,
+            self.has_crm,self.customer_id)
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.customer_name
 
     def __init__(self, first_name=None, last_name=None, username=None,
-                 password=None, auth_level=None, company_id=None, active=False):
+                 password=None, customer_id=None, active=False):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
         self.password = password
-        self.auth_level = auth_level
-        self.company_id = company_id
+        self.customer_id = customer_id
         self.active = active
 
     @property
@@ -282,20 +290,24 @@ class User(Base):
         for g in self.groups:
             perms = g.permissions
         return perms
+    @property
+    def group_id(self):
+        g = db.execute("SELECT group_id FROM user_groups WHERE user_id = :user_id", {'user_id': self.id}).first()
+        return g[0]
 
     def get_name(self):
         return User.first_name + ' ' + User.last_name
 
     def get_gateway(self):
-        gw = db.query(PbxContext.gateway).join(Company).join(User).filter(User.company_id==Company.id).first()
+        gw = db.query(PbxContext.gateway).join(Customer).join(User).filter(User.customer_id==Customer.id).first()
         return 0 if not gw else gw[0]
 
     def has_call_center(self):
-        co = db.query(Company).filter(Company.id==self.company_id).first()
+        co = db.query(Customer).filter(Customer.id==self.customer_id).first()
         return co.has_call_center
 
     def get_context(self):
-        co = db.query(Company).filter(Company.id==self.company_id).first()
+        co = db.query(Customer).filter(Customer.id==self.customer_id).first()
         return co.context
 
     def get_extension(self):
@@ -330,20 +342,15 @@ class User(Base):
         db.remove()
 
     @classmethod
-    def get_company_name(class_, company_id):
-        company = db.query(Company).filter(Company.id==company_id).first()
-        if company:
-            return company.name
+    def get_customer_name(class_, customer_id):
+        customer = db.query(Customer).filter(Customer.id==customer_id).first()
+        if customer:
+            return customer.name
 
     def get_email_account(self):
         email = db.query(EmailAccount).filter(EmailAccount.user_id==self.id).first()
         if email:
             return email
-
-    def __repr__(self):
-        return "<User({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21})>".format(
-            self.id,self.company_name, self.username, self.password,self.first_name,self.last_name,self.address,self.address_2,self.city,self.state,self.zip,self.tel,
-            self.mobile,self.notes, self.created, self.updated, self.active, self.auth_level, self.last_login, self.remote_addr, self.session_id, self.company_id)
 
 
 class Group(Base):
@@ -428,7 +435,7 @@ class EmailAccount(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     user_id =  Column(Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
-    company_id =  Column(Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE"))
+    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
     email = Column(Unicode(64), unique=True, nullable=False)
     password = Column(Unicode(255), nullable=False)
     mail_server = Column(Unicode(64), nullable=False)
@@ -445,6 +452,8 @@ class Contact(Base):
         self.email = _email
 
     id = Column(Integer, autoincrement=True, primary_key=True)
+    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE"))
     first_name = Column(Unicode(64), unique=True, nullable=False)
     last_name = Column(Unicode(64), unique=True, nullable=False)
     email = Column(Unicode(64), unique=True, nullable=False)
@@ -463,7 +472,7 @@ class Contact(Base):
     active = Column(Boolean, default=True)
     status = Column(Integer, default=1)
     lat_lon = Column(Unicode(100), default=u"0,0")
-    user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE"))
+
 
     def __str__(self):
         return '<%s>' % self.__class__.__name__
@@ -472,13 +481,13 @@ class Contact(Base):
         return '<%s %r>' % (self.__class__, self.__dict__)
 
 
-class CompanyNote(Base):
-    __tablename__='company_notes'
+class CustomerNote(Base):
+    __tablename__='customer_notes'
 
     query = db.query_property()
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    company_id =  Column(Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE"))
+    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
     created = Column(DateTime,default=datetime.date(datetime.now()))
     subject  =  Column(Unicode(128), nullable=True)
     note = Column(UnicodeText, nullable=False)
@@ -490,7 +499,7 @@ class Ticket(Base):
     query = db.query_property()
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    company_id =  Column(Integer, ForeignKey('companies.id', onupdate="CASCADE", ondelete="CASCADE"))
+    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
     ticket_priority_id =  Column(Integer, ForeignKey('ticket_priorities.id', onupdate="CASCADE", ondelete="CASCADE"))
     ticket_type =  Column(Integer, ForeignKey('ticket_types.id', onupdate="CASCADE", ondelete="CASCADE"))
     created = Column(DateTime,default=datetime.date(datetime.now()))
@@ -539,12 +548,4 @@ class Shift(Base):
     type_id = Column(Integer, default=1)
 
 
-class AuthLevel(Base):
-    __tablename__='auth_levels'
-
-    query = db.query_property()
-
-    id = Column(Integer, autoincrement=True, primary_key=True)
-    name = Column(Unicode(64))
-    description = Column(Unicode(128))
 

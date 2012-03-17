@@ -30,7 +30,7 @@ import transaction
 from freepybx.lib.base import BaseController
 from freepybx.lib.auth import *
 from freepybx.model import meta
-from freepybx.model.meta import User, Group, Contact
+from freepybx.model import *
 from simplejson import loads, dumps
 from webob import Request, Response
 import simplejson as json
@@ -69,8 +69,8 @@ def get_contact(id):
 def get_logs(id):
     pass
 
-def make_response(obj, _content_type='application/json'):
-    res = Response(content_type=_content_type)
+def make_response(obj, content_type='application/json'):
+    res = Response(content_type=content_type)
     if(content_type=="application/json"):
         res.charset = 'utf8'
         res.body = dumps(obj)

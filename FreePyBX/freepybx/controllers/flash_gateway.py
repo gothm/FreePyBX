@@ -91,11 +91,11 @@ def make_agent(name=None,volume=0,talk_time=0):
     
     return a
 
-def make_broker_user(name, id, company_id, email, mobile, ext, uuid, is_online):
+def make_broker_user(name, id, customer_id, email, mobile, ext, uuid, is_online):
     b = BrokerUser()
     b.name = name
     b.id = id
-    b.company_id = company_id
+    b.customer_id = customer_id
     b.email = email
     b.mobile = mobile
     b.ext = ext 
@@ -158,7 +158,7 @@ class VoiceWareService(object):
         else:
             raise Exception("No user in session...")
             
-        for row in User.query.filter(User.company_id==user.company_id).all():
+        for row in User.query.filter(User.customer_id==user.customer_id).all():
             if not len(row.portal_extension):
                 continue      
             else:
@@ -179,13 +179,13 @@ class VoiceWareService(object):
         else:
             raise Exception("No session id in db matching the user calling this method.")
                         
-        for r in db.execute("SELECT DISTINCT users.first_name, users.last_name, users.id, users.company_id, "
-                            "companies.context AS context, users.portal_extension, "
+        for r in db.execute("SELECT DISTINCT users.first_name, users.last_name, users.id, users.customer_id, "
+                            "customers.context AS context, users.portal_extension, "
                             "users.tel, users.mobile, users.username, sip_dialogs.uuid AS uuid "
                             "FROM users "
-                            "INNER JOIN companies ON users.company_id = companies.id "
-                            "LEFT JOIN sip_dialogs ON sip_dialogs.presence_id = users.portal_extension || '@' || companies.context "
-                            "WHERE companies.context = :context ORDER BY users.id", {'context': context}):
+                            "INNER JOIN customers ON users.customer_id = customers.id "
+                            "LEFT JOIN sip_dialogs ON sip_dialogs.presence_id = users.portal_extension || '@' || customers.context "
+                            "WHERE customers.context = :context ORDER BY users.id", {'context': context}):
 
             for pbx_reg in PbxRegistration.query.filter(PbxRegistration.sip_realm==context).filter(PbxRegistration.sip_user==r[5]).all():
                 ep_stats.append({'ip': pbx_reg.network_ip, 'port':pbx_reg.network_port})
@@ -249,11 +249,11 @@ class VoiceWareService(object):
         else:
             return                
         
-        ep = db.execute("SELECT pbx_endpoints.outbound_caller_id_number AS pbx_endpoints_outbound_caller_id_number, companies.tel AS companies_tel "
+        ep = db.execute("SELECT pbx_endpoints.outbound_caller_id_number AS pbx_endpoints_outbound_caller_id_number, customers.tel AS customers_tel "
                         "FROM pbx_endpoints "
-                        "INNER JOIN companies on companies.context  = pbx_endpoints.user_context "
-                        "WHERE companies.context = :context AND companies.id = :company_id AND pbx_endpoints.auth_id = :auth_id",
-                        {'context': context,'company_id': user.company_id, 'auth_id': user.portal_extension}).fetchone()
+                        "INNER JOIN customers on customers.context  = pbx_endpoints.user_context "
+                        "WHERE customers.context = :context AND customers.id = :customer_id AND pbx_endpoints.auth_id = :auth_id",
+                        {'context': context,'customer_id': user.customer_id, 'auth_id': user.portal_extension}).fetchone()
         if len(ep[0])==10:
             origination_caller_id_number = ep[0]
         else:
@@ -266,7 +266,7 @@ class VoiceWareService(object):
     def reloadCallCenter(self, sid):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>1:
+            if user.group_id>1:
                 return
         else:
             return
@@ -282,7 +282,7 @@ class VoiceWareService(object):
     def reloadXML(self, sid):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>1:
+            if user.group_id>1:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
@@ -296,7 +296,7 @@ class VoiceWareService(object):
     def reloadProfile(self, sid, profile=None):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>1:
+            if user.group_id>1:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
@@ -310,7 +310,7 @@ class VoiceWareService(object):
     def reloadACL(self, sid):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>1:
+            if user.group_id>1:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
@@ -324,7 +324,7 @@ class VoiceWareService(object):
     def showGateways(self, sid, profile=None):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>1:
+            if user.group_id>1:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
@@ -338,7 +338,7 @@ class VoiceWareService(object):
     def sofiaStatus(self, sid):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>3:
+            if user.group_id>3:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
@@ -352,7 +352,7 @@ class VoiceWareService(object):
     def showRegUsers(self, sid, profile=None):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            if user.auth_level>3:
+            if user.group_id>3:
                 return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)

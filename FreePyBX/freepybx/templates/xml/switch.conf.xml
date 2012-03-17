@@ -93,10 +93,10 @@
            max-dtmf-duration. -->
             <!--<param name="min-dtmf-duration" value="400"/>-->
             <!-- The max-dtmf-duration caps the playout of a DTMF event at the specified
-    duration. Events exceeding this duration will be truncated to this
-    duration. You cannot configure a duration on a profile that exceeds
-    this setting. This setting can be lowered, but cannot exceed 192000.
-    This setting cannot be set lower than min_dtmf_duration. -->
+            duration. Events exceeding this duration will be truncated to this
+            duration. You cannot configure a duration on a profile that exceeds
+            this setting. This setting can be lowered, but cannot exceed 192000.
+            This setting cannot be set lower than min_dtmf_duration. -->
             <!--<param name="max-dtmf-duration" value="192000"/>-->
             <!-- The default_dtmf_duration specifies the DTMF duration to use on
            originated DTMF events or on events that are received without a

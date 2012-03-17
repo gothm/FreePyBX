@@ -1,0 +1,106 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button"); 
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    
+
+    function vmboxAddFormHandler() {
+
+        dojo.xhrPost({
+            url:"/pbx/vmbox_add",
+            handleAs:"text",
+            form:dojo.byId("vmbox_add_form"),
+
+            load:function (res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message:"Mailbox successfully created."});
+                    dijit.byId("mainContent").set("href", "/pbx/virtual_mailbox_list.html");
+                } else {
+                    new voiceware.notice.Error({message:res});
+                }
+                return res;
+            },
+            error:function (err, ioArgs) {
+                new voiceware.notice.Error({message:err});
+                return err;
+            }
+        });
+    }    
+
+    
+</script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="audioStore" url="/pbx/ivr_audio"></div>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Virtual Mailbox',legend:'Mailbox Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'vmbox_add_form',helpCategory:'add_virtual_mailbox', submitFunc:'vmboxAddFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Virtual Mailbox Extension</label>
+            <input type="text" required="true" name="vmbox_number" id="vmbox_number" placeholder="Example: 201"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add an extension number."
+                   required="true"
+                   regExp="\b[0-9]{3,4}\b"
+                   promptMessage="Please enter a valid 3 or 4 digit extension."
+                   invalidMessage="Invalid extension."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Virtual Mailbox Pin</label>
+            <input type="text" required="true" name="vmbox_pin" id="vmbox_pin" placeholder="Example: 3425"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please add a 4 digit pin."
+                   dojoType="dijit.form.ValidationTextBox"
+                   required="true"
+                   regExp="\b[0-9]{4}\b"
+                   promptMessage="Please enter a 4 digit number."
+                   invalidMessage="Invalid number."
+                   trim="true"
+                    />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Skip Extension Greeting</label>
+            <input id="skip_greetin" name="skip_greetin" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Custom Audio File</label>
+            <input dojoType="dijit.form.FilteringSelect" store="audioStore" value="" id="audio_file" searchAttr="name" name="audio_file">
+        </li>
+    </ul>
+</div>

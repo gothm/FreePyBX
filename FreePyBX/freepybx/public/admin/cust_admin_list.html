@@ -114,8 +114,8 @@
 
     cust_admin_grid = function () {
         var custAdminLayout = [{
-            name: 'Company',
-            field: 'company_name',
+            name: 'Customer',
+            field: 'customer_name',
             width: 'auto'
         },{
             name: 'Admin Name',
@@ -165,7 +165,7 @@
     function editCustAdmin() {
         var item = custAdminGrid.selection.getSelected();
         tmpObj = item[0];
-        dijit.byId("adminContent").set("href", "/admin/cust_admin_edit.html");
+        dijit.byId("customerContent").set("href", "/admin/cust_admin_edit.html");
     }
 
     function update_cust_admin_grid(obj) {
@@ -190,12 +190,12 @@
     function delete_cust_admin() {
         var del_user = custcustAdminGrid.selection.getSelected()[0];
         dojo.xhrGet({
-            url: "/admin/del_cust_admin?id="+del_company.id,
+            url: "/admin/del_cust_admin?id="+del_customer.id,
             handleAs: "text",
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message: res});
-                    dijit.byId("adminContent").set("href", "/admin/cust_admin_list.html")
+                    dijit.byId("customerContent").set("href", "/admin/cust_admin_list.html")
                 } else {
                     new voiceware.notice.Error({message: res});
                 }
@@ -218,7 +218,7 @@
         <button id="addCustAdminBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
             Add Customer Admin
             <script type="dojo/method" event="onClick">
-                dijit.byId("adminContent").set("href", "/admin/cust_admin_add.html")
+                dijit.byId("customerContent").set("href", "/admin/cust_admin_add.html")
             </script>
         </button>
         <button id="editCustAdminBtn" dojoType="dijit.form.Button" iconClass="editIcon">

@@ -1,0 +1,561 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public 
+    License, v. 2.0. If a copy of the MPL was not distributed with this 
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan, 
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+    
+    http://www.vwci.com/ 
+    
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations 
+    of liability) contained within the Source Code Form of the Covered Software, 
+    except that You may alter any license notices to the extent required to 
+    remedy known factual inaccuracies.    
+-->
+
+<py:def function="call_reporting">
+<div dojoType="dijit.layout.BorderContainer" title="Call Reporting" id="tabCallReport" class="admin_context">
+    <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="background-color: #E0E4EA;width:200px;" splitter="true">
+        <div dojoType="dijit.Menu" id="report_menu" style="width:195px;border: 1px solid #c0c0c0;">
+            <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                onClick='dijit.byId("reportingContent").set("href", "/reporting/dashboard.html");'>
+                Reporting By Extension
+            </div>
+        </div>
+    </div>
+    <div id="reportingContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" href="/reporting/dashboard.html"
+            minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true" style="background-color: #E0E4EA;">
+    </div>
+</div>
+</py:def>
+
+<py:def function="support">
+<div dojoType="dijit.layout.BorderContainer" title="Support" id="tabSupport" class="admin_context">
+    <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="background-color: #E0E4EA;width:200px;" splitter="true">
+        <div dojoType="dijit.Menu" id="supportNavMenu" style="width:195px;">
+            <div dojoType="dijit.MenuItem" iconClass="bookIcon"
+                onClick='dijit.byId("supportContent").set("href", "/voip_device.html");'>
+                VoIP and Device Settings
+            </div>                  
+            <div dojoType="dijit.MenuItem" iconClass="bookIcon"
+                onClick='dijit.byId("supportContent").set("href", "/pbx_manual.html");'>
+                PBX Manual and Guide
+            </div>
+            <div dojoType="dijit.MenuItem" iconClass="bookIcon"
+                onClick='dijit.byId("supportContent").set("href", "/support/crm.html");'>
+                CRM Guide
+            </div>
+            <div dojoType="dijit.MenuItem" iconClass="bookIcon"
+                onClick='dijit.byId("supportContent").set("href", "/support/how_to.html");'>
+                Call Center Survival Guide
+            </div>                
+        </div>
+    </div>
+    <div id="supportContent" style="background-color: #E0E4EA;" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" href="/help/help_pbx.html"
+            minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+    </div>
+</div>
+</py:def>
+
+<py:def function="cdr">
+<div dojoType="dijit.layout.BorderContainer" title="CDR" class="admin_context">
+    <div id="cdrContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" style="background-color: #E0E4EA;"
+    minSize="200" href="/pbx/cdr.html" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>
+</div>
+</py:def>
+
+<py:def function="voicemail">
+<div dojoType="dijit.layout.BorderContainer" title="VoiceMail" class="admin_context">
+    <div id="voicemailContainer" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" style="background-color: #E0E4EA;"
+    minSize="200" href="/pbx/voicemail.html" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>
+</div>
+</py:def>
+
+<py:def function="crm">
+<div dojoType="dijit.layout.BorderContainer" title="CRM" class="admin_context">
+    <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:200px;" splitter="true"> 
+        <div dojoType="dijit.Menu" id="crmNavMenu" style="width:195px;">
+            <div dojoType="dijit.MenuItem" iconClass="dijitIconUsers"
+                onClick='dijit.byId("crmContent").set("href", "/crm/crm_campaigns.html");'>
+                Campaign Management
+            </div>
+            <div dojoType="dijit.MenuSeparator">
+            </div>
+            <div dojoType="dijit.PopupMenuItem">
+                <span>
+                   Campaigns Leads
+                </span>
+                <div dojoType="dijit.Menu">
+                <py:for each="campaign in c.campaigns">                      
+                        <div dojoType="dijit.MenuItem" onClick='getCampaignLeads("${campaign}");'>
+                            ${campaign}
+                        </div>                     
+                </py:for>
+                </div>
+            </div>                
+            <div dojoType="dijit.MenuItem" iconClass="dijitIconUsers"
+                onClick='dijit.byId("crmContent").set("href", "/crm/crm_accounts.html");'>
+                My Accounts
+            </div>                
+            <div dojoType="dijit.MenuItem" iconClass="dijitIconUsers"
+                onClick='dijit.byId("crmContent").set("href", "/crm/import_leads.html");'>
+                Import Leads
+            </div>
+        </div>
+    </div>    
+    <div id="crmContent" style="background-color: #E0E4EA;" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true"
+             minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
+    </div>
+</div>
+<div dojoType="dijit.layout.BorderContainer" title="Email" class="admin_context">
+    <div dojoType="dojox.layout.ContentPane" region="top" id="email_top"><h3>Email Center</h3></div>
+    <div dojoType="dijit.layout.TabContainer" title="Email" region="center" tabPosition="bottom">        
+        <div dojoType="dijit.layout.BorderContainer" id="foldersTab" design="sidebar" title="Mail">        
+            <div dojoType="dijit.layout.AccordionContainer" id="accordion"
+                            region="leading" minSize="100px" style="width: 160px;" splitter="true">
+                <div dojoType="dijit.layout.ContentPane" title="Folders">
+                    <div dojoType="dojo.data.ItemFileWriteStore" jsId="boxesStore" url="/pymp/get_folder_list"></div>
+                    <div dojoType="dijit.tree.ForestStoreModel" jsId="folderModel" store="boxesStore"
+                        query="{id:'*'}" rootId="folderRoot" rootLabel="Folders"
+                        childrenAttrs="folders"></div>
+                    <div dojoType="dijit.Tree" id="folderTree" jsId="folderTree" model="folderModel" openOnClick="true"
+                        getIconClass="getIconClassFolders"
+                        dndController="dijit.tree.dndSource">
+                        <script type="dojo/method" event="onDropExternal" args="source, nodes, copy">
+                            //<![CDATA[
+                            
+                            // TODO: fix me
+    
+                            //var sa = dijit.byId("headersGrid").selection.getSelected();
+    
+                            //var items = new Arrary();
+    
+                            for (var i=0; i < nodes.length; i++)
+                            {
+                                console.log("ok"); //dijit.byId("headersGrid")._getItemAttr(sa[i], 'subject'));
+                            }
+    
+                            //var items = dijit.byId("folderTree").dndController.itemCreator(
+                            //  source, dijit.byId("folderTree").dndController.current
+                            //);
+    
+    
+                            //for(var i=0; i < items.length; i++) {
+                            //  var data = dojo.toJson(items[i].item);
+                            //  console.log(data, typeof data);
+                            //  alert(grid.getStore( headerStore.getValue(items[i], "id")));
+                            //  console.log("node: "+items[i].item.id);
+                            //  console.log("item: "+dijit.getEnclosingWidget(items[i]).getStore().getValue(this, "subject"));
+                            //}
+    
+    
+                            //alert(source.getStore( headerStore.getValue(source.selectedItem[0], "id")));
+                            //alert(source.selection.getSelected())
+    
+                            //var queryStr = dojo.objectToQuery(node);
+                            //console.log(queryStr);
+                            // ]]>
+    
+                        </script>
+
+                    <script type="dojo/method" event="onClick" args="item">
+                        if(!item){
+                            return; // top level node in tree doesn't correspond to any item
+                        }
+                        /* filter the message list to messages in this folder */
+                        getStore( boxesStore.getValue(item, "folder_name"));
+                        //headersGrid.setQuery({
+                        //folder: boxesStore.getValue(item, "folder_name")
+                        //});
+                    </script>
+                </div>
+            </div>
+            <div dojoType="dijit.layout.ContentPane" title="Search Messages">
+                <form dojoType="dijit.form.Form" jsId="searchForm">
+                    <table>
+                        <tr>
+                            <td><label for="subjectSearch">Subject:</label></td>
+                            <td><input dojoType="dijit.form.TextBox" id="subjectSearch" name="subject"/></td>
+                        </tr>
+                        <tr>
+                            <td><label for="senderSearch">Sender:</label></td>
+                            <td><input dojoType="dijit.form.TextBox" id="senderSearch" name="from"/></td>
+                        </tr>
+                        <tr>
+                            <td><label for="bodySearch">Message Body:</label></td>
+                            <td><input dojoType="dijit.form.TextBox" id="bodySearch" name="body"/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">
+                                <button dojoType="dijit.form.Button" onClick="searchMessages">Search</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div dojoType="dojo.data.ItemFileWriteStore" jsId="headerStore" id="headerStore" url="/pymp/get_message_headers"></div>
+        <table dojoType="dojox.grid.EnhancedGrid"
+               plugins="{dnd: {copyOnly: true, dndConfig: {out:{ row: true, cell: false}} }, indirectSelection: true}"
+               region="top" minSize="20" splitter="true"
+               jsId="headersGrid"
+               id="headersGrid"
+               store="headerStore"
+               query="{id:'*'}"
+               style="height: 150px;">
+            <thead>
+            <tr>
+                <th field="from" width="20%">Sender</th>
+                <th field="subject" width="60%">Subject</th>
+                <th field="received" width="20%">Recieved</th>
+            </tr>
+            </thead>
+
+            <script type="dojo/connect" event="onStyleRow" args="inRow">
+                if(dijit.byId("headersGrid")._getItemAttr(inRow.index, 'read')==true){
+                    console.log(dijit.byId("headersGrid")._getItemAttr(inRow.index, 'read'));
+                    inRow.customClasses += ' msgRead';
+                } else {
+                    inRow.customClasses += ' msgUnread';
+                    //console.log(dijit.byId("headersGrid")._getItemAttr(inRow.index, 'read'));
+                }
+    
+            </script>
+            <script type="dojo/connect" event="onRowClick" args="e">
+                 // <!--
+                 //<![CDATA[
+
+                   var attachment_html="";
+                   var body = dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'body');
+                   var uid = dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'id');
+                   var att = new Array(dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'attachments'));
+                   var att_size = new Array(dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'attachment_sizes'));
+                   var has_attachment = dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'has_attachment');
+
+                       //alert(att[0]);
+                   for (var i=0; i < att.length; i++) {
+                       attachment_html = attachment_html + '<a href="/pymp/get_attachment/'+folder+'/'+uid+'/'+att[i]+'" target="_blank">'+att[i]+'</a>';
+                   }
+
+                   document.getElementById("message").innerHTML= "<div id='msg_header'><span class='messageHeader'>From: " + dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'from') + "</span><br><span class='messageHeader'>" + "Subject: " + dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'subject') + "</span><br><span class='messageHeader'>" + "Date: " + dijit.byId("headersGrid")._getItemAttr(e.rowIndex, 'received') + '</span></div><br/>' + "<br/><br></span>" + body.replace(/\r\n/g, "<br/>");
+                   if(has_attachment==true) {
+                        dojo.style(dijit.byId("attachmentsPane").domNode,"display", "block");
+                        document.getElementById("attachmentsPane").innerHTML="<h3 style='margin-top: 5px;'>Attachments:</h3>"+attachment_html+"<BR><BR>";
+                   } else {
+                        //dojo.style(dijit.byId("attachmentsPane").domNode, "margin-bottom", "-30px;");
+                        document.getElementById("attachmentsPane").innerHTML='<h1 style="text-align: center; color: #cccccc">No Attachments</h1>';
+                   }
+                // ]]>
+                // -->
+            </script>
+        </table>
+        <div id="message" dojoType="dijit.layout.ContentPane" tabindex="0" region="center" role="document"
+            aria-live="assertive" aria-atomic="true" minSize="20"></div>
+        <div id="attachmentsPane" dojoType="dijit.layout.ContentPane" region="bottom"
+            style="padding-bottom: 10px; height: 50px;"></div>
+        </div>
+        <div dojoType="dijit.layout.BorderContainer" dojoAttachPoint="container" title="Compose Message" closeable="true">
+            <div dojoType="dojox.layout.ContentPane" region="center" href="/email/compose.html" executeScripts="true" scriptSeparation="false" renderStyles="true"
+                 style="height: 80px; overflow: visible; z-index: 10; color:#666; background-color: #ebeef3">
+            </div>
+        </div>
+        <div dojoType="dijit.layout.BorderContainer" title="Contacts">
+            <div dojoType="dijit.layout.ContentPane" region="top">
+                <center id="contactIndex"></center>
+            </div>
+            <div dojoType="dojo.data.ItemFileWriteStore" id="contactStore" jsId="contactStore" url="/pymp/contacts"></div>
+            <table dojoType="dojox.grid.DataGrid" jsId="contactTable" store="contactStore" region="center" editable="true">
+                <thead>
+                <tr>
+                    <th field="first_name" width="25%" editable="true">First Name</th>
+                    <th field="last_name" width="25%" editable="true">Last Name</th>
+                    <th field="email" width="50%" editable="true">Email Address</th>
+                </tr>
+                </thead>
+            </table>
+            <div dojoType="dijit.layout.ContentPane" region="bottom">
+                Edit your contact information from this page by clicking entries in the table above.
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" charset="UTF-8">
+    dojo.addOnLoad(genIndex);    
+</script>        
+</py:def>
+
+<py:def function="user_list">
+<div id="mainContent" style="background-color: #E0E4EA;" dojoType="dojox.layout.ContentPane" tabindex="0" region="center" renderStyles="true" href="/pbx/user_list.html"
+        minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>
+</py:def>
+
+<py:def function="dashboard">
+<div dojoType="dijit.layout.BorderContainer" title="Dashboard" gutters="true" class="admin_context">
+    <div dojoType="dijit.layout.AccordionContainer" id="ccNav" splitter="true" region="leading" minSize="100px" style="width:235px;">
+        <div dojoType="dojox.layout.ContentPane" title="Users"
+        design="headline" href="/pbx/broker_users.html" executeScripts="true"></div>
+    </div>
+    <div id="dashContent" dojoType="dojox.layout.ContentPane" gutters="false" tabindex="0" region="center"  href="/pbx/dashboard.html" style="background-color: #E0E4EA;"
+    minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>
+</div>
+</py:def>
+
+<py:def function="call_center">
+<div dojoType="dijit.layout.BorderContainer" title="Call Center" class="admin_context">
+    <div dojoType="dijit.layout.AccordionContainer" id="callCenterNav"
+    region="leading" minSize="100px" style="width:235px;background-color: #E0E4EA;">
+        <div dojoType="dojox.layout.ContentPane" title="Users"
+        design="headline" href="/pbx/broker_users.html" executeScripts="true"></div>
+        <div dojoType="dojox.layout.ContentPane" title="Call Center Menu" minSize="100px" style="background-color: #E0E4EA;width:210px;" >
+            <div dojoType="dijit.Menu" id="ccNavMenu" style="width:210px;border: 1px solid #c0c0c0;">
+                <div dojoType="dijit.MenuItem" iconClass="dashboardIcon"
+                onClick='dijit.byId("callCenterContent").set("href", "/call_center/cc_dashboard.html");'>
+                    Call Center Dashboard
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="queueIcon"
+                onClick='dijit.byId("callCenterContent").set("href", "/call_center/cc_queues.html");'>
+                    Queue Management
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="agentIcon"
+                onClick='dijit.byId("callCenterContent").set("href", "/call_center/agent_list.html");'>
+                    Agent Management
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="tierIcon"
+                onClick='dijit.byId("callCenterContent").set("href", "/call_center/tier_list.html");'>
+                    Tier Management
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="reportingIcon"
+                onClick='dijit.byId("callCenterContent").set("href", "/call_center/cc_reporting.html");'>
+                    Call Center Reporting
+                </div>
+                <div dojoType="dijit.MenuSeparator"></div>
+                <div dojoType="dijit.PopupMenuItem">
+                    <span> Queue Recordings </span>
+                    <div dojoType="dijit.Menu" id="mnu_queue_directories">
+                        <py:for each="queue in c.queues">
+                            <div dojoType="dijit.MenuItem" onClick='getCallQueueRecordings("${queue}");'>
+                                Queue ${queue}
+                            </div>
+                        </py:for>
+                    </div>
+                </div>
+                <div dojoType="dijit.MenuItem" iconClass="warnIcon"
+                onClick='reloadCallCenter()'>
+                    Reload Call Center
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="callCenterContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" style="background-color: #E0E4EA;"
+    minSize="200" href="/call_center/cc_dashboard.html" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>
+</div>
+</py:def>
+
+<py:def function="pbx_menu">
+<div dojoType="dojox.layout.ContentPane" title="PBX Menu"  minSize="100px" style="width:235px;background-color: #E0E4EA;">
+    <div dojoType="dijit.Menu" id="pbxNavMenu" style="border: 1px solid #c0c0c0; width:210px;">
+        <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/user_list.html");'>
+            User Management
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="extensionIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/extension_list.html");'>
+            Extensions
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="virtualIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/virtual_extensions_list.html");'>
+            Virtual Extensions
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="virtualIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/virtual_mailbox_list.html");'>
+            Virtual Voice Mailboxes
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="dijitIconUsers"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/group_list.html");'>
+            Group Management
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="dijitIconConnector"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/did_list.html");'>
+            Inbound Numbers
+        </div>
+        <div dojoType="dijit.PopupMenuItem" iconClass="dijitIconConnector">
+            <span> Web Fax </span>
+            <div dojoType="dijit.Menu" id="fax_mnu">
+                <div dojoType="dijit.MenuItem" onClick='dijit.byId("mainContent").set("href", "/pbx/fax_ext_list.html");'>
+                    Fax Extensions
+                </div>
+                <div dojoType="dijit.MenuItem" onClick='dijit.byId("mainContent").set("href", "/pbx/fax_list.html");'>
+                    Send / Receive
+                </div>
+            </div>
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="timeIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/tod_route_list.html");'>
+            Time of Day Routes
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="recordingIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/recordings_list.html");'>
+            System Recordings
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="conferenceIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/conference_list.html");'>
+            Conference Bridges
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="dijitIconConnector"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/callerid_route_list.html");'>
+            Caller ID Routes
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="dijitIconConnector"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/blacklisted.html");'>
+            Blacklisted Numbers
+        </div>
+        <div dojoType="dijit.MenuItem" iconClass="ttsIcon"
+        onClick='dijit.byId("mainContent").set("href", "/pbx/tts_list.html");'>
+            Text to Speech
+        </div>
+        <div dojoType="dijit.MenuSeparator"></div>
+        <div dojoType="dijit.PopupMenuItem">
+            <span> Virtual Receptionist </span>
+            <div dojoType="dijit.Menu" id="submenu1">
+                <div dojoType="dijit.MenuItem" onClick='dijit.byId("mainContent").set("href", "/pbx/ivr_list.html");'>
+                    Automated Attendant (IVR)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mini_help">
+        No help to display in this category..
+    </div>
+</div>
+</py:def>
+
+<py:def function="footer_pane">
+<div dojoType="dijit.layout.ContentPane" region="bottom" id="footer" align="left">
+    <span>FreePyBX Communications Center</span>
+</div>
+</py:def>
+
+<py:def function="header_pane">
+<div dojoType="dojox.layout.ContentPane" region="top" id="logo_pane">
+    <img class="logo_img" src="../images/logo.png" width="190px" height="47px"/>
+    <div class="mnu_login">
+        <span class="welcome">${session['name']}&nbsp;(${session['ext']})</span><br/>
+        <span class="welcome">${session['customer_name']}</span><br/>
+        <a href="#" onclick="selectTab('PBXContainer','mainContent','preferences.html')" style="color: rgb(130,203,255)">preferences</a> | <a href="/logout" style="color: rgb(130,203,255)">logout</a><br/>
+    </div>
+</div>
+</py:def>
+
+<py:def function="dialogs">
+<div class="dijitHidden">
+    <div dojoType="dijit.Dialog" style="width:350px;"
+             data-dojo-props="title:'FreePyBX Help',href: '', loadingMessage:'Please wait while help is loaded...'"
+             id="help_dlg">
+    </div>
+</div>
+
+<div dojoType="dijit.Dialog" id="sendDialog" title="Sending Mail">
+    <div id="sendMailBar" style="text-align:center">
+        <div id="sendMail" dojoType="dijit.ProgressBar" style="height:15px; width:175px;" indeterminate="true"></div>
+    </div>
+</div>
+
+<div dojoType="dijit.Dialog" id="dlgRouteCall" title="VoiceWARE Route Call" 
+        style="margin-top: 100px; margin-right: auto; margin-left: auto;">
+    <form id="route_call_form">
+        <input type="hidden" name="route_uuid" id="route_uuid"/>
+        <table>
+            <tr>
+                <td>
+                    <label for="call_route_from">
+                            Route From:
+                    </label>
+                </td>
+                <td><div id="call_route_from"></div></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="call_route_to">
+                        To:
+                    </label></td>
+                <td>
+                    <div dojoType="dojo.data.ItemFileReadStore" jsId="rerouteStore" url="/pbx/extensions"></div>
+                    <input dojoType="dijit.form.FilteringSelect" required="false" store="rerouteStore" 
+                        value="" id="call_route_to" searchAttr="extension" name="call_route_to" />
+                </td>
+            </tr>
+            <tr>
+                <td align="center" colspan="2">
+                    <button dojoType="dijit.form.Button" type="button" onClick="routeCall();">
+                        Re-Route Call
+                    </button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+        
+<div dojoType="dijit.Dialog" id="fromImMsg" jsId="fromImMsg" style="width: 460px;height: 330px;" title="Instant Message">
+    <table>
+        <tr>
+            <td valign="top" colspan="2">
+                <div id="im_from"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" valign="top">
+                <div  id="chatWndFrom" style="border:1px solid #C0C0C0;width: 440px;height:230px;margin-top: 5px;"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">
+                <button dojoType="dijit.form.Button" type="submit" onClick="dijit.byId('fromImMsg').hide();">
+                    OK
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div dojoType="dijit.Dialog" id="toImMsg" jsId="toImMsg" style="width: 460px;height: 330px;" title="Instant Message"
+    execute="sendIMsg(arguments);">
+    <table>
+        <tr>
+            <td valign="top" colspan="2">
+                <div id="im_to"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" valign="top">
+                <div  id="chatWndTo" style="border:1px solid #C0C0C0;width: 440px;height:230px;margin-top: 5px;"></div>
+                <input type="hidden" id="user_object" name="user_object" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <input dojoType="dijit.form.TextBox" id="im_msg" name="im_msg" style="width:330px; height: 20px;"/>
+            </td>
+
+            <td align="right">
+                <button dojoType="dijit.form.Button" type="submit">OK</button>
+                <button data-dojo-type="dijit.form.Button" type="button"
+                    data-dojo-props="onClick:function(){dijit.byId('toImMsg').hide();}">Cancel</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</py:def>
+</html>

@@ -67,7 +67,7 @@
                 <field var="write_codec"/>
                 <field var="call_direction"/>
                 <field var="user_id"/>
-                <field var="company_id"/>
+                <field var="customer_id"/>
                 <field var="extension"/>
                 <!-- <field var="sip_hangup_disposition"/> -->
                 <!-- <field var="ani"/> -->

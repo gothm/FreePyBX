@@ -449,5 +449,5 @@ dojo.ready(function() {
     attributes.id = "vw_broker";
     attributes.name = "vw_broker";
     attributes.align = "middle";
-    swfobject.embedSWF("/js/voiceware/flex/vwbroker/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf", flashvars, params, attributes, function(e) { vwb = e.ref;});
+    swfobject.embedSWF("/flash/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf", flashvars, params, attributes, function(e) { vwb = e.ref;});
 });

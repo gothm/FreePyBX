@@ -1,0 +1,210 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript">
+
+    dojo.require("dojo.io.script");
+    dojo.require("dojo.parser");
+    dojo.require("dijit.dijit");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.Dialog");
+    dojo.require("dijit.Toolbar");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Textarea");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.TimeTextBox");
+    dojo.require("dijit.layout.TabContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
+    dojo.require("dojox.grid.EnhancedGrid");        
+    dojo.require("dojo.data.ItemFileWriteStore");
+    dojo.require("dojox.grid.enhanced.plugins.Pagination");
+    dojo.require("dojox.grid.enhanced.plugins.Filter");    
+    
+    var faxExtGrid;
+    var faxExtStore = new dojo.data.ItemFileWriteStore({url: '/pbx/fax_ext'});
+  
+    var plugins = {
+        pagination: true,
+        filter: true,
+        indirectSelection: true,
+    };           
+    
+    faxExtStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = faxExtStore._pending;
+        var changes = {};
+        changes.modified = [];
+        
+        for (var i in changeSet._modifiedItems) {
+            var item = null;
+            if (faxExtStore._itemsByIdentity) {
+                item = faxExtStore._itemsByIdentity[i];
+            } else {
+                item = faxExtStore._arrayOfAllItems[i];
+            }
+                changes.modified.push(itemToJS(faxExtStore, item));
+            }
+
+            if (changes.modified.length==0) {
+                alert("Nothing to save!");
+                saveComplete();
+                return;
+            }
+            
+            update_fax_grid(dojo.toJson(changes, true));
+            console.log(dojo.toJson(changes, true));            
+            saveComplete();
+    };        
+        
+    itemToJS = function(store, item) {
+        var js = {};
+            if (item && store) {
+                var attributes = store.getAttributes(item);
+                if (attributes && attributes.length > 0) {
+                    var i;
+                    for (i = 0; i < attributes.length; i++) {
+                        var values = store.getValues(item, attributes[i]);
+                        if (values) {
+                            if (values.length > 1) {
+                                var j;
+                                js[attributes
+                                    [i]] = [];
+                                for (j = 0; j < values.length; j++) {
+                                    var value = values[j];
+                                    if (store.isItem(value)) {
+                                        js[attributes
+                                            [i]].push(itemToJS(store, value));
+                                    } else {
+                                        js[attributes
+                                            [i]].push(value);
+                                    }
+                                }
+                            } else { if (store.isItem(values[0])) {
+                                js[attributes
+                                    [i]] = itemToJS(store, values[0]);
+                            } else {
+                                js[attributes
+                                    [i]] = values[0];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return js;
+    };
+    
+    fax_ext_grid = function (dbObj) {      
+        var faxExtLayout = [{
+            name: 'Name',
+            field: 'extension',
+            width: '100%',        
+        }];            
+                
+        faxExtGrid = new dojox.grid.EnhancedGrid({
+            id: 'faxExtGrid',
+            jsid: 'faxExtGrid',
+            query: {id: '*'},
+            store: faxExtStore,
+            structure: faxExtLayout,
+            selectionMode: 'single',
+            plugins: plugins,
+            columnReordering: true,
+            escapeHTMLInData: false,
+            region: "center",
+            autoHeight: true,            
+        },document.createElement('div'));
+                
+        dojo.byId("faxExtGridDiv").appendChild(faxExtGrid.domNode);
+        faxExtGrid.startup();
+    }    
+    
+    function update_fax_ext_grid(obj) {
+        dojo.xhrGet({
+            url: "/pbx/update_fax_ext_grid?data="+obj,
+            handleAs: "text",
+            load: function(res) {
+                if (res.indexOf("Error") == -1) {
+                    new voiceware.notice.Notice({message: res});
+                } else {
+                    new voiceware.notice.Error({message: res});
+                }
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });            
+    }    
+
+    dojo.addOnLoad(function() {   
+        fax_ext_grid()
+    });
+</script>
+
+
+<div style="border: 1px solid #c0c0c0;">
+        <div dojoType="dijit.Toolbar" region="top">
+            <button id="addFaxExtBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+                Add Fax Extension
+                <script type="dojo/method" event="onClick">
+                    dijit.byId("mainContent").set("href", "/pbx/fax_ext_add.html")
+                </script>
+            </button>
+            <button id="saveFaxExtBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+                Save
+                <script type="dojo/method" event="onClick">
+                    faxExtStore.save();
+                </script>
+            </button>            
+            <button id="faxExtDelBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+                &nbsp;Delete
+                <script type="dojo/method" event="onClick">                    
+                        var del_fax = faxExtGrid.selection.getSelected()[0];
+                        
+                        dojo.xhrGet({
+                            url: "/pbx/del_fax_ext?name="+del_fax.extension,
+                            handleAs: "text",
+                            load: function(res) {
+                                if (res.indexOf("Error") == -1) {
+                                    new voiceware.notice.Notice({message: res});
+                                    dijit.byId("mainContent").set("href", "/pbx/fax_ext_list.html")
+                                } else {
+                                    new voiceware.notice.Error({message: res});
+                                }
+                                return res;
+                            },
+                            error: function(err, ioArgs) {
+                                new voiceware.notice.Error({message: err});
+                                return err;
+                            }
+                        });            
+                </script>
+            </button>
+        </div>
+     <div id="faxExtGridDiv" style="width: 100%; height: 100%;"></div>
+</div>
+
+

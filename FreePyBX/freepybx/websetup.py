@@ -68,15 +68,6 @@ def insert_data():
         s.description = value
         Session.add(s)
 
-    auth_level = [(1, u'PBX Admin'),(2,u'Extension User'),(3, u'Billing & Reports')]
-
-    for key, value in auth_level:
-        al = AuthLevel()
-        al.name = key
-        al.description = value
-        Session.add(al)
-
-
     # Add initial admin with admin login rights
     admin_user = AdminUser(u'admin@freepybx.org',u'secretpass1',u'Admin',u'User')
     Session.add(admin_user)
@@ -100,6 +91,27 @@ def insert_data():
     pbb = Group(u'billing', u'Billing Administrators')
     pbb.permissions.append(Permission(u'pbx_admin'))
     Session.add(pbb)
+
+    # Setup the default VoIP services as an example to get you started on the concept.
+    Session.add(BillingServiceType(u'VoIP Service', u'Voice over Internet Protocol Service'))
+    Session.add(VoipServiceType(u'VoIP PBX Service', u'Private Branch Exchange Service'))
+    Session.add(VoipServiceType(u'VoIP Extension Service', u'VoIP Extension'))
+    Session.add(VoipServiceType(u'VoIP Trunk Service', u'Voip Trunk'))
+    Session.add(VoipServiceType(u'DID', u'Direct Inward Dial Number'))
+    Session.add(VoipServiceType(u'8XX', u'8XX Number'))
+
+    Session.add(BillingProductType(u'Voip Telephones'))
+    Session.add(BillingProductType(u'Voip ATA'))
+
+    Session.add(BillingServiceFeeType(u'Tax', u'Local taxes'))
+    Session.add(BillingServiceFeeType(u'USF Fee', u'Local taxes'))
+
+    Session.add(ProviderBillingApiType(u'Credit Card Gateway', u'Charge customer card via credit card processing gateway.'))
+    Session.add(BillingCycleType(u'Monthly', u'Monthly Service'))
+    Session.add(BillingCycleType(u'Annual', u'Annual Service'))
+    Session.add(BillingCycleType(u'Prepay Pool', u'Prepay Service Deducted from account funds.'))
+    Session.add(PaymentType(u'Credit Card Auto Bill', u'Charged credit card via merchant gateway automatically.'))
+    Session.add(PaymentType(u'Credit Card By Employee', u'Manually charged credit card via merchant gateway by employee.'))
 
     Session.commit()
     Session.flush()

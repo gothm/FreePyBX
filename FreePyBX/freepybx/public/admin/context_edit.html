@@ -44,15 +44,16 @@
     dojo.require("dijit.form.FilteringSelect");
     dojo.require("dojo.data.ItemFileReadStore");
 
-    var companyStore = new dojo.data.ItemFileWriteStore({url: '/admin/companies'});
+    var customerStore = new dojo.data.ItemFileWriteStore({url: '/admin/customers'});
     var profileStore = new dojo.data.ItemFileWriteStore({url: '/admin/profiles'});
     var didStore = new dojo.data.ItemFileWriteStore({url: '/admin/dids'});
 
     function setContextForm(obj) {
         console.log(dojo.toJson(obj, true));
         dojo.byId("context_id").value = obj.id;
-        dijit.byId("company_name").set("value", obj.company_name);
+        dijit.byId("customer_name").set("value", obj.customer_name);
         dijit.byId("domain").set("value", obj.context);
+        dijit.byId("gateway").set("value", obj.gateway);
         dijit.byId("profile").set("value", obj.profile);
         dijit.byId("context").set("value", obj.context);
         dijit.byId("caller_id_name").set("value", obj.caller_id_name);
@@ -68,7 +69,7 @@
                 return res;
             },
             error: function(err, ioArgs) {
-                new voiceware.notice.Error({message: "Failed to retrieve company."});
+                new voiceware.notice.Error({message: "Failed to retrieve customer."});
                 return err;
             }
         });
@@ -83,7 +84,7 @@
                 load: function(res) {
                     if (res.indexOf("Error") == -1) {
                         new voiceware.notice.Notice({message: res});
-                        dijit.byId("adminContent").set("href", "/admin/context_list.html");
+                        dijit.byId("customerContent").set("href", "/admin/context_list.html");
                     } else {
                         new voiceware.notice.Error({message: res});
                     }
@@ -110,9 +111,9 @@
     <input type="hidden" name="id" id="context_id" value=""/>
     <ul class="field_list">
         <li class="even">
-            <label class="fieldlabel" for="company_name">Company</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="companyStore" value="" id="company_name"
-                   searchAttr="name" name="company_name"/>
+            <label class="fieldlabel" for="customer_name">Customer</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="customerStore" value="" id="customer_name"
+                   searchAttr="name" name="customer_name"/>
         </li>
         <li class="odd">
             <label class="fieldlabel" for="domain">Domain</label>
@@ -137,10 +138,10 @@
         </li>
         <li class="odd">
             <label class="fieldlabel" for="caller_id_name">CallerID Name</label>
-            <input type="text" required="true" name="caller_id_name" id="caller_id_name" placeholder="Company Name."
+            <input type="text" required="true" name="caller_id_name" id="caller_id_name" placeholder="Customer Name."
                    dojoType="dijit.form.ValidationTextBox"
                    missingMessage="Please add a caller id name."
-                   regExp="\b[0-9_a-zA-Z]{2,64}\b"
+                   regExp="[0-9a-zA-Z' ']{2,32}"
                    promptMessage="Please enter a valid caller id name."
                    invalidMessage="Invalid name."
                    trim="true"/>
@@ -156,6 +157,12 @@
             <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value=""
                    id="profile" searchAttr="name" name="profile"/>
         </li>
+        <li class="even">
+            <label class="fieldlabel" for="gateway">Default Gateway</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="gatewayStore" value="" id="gateway"
+                   searchAttr="name" name="gateway"/>
+        </li>
+
     </ul>
 </div>
 </html>

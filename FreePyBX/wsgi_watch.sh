@@ -20,7 +20,7 @@ while [ true ]
             {
                 echo "Restarting wsgi process..."                
                 echo $FAILED >> /tmp/wsgi_watch.log
-                (cd ~; source bin/activate; cd FreePyBX; paster serve --reload development.ini &)
+                (cd ~; source bin/activate; cd PythonPBX; paster serve --reload development.ini &)
 		echo "WSGI server restarted!" | mail -s "WSGI Restarted" noel@vwna.com
             }
         else

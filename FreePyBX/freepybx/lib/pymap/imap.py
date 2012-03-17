@@ -172,10 +172,8 @@ class Pymap():
         self.conn.select(mbox)
         folders = self.conn.list(mbox)
         log.debug(folders)
-
         #for fname in folders[1]:
         log.debug(folders[1])
-
         folders[1].sort()
 
         i=0
@@ -214,7 +212,6 @@ class Pymap():
 
         folders = self.conn.list()
         log.debug(folders)
-
         folders[1].sort()
 
         i=0
@@ -266,14 +263,12 @@ class Pymap():
 
         return parts
 
-
     def get_message_headers_from_buffer(self, mbox='INBOX'):
            hdrs = []
            self.login()
 
            self.conn.select(mbox)
            typ, data = self.conn.search(mbox, 'ALL')
-
 
            for msg_num in data[0].split():
                    typ, data = self.conn.fetch(msg_num, '(RFC822.SIZE INTERNALDATE FLAGS BODY[TEXT])')
@@ -345,7 +340,6 @@ class Pymap():
 
         return store
 
-
     def get_message(self, uid, folder='INBOX'):
 
         if not self.logged_in:
@@ -360,6 +354,7 @@ class Pymap():
         typ, msg = self.conn.fetch(uid, 'RFC822')
 
         return msg[0][1]
+
 
 class PymapMime():
     message = {}

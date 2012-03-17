@@ -20,6 +20,7 @@
                 <action application="export" data="domain_name=${did.domain}"/>
                 <action application="export" data="is_inbound=true"/>
                 <action application="export" data="accountcode=${did.did}"/>
+                <action application="export" data="profile=${c.profile}"/>
                 <action application="export" data="force_transfer_context=${did.context}"/>
                 <action application="lua" data="route.lua" />
               </condition>
@@ -115,7 +116,7 @@
                     <condition field="$${sip_authorized}" expression="true">
                         <anti-action application="hangup" />
                     </condition>
-                    <condition field="destination_number" expression="^(\d{10})$$">
+                    <condition field="destination_number" expression="^(\+1|1)?(\d{10})$$">
                         <action application="export" data="is_outbound=true"/>
                          <action application="lua" data="route.lua" />
                     </condition>

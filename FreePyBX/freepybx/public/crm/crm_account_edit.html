@@ -1,0 +1,328 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+   
+    var crmAccountStore = new dojo.data.ItemFileReadStore({url: '/crm/accounts'});
+    var crmAccountNoteStore = new dojo.data.ItemFileReadStore({url: '/crm/account_notes_by_id/'+tmpObj.id});
+    
+    
+    function crmAccountEditFormHandler() {  
+        if(dijit.byId("crm_account_edit_form").validate()) {
+            dojo.xhrPost({
+                url: "/crm/edit_crm_account",
+                handleAs: "text",
+                form: dojo.byId("crm_account_edit_form"),    
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("crmContent").set("href", "/crm/crm_accounts.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }    
+        
+    function addCrmNoteHandler() {  
+        if(dijit.byId("crm_account_notes_form").validate()) {
+            dojo.xhrPost({
+                url: "/crm/add_crm_account_note",
+                handleAs: "text",
+                form: dojo.byId("crm_account_notes_form"),    
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("crmContent").set("href", "/crm/crm_account_edit.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });    
+        }
+    }          
+        
+    function setCrmAccountForm(obj) {    
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("crm_account_id").value = obj.id;
+        dojo.byId("crm_acct_id").value = obj.id;
+        dijit.byId("crm_account_first_name").set("value", obj.first_name);
+        dijit.byId("crm_account_last_name").set("value", obj.last_name);
+        dijit.byId("crm_account_customer").set("value", obj.customer);
+        dijit.byId("crm_account_title").set("value", obj.title);
+        dijit.byId("crm_account_active").set("value", obj.active);
+        dijit.byId("crm_account_address").set("value", obj.address);
+        dijit.byId("crm_account_address_2").set("value", obj.address_2);
+        dijit.byId("crm_account_city").set("value", obj.city);
+        dijit.byId("crm_account_state").set("value", obj.state);
+        dijit.byId("crm_account_zip").set("value", obj.zip);
+        dijit.byId("crm_account_email").set("value", obj.email);
+        dijit.byId("crm_account_tel").set("value", obj.tel);
+        dijit.byId("crm_account_url").set("value", obj.url);
+        dijit.byId("crm_account_tel_ext").set("value", obj.tel_ext);
+        dijit.byId("crm_account_mobile").set("value", obj.mobile); 
+        dijit.byId("crm_lead_type_name").set("value", obj.crm_lead_type_id);
+        dijit.byId("crm_account_crm_campaign_name").set("value", obj.crm_campaign_id);
+        dijit.byId("status_type_name").set("value", obj.crm_account_status_type_id);
+        
+        
+     }    
+     
+    function getCrmAccountByID() {
+        dojo.xhrGet({
+            url: "/crm/account_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setCrmAccountForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: "Failed to retrieve crm account."});
+                return err;
+            }
+        });            
+    }
+    
+    note_grid = function () {      
+        var noteLayout = [{        
+            name: 'Date',
+            field: 'created',
+            width: 'auto'
+        },{
+            name: 'Note',
+            field: 'note',
+            width: 'auto'
+    }];            
+                
+    noteGrid = new dojox.grid.EnhancedGrid({
+        id: 'noteGrid',
+        jsid: 'noteGrid',
+        query: {id: '*'},
+        store: crmAccountNoteStore,
+        structure: noteLayout,
+        region: "center",
+        style: "width: 100%; height: 100%;",
+        columnReordering: true,
+        escapeHTMLInData: false,
+        autoHeight: true,
+    },document.createElement('div'));
+    dojo.byId("crmAccountNoteGridDiv").appendChild(noteGrid.domNode);
+    noteGrid.startup();
+    }    
+    
+    dojo.addOnLoad(function() { 
+         getCrmAccountByID();
+         note_grid();
+    });
+ 
+</script>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmCampaignStore" data-dojo-props="url:'/crm/campaigns'"></div>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmAccountStatusTypeStore" data-dojo-props="url:'/crm/account_status_types'"></div>
+  <div data-dojo-type="dojo.data.ItemFileReadStore" data-dojo-id="crmLeadTypeStore" data-dojo-props="url:'/crm/account_lead_types'"></div>
+<div dojoType="dijit.layout.ContentPane" style="background-color: #ededed; height: 30px; overflow: hidden; margin-bottom: 0px; border-bottom: solid 1px #c0c0c0; border-top: solid 1px #c0c0c0;">
+    <p style="margin-left: 20px; margin-top: 0px; font-weight: bold; font-size: large">
+        Edit Account
+    </p>
+</div>
+<form dojoType="dijit.form.Form" id="crm_account_edit_form">
+    <input type="hidden" name="id" id="crm_account_id" value=""/>
+    <fieldset name="device_set" style="margin-top: 20px;border: solid 2px #c0c0c0; padding-top: 30px; padding-left: 30px; padding-bottom: 30px;">
+        <legend style="font-size: large; font-weight: bold; color: #c0c0c0; ">
+            Personal Information
+        </legend>
+        <script type="dojo/method" event="onSubmit">
+            if(this.validate()) {
+                return crmAccountAddHandler();
+            } else {
+                alert('Form contains invalid data.  Please correct and resubmit');
+                return false;
+            }
+            return true;
+        </script>
+        <table cellpadding="0" cellspacing="2" width="400" style="float: left">
+                <tr>
+                    <td valign="top"><strong>First Name: </strong></td>
+                    <td>
+                    <input type="text" required="true" name="first_name" id="crm_account_first_name" placeholder="First Name"
+                            dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a first name!" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Last Name: </strong></td>
+                    <td>
+                    <input type="text" required="true" name="last_name" id="crm_account_last_name" placeholder="Last Name"
+                            dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a last name!" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Customer: </strong></td>
+                    <td>
+                    <input type="text" required="false" name="customer" id="crm_account_customer" placeholder="Customer Name"
+                            dojoType="dijit.form.ValidationTextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Title: </strong></td>
+                    <td>
+                    <input type="text" required="true" name="title" id="crm_account_title" placeholder="Title"
+                            dojoType="dijit.form.ValidationTextBox" required="false" />
+                    </td>
+                </tr>      
+                <tr>
+                    <td valign="top"><strong>Email: </strong></td>
+                    <td>
+                    <input type="text" id="crm_account_email" name="email" size="30"
+                        dojoType="dijit.form.ValidationTextBox"  placeholder="email@domain.com"
+                        required="false"
+                        regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                        promptMessage="Please enter a valid email address."
+                        invalidMessage="Invalid email."
+                        trim="true"
+                    />
+                    </td>
+                </tr>                                          
+                <tr>
+                    <td valign="top"><strong>Address:</strong></td>
+                    <td>
+                    <input type="text" name="address" id="crm_account_address" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Address 2:</strong></td>
+                    <td>
+                    <input type="text" name="address_2" id="crm_account_address_2" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>City:</strong></td>
+                    <td>
+                    <input type="text" name="city" id="crm_account_city" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>State:</strong></td>
+                    <td>
+                    <input type="text" name="state" id="crm_account_state" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Zip: </strong></td>
+                    <td>
+                    <input type="text" name="zip" id="crm_account_zip" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Tel:</strong></td>
+                    <td>
+                    <input type="text" name="tel" id="crm_account_tel" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Extension:</strong></td>
+                    <td>
+                    <input type="text" name="tel_ext" id="crm_account_tel_ext" dojoType="dijit.form.TextBox"
+                            validator="dijit.form.TextBox" />
+                    </td>
+                </tr>                
+                <tr>
+                    <td valign="top"><strong>Mobile:</strong></td>
+                    <td>
+                    <input type="text" name="mobile" id="crm_account_mobile" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><strong>Active: </strong></td>
+                    <td>
+                    <input type="text" name="active" id="crm_account_active" dojoType="dijit.form.CheckBox" />
+                    </td>
+                </tr>   
+                <tr>
+                    <td valign="top"><strong>URL:</strong></td>
+                    <td>
+                    <input type="text" name="url" id="crm_account_url" dojoType="dijit.form.TextBox" />
+                    </td>
+                </tr>                            
+                <tr>
+                    <td valign="top"><strong>Campaign: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmCampaignStore" value="" id="crm_account_crm_campaign_name" searchAttr="name" name="crm_campaign_name">
+                    </td>
+                </tr>      
+                <tr>
+                    <td valign="top"><strong>Campaign Lead Type: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmLeadTypeStore" value="" id="crm_lead_type_name" searchAttr="name" name="crm_lead_type_name">
+                    </td>
+                </tr>                                      
+                <tr>
+                    <td valign="top"><strong>Campaign Status Type: </strong></td>
+                    <td>
+                        <input dojoType="dijit.form.FilteringSelect" required="true" store="crmAccountStatusTypeStore" value="" id="status_type_name" searchAttr="name" name="status_type_name">
+                    </td>
+                </tr> 
+                <tr>
+                    <td></td>
+                    <td>
+                    <br>
+                        <input type="submit" value="Save" label=" Save " id="edit_crm_account_button" dojoType="dojox.form.BusyButton"
+                                busyLabel="Editing CRM Account..." timeout="2000" onclick="crmAccountEditFormHandler()"/>
+                    </td>
+                </tr>
+        </table>
+</form>
+    
+<div id="crmAccountNoteGridDiv" style="width: 500px; margin-left: 20px;"></div>
+<form dojoType="dijit.form.Form" id="crm_account_notes_form">
+        <input type="hidden" name="crm_acct_id" id="crm_acct_id" value=""/>
+        <table cellpadding="0" cellspacing="2" width="400" style="float: left; margin-top: 30px;">
+            <tr>
+                <td valign="top"><strong>Notes: </strong></td>
+                <td><textarea id="crm_note" name="crm_note" cols="40" rows="10" dojoType="dijit.form.Textarea"></textarea></td>
+            </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                    <br>
+                        <input type="submit" value="Save" label=" Save " id="add_crm_note_btn" dojoType="dojox.form.BusyButton"
+                                busyLabel="Adding Note.." timeout="2000" onclick="addCrmNoteHandler()"/>
+                    </td>
+                </tr>
+        </table>                
+</form>
+</fieldset>
+

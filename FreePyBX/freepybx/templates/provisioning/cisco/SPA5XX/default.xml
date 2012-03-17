@@ -1,0 +1,102 @@
+<flat-profile>
+    <!-- Reset Never -->
+    <Resync_Periodic>0</Resync_Periodic>
+    <Resync_On_Reset>Yes</Resync_On_Reset>
+    <Profile_Rule>http://${c.ep.user_context}:888/provisioning/cisco/${c.ep.mac}/5XX.xml</Profile_Rule>
+
+    <!-- Phone Information -->
+    <Text_Logo group="Phone/General">${c.ep.internal_caller_id_name}</Text_Logo>
+    <Logo_Type group="User/Screen">BMP Picture</Logo_Type>
+    <Background_Picture_Type group="User/Screen">BMP Picture</Background_Picture_Type>
+    <Select_Logo ua="na">BMP Picture</Select_Logo>
+    <Select_Background_Picture ua="ro">BMP Picture</Select_Background_Picture>
+    <BMP_Picture_Download_URL ua="ro">http://www.vwna.com/logo-phone.bmp</BMP_Picture_Download_URL>
+    <Station_Name group="Phone/General">${c.ep.internal_caller_id_name}</Station_Name>
+    <Voice_Mail_Number group="Phone/General">*97</Voice_Mail_Number>
+
+    <!-- Line Registration Information -->
+
+    <Display_Name_1_ group="SIP/SIP_Parameters" ua="na">${c.ep.internal_caller_id_name}</Display_Name_1_>
+    <!-- If BLF then set this to the BLF -->
+    <Short_Name_1_ group="Phone/Line_Key_1" ua="na">${c.ep.auth_id}</Short_Name_1_>
+    <User_ID_1_ ua="na">admin</User_ID_1_>
+    <Password_1_ ua="na">${c.ep.password}</Password_1_>
+    <!-- Below set to disabled for BLF -->
+    <Extension_1_ group="Phone/Line_Key_1">disabled</Extension_1_>
+    <!-- If BLF set to shared -->
+    <Share_Call_Appearance_1_ group="Phone/Line_Key_1">private</Share_Call_Appearance_1_>
+    <!-- this changes how the button works. If it's set when the phone isn't on blf then the button turns orange. so we probably need to remove this normally.-->
+    <Extended_Function_1_ group="Phone/Line_Key_1"></Extended_Function_1_>
+    <Dial_Plan_1_ ua="na">(*xx.|7xxxS0|9[3469]11S0|9[2-9]xxxxxxS0|91xxx[2-9]xxxxxxS0|xxxxxxxxxxxx.)</Dial_Plan_1_>
+    <SIP_Port_1_ group="Ext_1/SIP_Settings">5060</SIP_Port_1_>
+    <Register_Expires_1_ group="Ext_1/Proxy_and_Registration">1800</Register_Expires_1_>
+    <Ans_Call_Without_Reg_1_ ua="na">No</Ans_Call_Without_Reg_1_>
+
+    <!-- Proxy Information -->
+    <Proxy_1_ group="Ext_1/Proxy_and_Registration">${c.ep.user_context}</Proxy_1_>
+    <Use_Outbound_Proxy_1_ ua="na">No</Use_Outbound_Proxy_1_>
+    <Outbound_Proxy_1_ ua="na"></Outbound_Proxy_1_>
+    <Proxy_Redundancy_Method_1_ group="Ext_1/Proxy_and_Registration"></Proxy_Redundancy_Method_1_>
+    <Proxy_Fallback_Intvl_1_ ua="ro">3600</Proxy_Fallback_Intvl_1_>
+    <Proxy_Redundancy_Method_1_ ua="ro">Normal</Proxy_Redundancy_Method_1_>
+
+    <!-- DNS SRV Information -->
+    <Use_DNS_SRV_1_ ua="rw">No</Use_DNS_SRV_1_>
+    <DNS_SRV_Auto_Prefix_1_ group="Ext_1/Proxy_and_Registration">No</DNS_SRV_Auto_Prefix_1_>
+
+    <!-- NAT -->
+    <NAT_Mapping_Enable_1_ group="Ext_1/NAT_Settings">Yes</NAT_Mapping_Enable_1_>
+    <NAT_Keep_Alive_Enable_1_ group="Ext_1/NAT_Settings">Yes</NAT_Keep_Alive_Enable_1_>
+
+    <!-- Registration Settings -->
+    <Reg_Min_Expires group="SIP/SIP_Timer_Values__sec_">1</Reg_Min_Expires>
+    <Reg_Max_Expires group="SIP/SIP_Timer_Values__sec_">600</Reg_Max_Expires>
+    <Reg_Retry_Intvl group="SIP/SIP_Timer_Values__sec_">10</Reg_Retry_Intvl>
+    <Reg_Retry_Long_Intvl group="SIP/SIP_Timer_Values__sec_">20</Reg_Retry_Long_Intvl>
+
+    <!-- RTP Settings -->
+    <RTP_Packet_Size group="SIP/RTP_Parameters">0.020</RTP_Packet_Size>
+
+    <!-- Codec Names -->
+    <AVT_Codec_Name ua="na">telephone-event</AVT_Codec_Name>
+    <G711u_Codec_Name ua="na">PCMU</G711u_Codec_Name>
+    <G711a_Codec_Name ua="na">PCMA</G711a_Codec_Name>
+    <!-- Firmware -->
+    <Upgrade_Enable ua="ro">No</Upgrade_Enable>
+    <Upgrade_Rule ua="ro"></Upgrade_Rule>
+
+    <!-- Admin -->
+    <Enable_Web_Server ua="na">Yes</Enable_Web_Server>
+    <Web_Server_Port ua="na">80</Web_Server_Port>
+    <Enable_Web_Admin_Access ua="na">Yes</Enable_Web_Admin_Access>
+    <Admin_Passwd ua="na">${c.ep.password}</Admin_Passwd>
+    <User_Password ua="na">${c.ep.password}</User_Password>
+    <Enable_CDP group="System/VLAN_Settings">No</Enable_CDP>
+
+    <!-- Timezone Stuff -->
+    <Primary_NTP_Server ua="na">0.pool.ntp.org</Primary_NTP_Server>
+    <Time_Zone ua="na">GMT-06:00</Time_Zone>
+    <Daylight_Saving_Time_Rule ua="na">start=3/8/7/02:0:0;end=11/1/7/02:0:0;save=1</Daylight_Saving_Time_Rule>
+    <Daylight_Saving_Time_Enable group="Regional/Miscellaneous">No</Daylight_Saving_Time_Enable>
+
+    <Subscribe_Expires group="Attendant_Console/General">1800</Subscribe_Expires>
+    <Subscribe_Retry_Interval group="Attendant_Console/General">30</Subscribe_Retry_Interval>
+    <Subscribe_Delay group="Attendant_Console/General">1</Subscribe_Delay>
+    <Server_Type group="Attendant_Console/General">Broadsoft</Server_Type>
+    <Test_Mode_Enable group="Attendant_Console/General">No</Test_Mode_Enable>
+    <Attendant_Console_Call_Pickup_Code group="Attendant_Console/General">**#</Attendant_Console_Call_Pickup_Code>
+
+
+    <!-- Ring tones and Cadences -->
+    <Ring1 group="Phone/Ring_Tone">n=Classic-1;w=3;c=1</Ring1>
+    <Ring2 group="Phone/Ring_Tone">n=Classic-2;w=3;c=2</Ring2>
+    <Ring3 group="Phone/Ring_Tone">n=Classic-3;w=3;c=3</Ring3>
+    <Ring4 group="Phone/Ring_Tone">n=Classic-4;w=3;c=4</Ring4>
+    <Ring5 group="Phone/Ring_Tone">n=Simple-1;w=2;c=1</Ring5>
+    <Ring6 group="Phone/Ring_Tone">n=Simple-2;w=2;c=2</Ring6>
+    <Ring7 group="Phone/Ring_Tone">n=Simple-3;w=2;c=3</Ring7>
+    <Ring8 group="Phone/Ring_Tone">n=Simple-4;w=2;c=4</Ring8>
+    <Ring9 group="Phone/Ring_Tone">n=Simple-5;w=2;c=5</Ring9>
+    <Ring10 group="Phone/Ring_Tone">n=Office;w=4;c=1</Ring10>
+
+</flat-profile>

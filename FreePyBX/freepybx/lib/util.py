@@ -43,6 +43,7 @@ import mimetypes
 
 
 path_dir = config['app_conf']['fs_vm_dir']
+smtp_server = config['smtp_server']
 
 __all__=['escapeSpecialCharacters','has_queue','has_agent','has_tier',
          'has_agent_tier','get_agent','get_tier','get_queue','get_agent_status',
@@ -67,7 +68,6 @@ def make_file_response(path):
     res = Response(content_type=get_mimetype(path))
     res.body = open(path, 'rb').read()
     return res
-
 
 def escapeSpecialCharacters (text, characters):
     for character in characters:
@@ -136,12 +136,12 @@ def tier_delete(q):
     return True
     
 def get_context(self):
-    context = PbxContext.query.filter(PbxContext.company_id==session['company_id']).first()
+    context = PbxContext.query.filter(PbxContext.customer_id==session['customer_id']).first()
     db.remove()
     return context.context
 
-def check_for_remaining_admin(company_id):
-    return len(Company.query.filter(Company.id==company_id).all())
+def check_for_remaining_admin(customer_id):
+    return len(Customer.query.filter(Customer.id==customer_id).all())
 
 def get_queue_directory():
     dirs = []
@@ -254,7 +254,7 @@ def fix_date(t):
     return t.strftime("%m/%d/%Y %I:%M:%S %p")
 
 def get_default_gateway():
-    co = Company.query.filter_by(id=session['company_id']).first()
+    co = Customer.query.filter_by(id=session['customer_id']).first()
     return co.default_gateway
 
 def get_type(id):
@@ -284,7 +284,6 @@ def delete_extension_by_user_id(user_id):
                 PbxCondition.query.filter_by(pbx_route_id=route.id).delete()
             PbxRoute.query.filter(PbxRoute.pbx_route_type_id==1). \
                 filter(PbxRoute.name==ext.auth_id).filter(PbxRoute.context==session['context']).delete()
-        PbxFindMeRoute.query.filter_by(pbx_endpoint_id=ext.id).delete()
         for sg in PbxGroup.query.filter_by(context=session['context']).all():
             PbxGroupMember.query.filter_by(pbx_group_id=sg.id).filter_by(extension=ext.auth_id).delete()
         PbxEndpoint.query.filter(PbxEndpoint.user_id==user_id).filter(PbxEndpoint.user_context==session['context']).delete()
@@ -518,3 +517,41 @@ class PbxEncoder(json.JSONEncoder):
          elif isinstance(obj, ObjectId):
              return str(obj)
          return json.JSONEncoder.default(self, obj)
+
+
+class PbxSMTP():
+    def __init__(self, _to_email, _from_email, _subject=None, _msg_body=None, _msg_attachments=[]):
+        self.to_email = _to_email
+        self.from_email = _from_email
+        self.subject = _subject
+        self.msg_body = _msg_body
+        self.msg_attachments = _msg_attachments
+
+
+    def send_message(self):
+        # Create message container - the correct MIME type is multipart/alternative.
+        msg = MIMEMultipart('alternative')
+        html_parser = HTMLParser.HTMLParser()
+        body_plain = html_parser.unescape(self.msg_body)
+        body_html = self.msg_body
+
+        msg['Subject'] = self.subject
+        msg['From'] = self.from_email
+        msg['To'] = self.to_email
+
+        # Record the MIME types of both parts - text/plain and text/html.
+        part1 = MIMEText(body_plain, 'plain')
+        #        part2 = MIMEText(body_html, 'html')
+
+        # Attach parts into message container.
+        # According to RFC 2046, the last part of a multipart message, in this case
+        # the HTML message, is best and preferred.
+        msg.attach(part1)
+        #        msg.attach(part2)
+
+        # Send the message via local SMTP server.
+        s = smtplib.SMTP('108.60.221.2')
+        # sendmail function takes 3 arguments: sender's address, recipient's address
+        # and message to send - here it is sent as one string.
+        s.sendmail(msg['From'], msg['To'], msg.as_string())
+        s.quit()

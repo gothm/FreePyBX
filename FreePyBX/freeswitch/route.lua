@@ -498,6 +498,7 @@ called_num = session:getVariable("destination_number")
 caller_num = session:getVariable("caller_id_number")
 caller_name = session:getVariable("caller_id_name")
 profile = session:getVariable("variable_sofia_profile_name")
+session:set_tts_parms("cepstral", "Allison")
 
 log(called_num)
 
