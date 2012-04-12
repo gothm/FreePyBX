@@ -4,6 +4,7 @@
           xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
           xmlns="http://www.w3.org/1999/xhtml">
+    <!-- ${c.qs} -->
     <section name="dialplan">
         <context name="default">
             <extension name="unloop">
@@ -61,11 +62,12 @@
                 </extension>              
                 </py:for>          
                 <py:for each="vm in account.voicemailboxes">
-                <extension name="leave-${vm.extension}">
+                <extension name="${vm.extension}">
                     <condition field="destination_number" expression="^(${vm.extension})$$">
-                        <action application="set" data="skip_greeting=${str(vm.skip_greeting).lower()}"/>
-                        <action  py:if="vm.audio_file" application="playback" data="${account.recordings_dir}${vm.audio_file}"/>
                         <action application="answer"/>
+                        <action application="sleep" data="1000"/>
+                        <action application="set" data="skip_greeting=${str(vm.skip_greeting).lower()}"/>
+                        <action  py:if="vm.audio_file" application="playback" data="${account.recordings_dir}${vm.audio_file.split(',')[1]}"/>
                         <action application="voicemail" data="${c.profile} ${account.domain} ${vm.extension}"/>
                         <action application="hangup"/>
                     </condition>
@@ -153,7 +155,7 @@
                     </condition>
                 </extension>
                 <extension name="extension-intercom">
-                  <condition field="destination_number" expression="^8(.*)$">
+                  <condition field="destination_number" expression="^00(.*)$">
                     <action application="set" data="dialed_extension=$1"/>
                     <action application="export" data="sip_auto_answer=true"/>
                     <action application="bridge" data="user/$${dialed_extension}@${account.domain}"/>

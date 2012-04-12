@@ -83,7 +83,7 @@
         </li>
         <li class="odd">
             <label class="fieldlabel">Virtual Mailbox Pin</label>
-            <input type="text" required="true" name="vmbox_pin" id="vmbox_pin" placeholder="Example: 3425"
+            <input type="text" required="true" name="vm_password" id="vm_password" placeholder="Example: 3425"
                    dojoType="dijit.form.ValidationTextBox"
                    missingMessage="Please add a 4 digit pin."
                    dojoType="dijit.form.ValidationTextBox"
@@ -95,12 +95,34 @@
                     />
         </li>
         <li class="odd">
-            <label class="fieldlabel">Skip Extension Greeting</label>
-            <input id="skip_greetin" name="skip_greetin" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <label class="fieldlabel">Skip Greeting</label>
+            <input id="skip_greeting" name="skip_greeting" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="even">
-            <label class="fieldlabel">Custom Audio File</label>
+            <label class="fieldlabel">Play Audio</label>
             <input dojoType="dijit.form.FilteringSelect" store="audioStore" value="" id="audio_file" searchAttr="name" name="audio_file">
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Attach Voicemail to Email</label>
+            <input id="vm_attach_email" name="vm_attach_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Notify of Voicemail by Email</label>
+            <input id="vm_notify_email" name="vm_notify_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Keep Voicemail After Email</label>
+            <input id="vm_save" name="vm_save" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">VoiceMail Email</label>
+            <input type="text" id="vm_email" name="vm_email" size="30"
+                   dojoType="dijit.form.ValidationTextBox"  placeholder="Email to send voicemail recordings to."
+                   required="false"
+                   regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
+                   promptMessage="Please enter a valid email address."
+                   invalidMessage="Invalid email."
+                   trim="true" />
         </li>
     </ul>
 </div>

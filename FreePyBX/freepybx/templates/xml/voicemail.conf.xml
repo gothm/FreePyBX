@@ -31,7 +31,7 @@
         <configuration name="voicemail.conf" description="Voicemail">
             <settings></settings>
             <profiles>
-                <py:for each="sipprofile in c.sip_profiles">
+                <py:for each="sipprofile in c.pbx_profiles">
                     <profile name="${sipprofile.name}">
                         <param name="odbc-dsn" value="${c.odbc_credentials}"/>
                         <param name="file-extension" value="mp3"/>
@@ -70,15 +70,15 @@
                         <param name="repeat-message-key" value="0"/>
                         <param name="record-silence-threshold" value="200"/>
                         <param name="record-silence-hits" value="2"/>
-                        <param name="operator-extension" value="411 XML $${context}"/>
+                        <param name="operator-extension" value="411 XML $${domain}"/>
                         <param name="operator-key" value="9"/>
-                        <param name="vmain-extension" value="411 XML $${context}"/>
+                        <param name="vmain-extension" value="411 XML $${domain}"/>
                         <param name="vmain-key" value="*"/>
                         <email>
                             <param name="template-file" value="voicemail.tpl"/>
                             <param name="notify-template-file" value="notify-voicemail.tpl"/>
                             <param name="date-fmt" value="%A, %B %d %Y, %I %M %p"/>
-                            <param name="email-from" value="voicemail@$${context}"/>
+                            <param name="email-from" value="voicemail@$${domain}"/>
                         </email>
                         <param name="storage-dir" value="/usr/local/freeswitch/htdocs/vm"/>
                         <param name="record-title" value="VoiceMail"/>

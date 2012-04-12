@@ -32,7 +32,11 @@
         <div dojoType="dijit.Menu" id="report_menu" style="width:195px;border: 1px solid #c0c0c0;">
             <div dojoType="dijit.MenuItem" iconClass="reportIcon"
                 onClick='dijit.byId("reportingContent").set("href", "/reporting/dashboard.html");'>
-                Reporting By Extension
+                Calls By Extension
+            </div>
+            <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                 onClick='dijit.byId("reportingContent").set("href", "/reporting/ext_recordings.html");'>
+                Extension Recordings
             </div>
         </div>
     </div>
@@ -42,29 +46,29 @@
 </div>
 </py:def>
 
-<py:def function="support">
-<div dojoType="dijit.layout.BorderContainer" title="Support" id="tabSupport" class="admin_context">
-    <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="background-color: #E0E4EA;width:200px;" splitter="true">
-        <div dojoType="dijit.Menu" id="supportNavMenu" style="width:195px;">
+<py:def function="help">
+<div dojoType="dijit.layout.BorderContainer" title="Help" id="tabHelp">
+    <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="border: 1px solid #c0c0c0; background-color: #E0E4EA;width:200px;" splitter="true">
+        <div dojoType="dijit.Menu" id="helpNavMenu" style="width:195px;">
             <div dojoType="dijit.MenuItem" iconClass="bookIcon"
-                onClick='dijit.byId("supportContent").set("href", "/voip_device.html");'>
+                onClick='dijit.byId("helpContent").set("href", "/help/help_pbx.html");'>
                 VoIP and Device Settings
             </div>                  
             <div dojoType="dijit.MenuItem" iconClass="bookIcon"
-                onClick='dijit.byId("supportContent").set("href", "/pbx_manual.html");'>
+                onClick='dijit.byId("helpContent").set("href", "/help/pbx_manual.html");'>
                 PBX Manual and Guide
             </div>
             <div dojoType="dijit.MenuItem" iconClass="bookIcon"
-                onClick='dijit.byId("supportContent").set("href", "/support/crm.html");'>
+                onClick='dijit.byId("helpContent").set("href", "/help/pbx_manual.html");'>
                 CRM Guide
             </div>
             <div dojoType="dijit.MenuItem" iconClass="bookIcon"
-                onClick='dijit.byId("supportContent").set("href", "/support/how_to.html");'>
+                onClick='dijit.byId("helpContent").set("href", "/help/pbx_manual.html");'>
                 Call Center Survival Guide
             </div>                
         </div>
     </div>
-    <div id="supportContent" style="background-color: #E0E4EA;" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" href="/help/help_pbx.html"
+    <div id="helpContent" style="background-color: #fff;" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" href="/help/help_pbx.html"
             minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
     </div>
 </div>
@@ -317,8 +321,6 @@
 <div dojoType="dijit.layout.BorderContainer" title="Call Center" class="admin_context">
     <div dojoType="dijit.layout.AccordionContainer" id="callCenterNav"
     region="leading" minSize="100px" style="width:235px;background-color: #E0E4EA;">
-        <div dojoType="dojox.layout.ContentPane" title="Users"
-        design="headline" href="/pbx/broker_users.html" executeScripts="true"></div>
         <div dojoType="dojox.layout.ContentPane" title="Call Center Menu" minSize="100px" style="background-color: #E0E4EA;width:210px;" >
             <div dojoType="dijit.Menu" id="ccNavMenu" style="width:210px;border: 1px solid #c0c0c0;">
                 <div dojoType="dijit.MenuItem" iconClass="dashboardIcon"
@@ -358,6 +360,8 @@
                 </div>
             </div>
         </div>
+        <div dojoType="dojox.layout.ContentPane" title="Users"
+             design="headline" href="/pbx/broker_users.html" executeScripts="true"></div>
     </div>
     <div id="callCenterContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" style="background-color: #E0E4EA;"
     minSize="200" href="/call_center/cc_dashboard.html" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true"></div>

@@ -114,6 +114,7 @@
 // ]]>
 // -->
 </script>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="groupStore" url="/admin/user_groups"></div>
 <div dojoType="voiceware.PbxForm"
      data-dojo-props="title:'Edit User',legend:'User Settings',delStyle:'display:none', noticeClass: 'noNotice',
      formName:'user_edit_form',helpCategory:'edit_user', submitFunc:'userEditFormHandler();',
@@ -192,12 +193,9 @@
             <input type="text" name="active" id="active" dojoType="dijit.form.CheckBox"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="group_id">Admin Group</label>
-            <select dojoType="dijit.form.FilteringSelect"  id="group_id" name="group_id">
-                <option value="2">Extension User</option>
-                <option value="1">PBX Admin</option>
-                <option value="3">Billing &amp; Reports</option>
-            </select>
+            <label class="fieldlabel" for="group_id">Group</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="groupStore" value="" id="group_id"
+                   searchAttr="description" name="group_id"/>
         </li>
         <li class="odd">
             <label class="fieldlabel">Portal Extension</label>

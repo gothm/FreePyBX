@@ -1,5 +1,4 @@
-/* 
- 
+/*
     This Source Code Form is subject to the terms of the Mozilla Public 
     License, v. 2.0. If a copy of the MPL was not distributed with this 
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -18,8 +17,9 @@
  */
     dojo.require("dojo.parser");
     dojo.require("dojo.data.ItemFileWriteStore");
-    dojo.require("dojo.data.ItemFileReadStore");    
-    
+    dojo.require("dojo.data.ItemFileReadStore");
+
+    dojo.require("dijit.dijit");
     dojo.require("dijit.Tree");
     dojo.require("dijit.Editor");
     dojo.require('dijit.form.Form');
@@ -72,7 +72,7 @@
     dojo.require("dojox.grid.enhanced.plugins.Pagination");
     dojo.require("dojox.grid.enhanced.plugins.Filter");        
     
-    dojo.require("dijit.dijit");
+
     dojo.require("dojox.widget.Portlet");
     dojo.require("dojox.widget.FeedPortlet");
     dojo.require("dojox.layout.GridContainer");
@@ -109,12 +109,12 @@
 
     function getCallQueueRecordings(queue) {
         tmpObj = queue;
-        dijit.byId("callCenterContent").set("href", "/cc_queue_recordings.html");
+        dijit.byId("callCenterContent").set("href", "/call_center/cc_queue_recordings.html");
     }
     
     function getCampaignLeads(campaign) {
         tmpObj = campaign;
-        dijit.byId("crmContent").set("href", "/crm_campaign_leads.html");
+        dijit.byId("crmContent").set("href", "/crm/crm_campaign_leads.html");
     }    
     
     function logout(obj) {
@@ -402,7 +402,7 @@
 
     function showHelp(id) {
         dijit.byId("help_dlg").set("href", "/help/"+id+".html");
-        dijit.byId("help_dlg").set("title", "FreeGUIPy Help");
+        dijit.byId("help_dlg").set("title", "Help");
         dijit.byId("help_dlg").show();
         return true;
     }
@@ -449,5 +449,6 @@ dojo.ready(function() {
     attributes.id = "vw_broker";
     attributes.name = "vw_broker";
     attributes.align = "middle";
-    swfobject.embedSWF("/flash/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf", flashvars, params, attributes, function(e) { vwb = e.ref;});
+    swfobject.embedSWF("/flash/vwbroker.swf", "vwbroker", "10", "10", swfVersionStr, "expressInstall.swf",
+        flashvars, params, attributes, function(e) { vwb = e.ref;});
 });

@@ -25,10 +25,14 @@
 .pbxFormOuter {
     width: 700px;
     background-color: rgba(128, 201, 252, 0.38);
-    border: 1px solid #4787de;
     margin-top: 10px;
     padding-bottom: 20px;
-
+    border:1px solid #b5bcc7;
+    border-radius:3pt;
+    -moz-border-radius:3pt;
+    -webkit-border-radius:4pt;
+    -o-border-radius:4pt;
+    -ms-border-radius:4pt;
 }
 
 .pbxFormFs {

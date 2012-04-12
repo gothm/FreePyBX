@@ -37,8 +37,7 @@
     dojo.require("dijit.layout.TabContainer");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dojox.grid.EnhancedGrid");
-    dojo.require("dojox.grid.enhanced.plugins.Menu");  
-    
+    dojo.require("dojox.grid.enhanced.plugins.Menu");
     
     function RecordingListen(data,name) {
         vm = dijit.byId("qrecDlg");
@@ -48,7 +47,6 @@
     }            
     
     var qrecStore = new dojo.data.ItemFileWriteStore({url:  "/call_center/get_queue_recordings?queue_name="+tmpObj});
-    
     
     function deleteQueueRecording(data) {
         dojo.xhrPost({

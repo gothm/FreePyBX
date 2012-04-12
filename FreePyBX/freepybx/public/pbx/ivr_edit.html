@@ -32,17 +32,17 @@
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
     dojo.require("dijit.form.Textarea");
-    dojo.require("dijit.form.Button"); 
+    dojo.require("dijit.form.Button");
     dojo.require("dojox.validate.web");
     dojo.require("dojox.validate._base");
-    dojo.require("dijit.form.ValidationTextBox"); 
-    
+    dojo.require("dijit.form.ValidationTextBox");
+
     function ivrEditFormHandler() {
         dojo.xhrPost({
             url: "/pbx/ivr_edit",
             handleAs: "text",
             form: dojo.byId("ivr_edit_form"),
-    
+
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message: res});
@@ -56,25 +56,25 @@
                 new voiceware.notice.Error({message: err});
                 return err;
             }
-        });    
-    }    
-        
-    function setIVRForm(obj) {    
+        });
+    }
+
+    function setIVRForm(obj) {
         console.log(dojo.toJson(obj, true));
         dojo.byId("ivr_name").value = obj.name;
         dojo.byId("ivr_id").value = obj.id;
-        dijit.byId("audio_name").set("value", obj.audio_name);
-        
+        dijit.byId("ivr_audio").set("value", obj.audio_name);
+
         dojo.forEach(obj.options, function(option) {
             dijit.byId("option_"+option.option).set("value", option.pbx_route_id);
         });
-        
+
         dijit.byId("timeout").set("value", obj.timeout);
         dijit.byId("direct_dial").set("checked", obj.direct_dial);
         dijit.byId("timeout_destination").set("value", obj.timeout_destination);
-     
-     }    
-     
+
+    }
+
     function getIVRByID() {
         dojo.xhrGet({
             url: "/pbx/ivr_by_id/"+tmpObj.id,
@@ -87,11 +87,11 @@
                 new voiceware.notice.Error({message: "Failed to retrieve IVR."});
                 return err;
             }
-        });            
-    }         
-    
-    dojo.addOnLoad(function() { 
-         getIVRByID();
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        getIVRByID();
     });
 
 </script>
@@ -111,7 +111,7 @@
         </li>
         <li class="odd">
             <label class="fieldlabel">Enter Audio File</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value="" id="audio_name"
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value="" id="ivr_audio"
                    searchAttr="name" name="audio_name">
         </li>
         <li class="even">

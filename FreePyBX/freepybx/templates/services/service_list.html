@@ -70,7 +70,7 @@
             saveComplete();
             return;
         }
-        update_admin_grid(dojo.toJson(changes, true));
+        update_service_grid(dojo.toJson(changes, true));
         console.log(dojo.toJson(changes, true));
         saveComplete();
     };
@@ -113,29 +113,15 @@
         return js;
     };
 
-    admin_grid = function () {
+    service_grid = function () {
         var adminLayout = [{
-            name: 'Admin Name',
+            name: 'Service Name',
             field: 'name',
             width: 'auto'
         },{
-            name: 'Username',
-            field: 'username',
+            name: 'Description',
+            field: 'description',
             width: 'auto'
-        },{
-            name: 'Password',
-            field: 'password',
-            width: 'auto'
-        },{
-            name: 'Active',
-            field: 'active',
-            editable: 'true',
-            width: 'auto',
-            type: dojox.grid.cells.Bool,
-            formatter: function(value) {
-                console.log(value);
-                return value;
-            }
         }];
 
         serviceGrid = new dojox.grid.EnhancedGrid({
@@ -162,9 +148,9 @@
         dijit.byId("serv").set("href", "/admin/admin_edit.html");
     }
 
-    function update_admin_grid(obj) {
+    function update_service_grid(obj) {
         dojo.xhrGet({
-            url: "/admin/update_admin_grid?data="+obj,
+            url: "/admin/update_service_grid?data="+obj,
             handleAs: "text",
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
@@ -203,20 +189,20 @@
     }
 
     dojo.addOnLoad(function() {
-        //admin_grid();
+        service_grid();
     });
     //]]>
 </script>
 <div style="border: 1px solid #c0c0c0;">
     <div dojoType="dijit.Toolbar" region="top">
-        <button id="addAdminBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
-            Add Admin
+        <button  dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add Service
             <script type="dojo/method" event="onClick">
-                dijit.byId("adminContent").set("href", "/admin/admin_add.html")
+                dijit.byId("servicesContent").set("href", "/services/service_add.html")
             </script>
         </button>
-        <button id="editAdminBtn" dojoType="dijit.form.Button" iconClass="editIcon">
-            Edit Admin
+        <button dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit Service
             <script type="dojo/method" event="onClick">
                 if (serviceGrid.selection.getSelected()[0] == undefined) {
                 alert("Please select a admin to edit!");
@@ -225,16 +211,16 @@
                 editAdmin();
             </script>
         </button>
-        <button id="saveAdminBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+        <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
             Save
             <script type="dojo/method" event="onClick">
                 serviceStore.save();
             </script>
         </button>
-        <button id="delAdminBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+        <button dojoType="dijit.form.Button" iconClass="dijitIconDelete">
             &nbsp;Delete
             <script type="dojo/method" event="onClick">
-                delete_admin();
+                delete_service();
             </script>
         </button>
     </div>

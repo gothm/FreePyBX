@@ -50,6 +50,7 @@ decoder = Decoder(amf3=True)
 encoder = Encoder(amf3=True)
 
 
+
 #'ESL:INCOMINGCALL:EXT:'+ext+':CONTEXT:'+context+':FROM:'+caller_id_num
 def make_message(type, command, context, data, ext=None):
     m = Message()
@@ -58,7 +59,7 @@ def make_message(type, command, context, data, ext=None):
     m.context = context
     m.data = data
     m.ext = ext
-    
+
 
 class Message:
     pass
@@ -70,14 +71,14 @@ class ESLBrokerNotifier(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host, port):
-        
+
         try:
             self.sock.connect((host, port))
             print "Connected to server.\n"
         except socket.error, e:
             raise Exception("Can't connect: %s" % e[1])
-        
-        
+
+
     def stop(self):
         return
 
@@ -85,93 +86,93 @@ class ESLBrokerNotifier(object):
 
         try:
             msg = dict({"type":"ESL","command":"CONNECT","context":"", "data": "", "ext": ""})
-            objs = encoder.encode(msg)                                        
+            objs = encoder.encode(msg)
             self.sock.send(objs)
         except socket.error, e:
             raise Exception("Can't connect: %s" % e[1])
-        
+
         self.smain()
-       
+
 
     def smain(self):
         con = ESLconnection("127.0.0.1","8888","3v3lyn888")
-        
+
         if con.connected:
             con.events("plain", "all");
-        
+
             while con.connected():
                 e = con.recvEventTimed(1000)
-                if e:   
+                if e:
                     name = e.getHeader("Event-Name")
-#                    print e.serialize()
-                    
+                    print e.serialize()
+
                     if name == 'CUSTOM':
                         subclass = e.getHeader("Event-Subclass")
-        
+
                         if subclass == 'callcenter::info':
                             agent_context = e.getHeader("CC-Agent")
                             state = e.getHeader("CC-Agent-State")
                             if agent_context and state:
                                 agent = agent_context.split("@")[0]
-                                context = agent_context.split("@")[1]                               
-                                
+                                context = agent_context.split("@")[1]
+
                                 try:
                                     #type, command, context, data, ext
                                     msg = dict({"type":"ESL","command":"NOTICE","context":context, "data": state, "ext": agent})
-                                    objs = encoder.encode(msg)                                        
+                                    objs = encoder.encode(msg)
                                     self.sock.send(objs)
                                     print e.serialize()
                                 except:
                                     print "excepted"
-                                    
+
                         if subclass == 'callcenter::info':
                             if e.getHeader("CC-Action") == 'agent-offering':
-                                
+
                                 print "Agent offering..."
                                 agent_context = e.getHeader("CC-Agent")
-                                
+
                                 if len(agent_context) > 3:
                                     agent = agent_context.split("@")[0]
-                                    context = agent_context.split("@")[1]   
-                                    
+                                    context = agent_context.split("@")[1]
+
                                 cid_num = e.getHeader("CC-Member-CID-Number")
-                                caller_id_num = cid_num[len(cid_num)-10:]    
-                                
+                                caller_id_num = cid_num[len(cid_num)-10:]
+
                                 try:
                                     #type, command, context, data, ext
                                     msg = dict({"type":"ESL","command":"INCOMINGCALL","context": context, "data": caller_id_num, "ext": agent})
-                                    objs = encoder.encode(msg)    
+                                    objs = encoder.encode(msg)
                                     self.sock.send(objs)
-                                    print e.serialize()                                
+                                    print e.serialize()
                                 except:
-                                    print "excepted"                         
-                    
-#                    elif name == 'CHANNEL_PROGRESS':                        
-#                        ext = e.getHeader("variable_pbx_contact_user")
-#                        context = e.getHeader("variable_context")
-#                        domain = e.getHeader("variable_domain")
-#                        cid_num = e.getHeader("Caller-Caller-ID-Number")
-#                        
-#                        if ext and context and domain and cid_num:
-#                            caller_id_num = cid_num[len(cid_num)-10:]      
-#                               
-#                            try:
-#                                #type, command, context, data, ext
-#                                msg = dict({"type":"ESL","command":"INCOMINGCALL","context": context, "data": caller_id_num, "ext": ext})
-#                                objs = encoder.encode(msg)    
-#                                self.sock.send(objs)
-#                                print e.serialize()
-#                            except:
-#                                print "excepted"
-#                
-#                                
-#                    elif name == 'HEARTBEAT':
-#                        try:
-#                            msg = dict({"type":"ESL","command":"HEARTBEAT","context":"", "data": "", "ext": ""})
-#                            objs = encoder.encode(msg)       
-#                            self.sock.send(objs)                   
-#                        except:
-#                          print "excepted"
+                                    print "excepted"
+
+                    elif name == 'CHANNEL_PROGRESS':
+                        ext = e.getHeader("variable_pbx_contact_user")
+                        context = e.getHeader("variable_context")
+                        domain = e.getHeader("variable_domain")
+                        cid_num = e.getHeader("Caller-Caller-ID-Number")
+
+                        if ext and context and domain and cid_num:
+                            caller_id_num = cid_num[len(cid_num)-10:]
+
+                            try:
+                                #type, command, context, data, ext
+                                msg = dict({"type":"ESL","command":"INCOMINGCALL","context": context, "data": caller_id_num, "ext": ext})
+                                objs = encoder.encode(msg)
+                                self.sock.send(objs)
+                                print e.serialize()
+                            except:
+                                print "excepted"
+
+
+                    elif name == 'HEARTBEAT':
+                        try:
+                            msg = dict({"type":"ESL","command":"HEARTBEAT","context":"", "data": "", "ext": ""})
+                            objs = encoder.encode(msg)
+                            self.sock.send(objs)
+                        except:
+                            print "excepted"
 
 
 
@@ -183,4 +184,4 @@ if __name__ == '__main__':
     try:
         client.connectBroker()
     except KeyboardInterrupt:
-        client.stop()   
+        client.stop()

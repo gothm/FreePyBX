@@ -1,3 +1,6 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
 <!--
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,18 +24,13 @@
     except that You may alter any license notices to the extent required to
     remedy known factual inaccuracies.
 -->
-
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:py="http://genshi.edgewall.org/">
-
 <script charset="UTF-8" type="text/javascript">
-
     dojo.require("dijit.form.FilteringSelect");
     dojo.require("dojo.data.ItemFileReadStore");
     dojo.require("dijit.form.Form");
     dojo.require("dojox.widget.Wizard");
     dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.ComboBox");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
     dojo.require("dijit.form.Button");
@@ -95,10 +93,7 @@
 
 
 </script>
-
-<div dojoType="dojo.data.ItemFileReadStore" jsId="customer_store" url="/admin/customers"></div>
-<div dojoType="dojo.data.ItemFileReadStore" jsId="profileStore" url="/admin/profiles"></div>
-<div dojoType="dojo.data.ItemFileReadStore" jsId="contextStore" url="/admin/context_store"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="groupStore" url="/admin/user_groups"></div>
 <div dojoType="voiceware.PbxForm"
      data-dojo-props="title:'Edit Customer Admin',legend:'Customer Admin Settings',delStyle:'display:none', noticeClass: 'noNotice',
      formName:'cust_admin_edit_form',helpCategory:'edit_cust_admin', submitFunc:'custAdminEditFormHandler();',
@@ -147,12 +142,9 @@
             </div>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="group_id">Auth Level</label>
-            <select data-dojo-type="dijit.form.ComboBox" id="group_id" name="group_id">
-                <option value="1">PBX Admin</option>
-                <option value="2">Extension User</option>
-                <option value="3">Billing & Reports</option>
-            </select>
+            <label class="fieldlabel" for="group_id">Group</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="groupStore" value="" id="group_id"
+                   searchAttr="description" name="group_id"/>
         </li>
     </ul>
 

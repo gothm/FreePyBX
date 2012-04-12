@@ -276,6 +276,7 @@ class User(Base):
     def __unicode__(self):
         return self.customer_name
 
+    # u = User(first_name, last_name, username, password, 1, form_result.get('customer_id'), True)
     def __init__(self, first_name=None, last_name=None, username=None,
                  password=None, customer_id=None, active=False):
         self.first_name = first_name

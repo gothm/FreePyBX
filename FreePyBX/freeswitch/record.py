@@ -76,8 +76,8 @@ def handler(session, args):
     try:
         session.answer()    
         session.set_tts_parms('cepstral', 'Allison')    
-        VWCI = VWCI(session)
-        VWCI.main()
+        vwci = VWCI(session)
+        vwci.main()
     except:
         raise Exception("Broke in handler...")
     finally:

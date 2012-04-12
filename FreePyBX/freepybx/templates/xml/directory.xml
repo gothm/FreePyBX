@@ -27,6 +27,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml">
+    <!-- ${c.qs} -->
     <section name="directory">
         <domain name='${c.domain}'>
             <groups>
@@ -68,14 +69,23 @@
                         </py:if>
                         <py:for each="vm in c.voicemailboxes">
                             <user id='${vm.extension}' mailbox='${vm.extension}'>
-                                     <params>
-                                        <param name='password' value='PBX2345234524'/>
-                                        <param name='vm-password' value='${vm.pin}'/>
-<!--                                         <param py:if="endpoint.vm_email" name="vm-mailto" value="${endpoint.vm_email}"/>
-                                        <param py:if="endpoint.vm_delete" name="vm-email-all-messages" value="${endpoint.vm_delete}"/>
-                                        <param py:if="endpoint.vm_attach_email" name="vm-attach-file" value="${endpoint.vm_attach_email}"/> -->
-                                        <param name="vm-message-ext" value="mp3"/>
-                                    </params>
+                                <params>
+                                    <param name='password' value='VIRTUALMAILBOX_NOREG'/>
+                                    <param name='vm-password' value='${vm.vm_password}'/>
+                                    <param py:if="vm.vm_email" name="vm-mailto" value="${vm.vm_email}"/>
+                                    <param py:if="vm.vm_attach_email" name="vm-email-all-messages" value="${str(vm.vm_attach_email).lower()}"/>
+                                    <param py:if="vm.vm_attach_email" name="vm-attach-file" value="${str(vm.vm_attach_email).lower()}"/>
+                                    <param py:if="vm.vm_save" name="vm-keep-local-after-email" value="${str(vm.vm_save).lower()}"/>
+                                    <param py:if="vm.vm_notify_email" name="vm-notify-email-all-messages"  value="${str(vm.vm_notify_email).lower()}"/>
+                                    <param name="vm-message-ext" value="mp3"/>
+                                </params>
+                                <variables>
+                                    <variable name="accountcode" value="${vm.extension}"/>
+                                    <variable name="user_context" value="${c.domain}"/>
+                                    <variable name="vm_extension" value="${vm.extension}"/>
+                                    <variable name="presence_id" value="${vm.extension}@${c.domain}"/>
+                                    <variable name="mailbox" value="${vm.extension}"/>
+                                </variables>
                             </user>
                         </py:for>                        
                     </users>

@@ -304,6 +304,19 @@ class AdminController(BaseController):
 
         return "Successfully updated Customer."
 
+    @authorize(logged_in)
+    def user_groups(self, **kw):
+        items=[]
+        for row in Group.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+
     @authorize(super_user)
     def profiles(self, **kw):
         items=[]
@@ -909,6 +922,7 @@ class AdminController(BaseController):
         db.remove()
         return  "Successfully deleted admin."
 
+
     @authorize(super_user)
     def cust_admins(self, **kw):
         items=[]
@@ -933,7 +947,7 @@ class AdminController(BaseController):
         items=[]
         row = User.query.filter_by(id=id).first()
 
-        items.append({'id': row.id, 'customer_name': row.get_customer_name(row.customer_id), 'first_name': row.first_name, 'last_name': row.last_name, 'username': row.username, 'password': row.password, 'customer_id': row.customer_id})
+        items.append({'id': row.id, 'customer_name': row.get_customer_name(row.customer_id), 'first_name': row.first_name, 'last_name': row.last_name, 'username': row.username, 'password': row.password, 'customer_id': row.customer_id, 'group_id': row.group_id})
 
         out = dict({'identifier': 'id', 'label': 'name', 'items': items})
         response = make_response(out)
@@ -952,7 +966,7 @@ class AdminController(BaseController):
             first_name = form_result.get('first_name')
             last_name = form_result.get('last_name')
 
-            u = User(first_name, last_name, username, password, 1, form_result.get('customer_id'), True)
+            u = User(first_name, last_name, username, password, form_result.get('customer_id'), True)
             db.add(u)
 
             g = Group.query.filter(Group.name=='pbx_admin').first()

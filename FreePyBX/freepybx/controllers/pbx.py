@@ -123,7 +123,7 @@ class PbxController(BaseController):
             for context in PbxContext.query.distinct(PbxContext.context):
                 for queue in CallCenterQueue.query.filter_by(context=context.context).all():
                     c.call_center_queues.append(
-                             {'name': queue.name, 'domain': queue.domain, 'moh_sound': queue.moh_sound.split(",")[1],
+                            {'name': queue.name, 'domain': queue.domain, 'moh_sound': queue.moh_sound.split(",")[1],
                              'time_base_score': queue.time_base_score,
                              'max_wait_time': queue.max_wait_time,
                              'max_wait_time_with_no_agent': queue.max_wait_time_with_no_agent,
@@ -186,7 +186,6 @@ class PbxController(BaseController):
         return render('xml/lcr.conf.xml')
 
     def configuration(self, **kw):
-
         conf = re.sub('[^A-Za-z0-9]+', '', request.params.get('key_value', "Nothing"))
 
         if has_method(self, conf):
@@ -208,7 +207,7 @@ class PbxController(BaseController):
                                          "INNER JOIN pbx_profiles "
                                          "ON pbx_profiles.id = pbx_gateways.pbx_profile_id "
                                          "WHERE pbx_profiles.name = :profile_name",
-                                         {'profile_name': str(request.params["profile"])})
+                            {'profile_name': str(request.params["profile"])})
                     c.gateway = {'name': str(request.params["profile"]), 'gateway': gateway}
                     db.remove()
                     return render('xml/gateways.xml')
@@ -228,23 +227,31 @@ class PbxController(BaseController):
                 c.groups.append({'name': group.name, 'extensions': exts})
 
             for vmext in PbxVirtualMailbox.query.filter_by(context=domain).all():
-                c.voicemailboxes.append({'extension': vmext.extension, 'pin': vmext.pin})
+                c.voicemailboxes.append({'extension': vmext.extension, 'vm_password': vmext.vm_password,
+                                         'vm_attach_email': vmext.vm_attach_email, 'vm_save': vmext.vm_save,
+                                         'vm_notify_email': vmext.vm_notify_email, 'vm_email': vmext.vm_email})
 
             if not request.params.has_key('user'):
                 c.endpoints = []
                 c.domain = domain
                 c.endpoints = PbxEndpoint.query.filter_by(user_context = domain).all()
-                db.remove()
+
                 return render('xml/directory.xml')
             else:
                 user = request.params.get('user')
+                c.domain = domain
                 c.endpoints = PbxEndpoint.query.filter_by(user_context = domain).filter_by(auth_id=user).all()
 
                 if not len(c.endpoints):
-                    return render('xml/notfound.xml')
+                    for vmext in PbxVirtualMailbox.query.filter_by(context=domain).all():
+                        c.voicemailboxes.append({'extension': vmext.extension, 'vm_password': vmext.vm_password,
+                                                 'vm_attach_email': vmext.vm_attach_email, 'vm_save': vmext.vm_save,
+                                                 'vm_notify_email': vmext.vm_notify_email, 'vm_email': vmext.vm_email})
+                    if c.voicemailboxes:
+                        return render('xml/virtual_mailboxes.xml')
+                    else:
+                        return render('xml/notfound.xml')
 
-                c.domain = domain
-                db.remove()
                 return render('xml/directory.xml')
         except:
             return render('xml/notfound.xml')
@@ -357,8 +364,9 @@ class PbxController(BaseController):
             return render('xml/dialplan.xml')
 
         except Exception, e:
-            log.debug("Unexpected error: %s" % e)
+            log.debug("Exception: %s" % e)
             return render('xml/notfound.xml')
+
         finally:
             db.remove()
 
@@ -755,7 +763,7 @@ class PbxController(BaseController):
             e.accountcode = co.tel
             e.find_me = True if form_result.get('find_me')=="true" else False
             e.auto_provision = True if form_result.get('auto_provision')=="true" else False
-            e.device_type_id = form_result.get('device_type_id', 0)
+            e.device_type_id = form_result.get('device_type_id') if form_result.get('device_type_id') else 0
             e.include_xml_directory = True if form_result.get('include_xml_directory')=="true" else False
             e.mac = form_result.get('mac', None)
 
@@ -874,16 +882,16 @@ class PbxController(BaseController):
             e.record_inbound_calls = form_result.get('record_inbound_calls', False)
             e.record_outbound_calls = form_result.get('record_outbound_calls', False)
             e.auto_provision = True if form_result.get('auto_provision')=="true" else False
-            e.device_type_id = form_result.get('device_type_id', 0)
+            e.device_type_id = form_result.get('device_type_id') if form_result.get('device_type_id') else 0
             e.include_xml_directory = True if form_result.get('include_xml_directory')=="true" else False
-            e.mac = form_result.get('mac')
+            e.mac = form_result.get('mac', None)
 
             db.add(e)
             db.commit()
             db.flush()
 
             r = PbxRoute.query.filter(PbxRoute.pbx_route_type_id==1).\
-                filter(PbxRoute.name==e.auth_id).filter(PbxRoute.context==session['context']).first()
+            filter(PbxRoute.name==e.auth_id).filter(PbxRoute.context==session['context']).first()
 
             delete_conditions(r.id)
 
@@ -1062,24 +1070,23 @@ class PbxController(BaseController):
                 if not len(i['did']) == 10 or not str(i['did']).strip().isdigit():
                     return "A virtual extension needs to be exactly 10 digits."
                 ve = PbxVirtualExtension.query.filter_by(id=i['id']).filter_by(context=session['context']).first()
-                ve.did = i['did'].strip()
-                ve.timeout = i['timeout'].strip()
-                ve.pbx_route_id = i['pbx_route_id'].strip()
+                ve.did = i['did']
+                ve.timeout = i['timeout']
+                ve.pbx_route_id = i['pbx_route_id']
                 db.commit()
                 db.flush()
-                db.remove()
 
         except DataInputError, error:
             db.remove()
             return 'Error: %s' % error
 
-        return "Successfully updated."
+        return "Successfully updated virtual extension."
 
     @authorize(logged_in)
     def vmboxes(self):
         items=[]
         for extension in PbxVirtualMailbox.query.filter_by(context=session['context']).all():
-            items.append({'id': extension.id, 'extension': extension.extension, 'pin': extension.pin})
+            items.append({'id': extension.id, 'extension': extension.extension, 'vm_password': extension.vm_password})
 
         db.remove()
 
@@ -1094,14 +1101,19 @@ class PbxController(BaseController):
         schema = VirtualMailboxForm()
         try:
             form_result = schema.to_python(request.params)
-            svm = PbxVirtualMailbox()
-            svm.extension = form_result.get('vmbox_number')
-            svm.pin = form_result.get('vmbox_pin')
-            svm.context = session['context']
-            svm.skip_greeting =  True if form_result.get('skip_greeting')=="true" else False
-            svm.audio_file = form_result.get('audio_file', None)
+            vm = PbxVirtualMailbox()
+            vm.extension = form_result.get('vmbox_number')
+            vm.vm_password = form_result.get('vm_password')
+            vm.context = session['context']
+            vm.skip_greeting =  True if form_result.get('skip_greeting')=="true" else False
+            vm.audio_file = form_result.get('audio_file', None)
+            vm.vm_email = form_result.get('vm_email', None)
+            vm.vm_password = form_result.get('vm_password', u'9999')
+            vm.vm_attach_email = True if form_result.get('vm_attach_email')=="true" else False
+            vm.vm_notify_email = True if form_result.get('vm_notify_email')=="true" else False
+            vm.vm_save = True if form_result.get('vm_save')=="true" else False
 
-            db.add(svm)
+            db.add(vm)
             db.commit()
             db.flush()
 
@@ -1113,7 +1125,7 @@ class PbxController(BaseController):
             r.voicemail_enable = True
             r.voicemail_ext = form_result.get('vmbox_number')
             r.pbx_route_type_id = 3
-            r.pbx_to_id = svm.id
+            r.pbx_to_id = vm.id
 
             db.add(r)
             db.commit()
@@ -1135,7 +1147,7 @@ class PbxController(BaseController):
                 if not str(i['extension']).strip().isdigit() or not str(i['pin']).strip().isdigit():
                     return "A virtual mailbox and pin needs to be exactly 3 or 4 numbers."
                 vm = PbxVirtualMailbox.query.filter_by(id=i['id']).filter_by(context=session['context']).first()
-                vm.pin = i['pin'].strip()
+                vm.vm_password = i['vm_password'].strip()
                 db.commit()
                 db.flush()
                 db.remove()
@@ -1221,6 +1233,7 @@ class PbxController(BaseController):
         db.flush()
 
         db.remove()
+
         return "Successfully added group "+str(form_result.get('group_name'))+"."
 
     @authorize(logged_in)
@@ -1230,19 +1243,14 @@ class PbxController(BaseController):
 
         try:
             for i in w['modified']:
-                sg = PbxGroup.query.filter(PbxGroupMember.pbx_group_id==sg.id).delete()
+                PbxGroupMember.query.filter(PbxGroupMember.pbx_group_id==i['id']).delete()
 
                 for gm in i['members'].split(","):
                     if not gm.strip().isdigit():
                         continue
-                    sm = PbxGroupMember()
-                    sm.pbx_group_id = sg.id
-                    sm.extension = gm.strip()
-
-                    db.add(sm)
+                    db.add(PbxGroupMember(i['id'], gm.strip()))
                     db.commit()
                     db.flush()
-                    db.remove()
         except:
             db.remove()
             return "Error updating group."
@@ -1656,7 +1664,7 @@ class PbxController(BaseController):
         items=[]
         for cid in PbxCallerIDRoute.query.filter_by(context=session['context']).all():
             route = db.query(PbxRoute.id, PbxRouteType.name, PbxRoute.name)\
-                .join(PbxRouteType).filter(PbxRoute.context==session['context']).filter(PbxRoute.id==cid.pbx_route_id).first()
+            .join(PbxRouteType).filter(PbxRoute.context==session['context']).filter(PbxRoute.id==cid.pbx_route_id).first()
             items.append({'id': cid.id, 'cid_number': cid.cid_number, 'pbx_route_id': cid.pbx_route_id, 'pbx_route_name': route[1]+': '+route[2]})
 
         db.remove()
@@ -2209,8 +2217,11 @@ class PbxController(BaseController):
             for x in range(1,5):
                 path.append(row.file_path.split("/")[len(row.file_path.split("/"))-i])
                 i=i-1
+            i = 4
+
             fpath = "/"+"/".join(path)
-            items.append({'name': name, 'received': received, 'path': fpath, 'size': row.message_len})
+            path = []
+            items.append({'name': name, 'to': row.username, 'received': received, 'path': fpath, 'size': row.message_len})
 
         db.remove()
         out = dict({'identifier': 'path', 'label': 'name', 'items': items})
@@ -2232,7 +2243,7 @@ class PbxController(BaseController):
             dir = fs_vm_dir+"/"+session['context']+"/"+session['ext']
             os.remove(os.path.join(dir, file_name))
         except:
-            return "Error: did not delete correctly.."
+            return "Error: Virtual Extension voicemail can be deleted by dialing * plus extension from a registered endpoint."
 
         return "Deleted voicemail."
 
@@ -2264,16 +2275,16 @@ class PbxController(BaseController):
         for row in db.execute("SELECT DISTINCT users.id, users.first_name ||' '|| users.last_name AS agent, users.portal_extension as extension, "
                               "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context = customers.context) AS call_count_in, "
-                              "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS call_count_out, "
-                              "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context =  customers.context) AS time_on_call_in, "
-                              "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS time_on_call_out "
-                              "FROM users "
-                              "INNER JOIN customers ON customers.id = users.customer_id "
-                              "WHERE customers.id = :customer_id "
-                              "ORDER BY extension", {'customer_id': session['customer_id']}).fetchall():
+                                                                                           "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                                                                                           "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS call_count_out, "
+                                                                                                                                                        "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                                                                                                                                                        "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context =  customers.context) AS time_on_call_in, "
+                                                                                                                                                                                                                     "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                                                                                                                                                                                                                     "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS time_on_call_out "
+                                                                                                                                                                                                                                                                                  "FROM users "
+                                                                                                                                                                                                                                                                                  "INNER JOIN customers ON customers.id = users.customer_id "
+                                                                                                                                                                                                                                                                                  "WHERE customers.id = :customer_id "
+                                                                                                                                                                                                                                                                                  "ORDER BY extension", {'customer_id': session['customer_id']}).fetchall():
 
             m, s = divmod(row.time_on_call_in, 60)
             h, m = divmod(m, 60)
@@ -2314,9 +2325,9 @@ class PbxController(BaseController):
                               "INNER JOIN customers ON cdr.context = customers.context "
                               "WHERE customers.id = :customer_id "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" "
-                              "AND cdr.call_direction IS NOT NULL "
-                              "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
-                              "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
+                                                                                           "AND cdr.call_direction IS NOT NULL "
+                                                                                           "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
+                                                                                           "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
 
             num = row.caller_id_number if len(row.caller_id_number)<=10 else row.caller_id_number[len(row.caller_id_number)-10:]
 
@@ -2353,9 +2364,9 @@ class PbxController(BaseController):
                               "INNER JOIN customers ON cdr.context = customers.context "
                               "WHERE customers.id = :customer_id "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" "
-                              "AND cdr.call_direction IS NOT NULL "
-                              "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
-                              "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
+                                                                                           "AND cdr.call_direction IS NOT NULL "
+                                                                                           "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
+                                                                                           "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
 
             num = row.caller_id_number if len(row.caller_id_number)<=10 else row.caller_id_number[len(row.caller_id_number)-10:]
 
@@ -2381,8 +2392,8 @@ class PbxController(BaseController):
 
         response = make_file_response(fpath)
         response.headers = [("Content-type", "application/octet-stream"),
-                            ("Content-Disposition", "attachment; filename="+str(fpath.split("/")[:len(fpath.split("/"))][2])),
-                            ("Content-length", str(size)),]
+            ("Content-Disposition", "attachment; filename="+str(fpath.split("/")[:len(fpath.split("/"))][2])),
+            ("Content-length", str(size)),]
 
         return response(request.environ, self.start_response)
 
@@ -2449,9 +2460,9 @@ class PbxController(BaseController):
     @authorize(logged_in)
     def inuse_findme_endpoints(self):
         items=[]
-        for row in db.query(PbxFindMeRoute.id, PbxEndpoint.auth_id) \
-                .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me)) \
-                .filter(PbxEndpoint.user_context==session['context']).all():
+        for row in db.query(PbxFindMeRoute.id, PbxEndpoint.auth_id)\
+        .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
+        .filter(PbxEndpoint.user_context==session['context']).all():
             items.append({'id': row.id, 'auth_id': row.auth_id})
 
         db.remove()
@@ -2518,11 +2529,11 @@ class PbxController(BaseController):
 
     @authorize(logged_in)
     def get_find_me_edit(self, id, **kw):
-        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2 \
-                                      , PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id) \
-                .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me)) \
-                .filter(PbxEndpoint.user_context==session['context']) \
-                .filter_by(id=id).first()
+        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2\
+            , PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
+        .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
+        .filter(PbxEndpoint.user_context==session['context'])\
+        .filter_by(id=id).first()
         db.remove()
         return render('find_me_edit.html')
 
@@ -2530,9 +2541,9 @@ class PbxController(BaseController):
     def permissions(self, id, **kw):
         c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2\
             , PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
-                .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
-                .filter(PbxEndpoint.user_context==session['context'])\
-                .filter_by(id=id).first()
+        .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
+        .filter(PbxEndpoint.user_context==session['context'])\
+        .filter_by(id=id).first()
         db.remove()
         return render('find_me_edit.html')
 
@@ -2569,7 +2580,8 @@ class PbxController(BaseController):
     @authorize(logged_in)
     def device_store(self):
         items=[]
-        for row in db.query(PbxDeviceManufacturer.id, PbxDeviceManufacturer.name,  PbxDeviceType.model, PbxDeviceType.id).join(PbxDeviceType).order_by(PbxDeviceManufacturer.name).all():
+        for row in db.query(PbxDeviceManufacturer.id, PbxDeviceManufacturer.name,  PbxDeviceType.model,
+            PbxDeviceType.id).join(PbxDeviceType).order_by(PbxDeviceManufacturer.name).all():
             items.append({'id': row[0], 'manufacturer': row[1], 'model': row[2], 'name':  row[1]+ ': '+row[2], 'device_type_id': row[3]})
 
         db.remove()
@@ -2583,8 +2595,8 @@ class PbxController(BaseController):
     @authorize(logged_in)
     def login_ext(self, id):
         items=[]
-        for row in PbxEndpoint.query.filter_by(user_context=session['context']). \
-                filter_by(user_id=id).order_by(PbxEndpoint.auth_id).all():
+        for row in PbxEndpoint.query.filter_by(user_context=session['context']).\
+        filter_by(user_id=id).order_by(PbxEndpoint.auth_id).all():
             items.append({'id': row.id, 'extension': row.auth_id})
         db.remove()
 
@@ -2606,6 +2618,36 @@ class PbxController(BaseController):
         db.remove()
 
         out = dict({'help': data})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ext_recordings(self):
+        files = []
+
+        dir = fs_vm_dir+session['context']+"/extension-recordings/"
+
+        try:
+            for i in os.listdir(dir):
+                id = i.split("_")[1].split("_")[0].strip()
+                direction = i.split("_")[2]
+                ext = i.split("_")[0]
+                row = PbxCdr.query.filter(PbxCdr.uuid==id).first()
+                if not row:
+                    continue
+                path = dir+"/"+i
+                tpath = "/vm/"+session['context']+"/extension-recordings/"+i
+                received = str(modification_date(path)).strip("\"")
+                fsize = str(os.path.getsize(path))
+                caller = row.caller_id_number[len(row.caller_id_number)-10:]
+                dest = row.destination_number[len(row.destination_number)-10 if len(row.destination_number) > 10 else 0:]
+                files.append({'name': caller, 'dest': dest, 'path': tpath, 'received': received, 'size': fsize, 'extension': ext, 'id': id, 'direction': direction})
+        except Exception, e:
+            raise
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': files})
         response = make_response(out)
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 

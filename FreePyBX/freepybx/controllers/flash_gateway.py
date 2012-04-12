@@ -1,5 +1,4 @@
-"""
-    This Source Code Form is subject to the terms of the Mozilla Public
+""" This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -19,8 +18,7 @@
     copyright notices, patent notices, disclaimers of warranty, or limitations
     of liability) contained within the Source Code Form of the Covered Software,
     except that You may alter any license notices to the extent required to
-    remedy known factual inaccuracies.
-"""
+    remedy known factual inaccuracies."""
 
 import logging
 from freepybx.lib import helpers as h
@@ -58,7 +56,7 @@ pyamf.register_package(model, namespace)
 
 def fix_date(t):
     if not t:
-        return ""    
+        return ""
     return t.strftime("%m/%d/%Y %I:%M:%S %p")
 
 def get_talk_time(ext, context):
@@ -66,11 +64,11 @@ def get_talk_time(ext, context):
                        "WHERE (caller_id_number=:ext OR destination_number=:ext) "
                        "AND start_stamp BETWEEN CURRENT_DATE AND CURRENT_TIMESTAMP "
                        "AND bleg_uuid IS NOT NULL AND context = :context",
-                       {'ext':ext, 'context': context})
+            {'ext':ext, 'context': context})
     r = rows.fetchone()
     db.remove()
     return r.mins
-        
+
 def get_volume(ext, context):
     rows =  db.execute("SELECT count(*) AS ct "
                        "FROM cdr "
@@ -78,7 +76,7 @@ def get_volume(ext, context):
                        "AND start_stamp BETWEEN CURRENT_DATE "
                        "AND CURRENT_TIMESTAMP AND bleg_uuid IS NOT NULL "
                        "AND context = :context",
-                       {'ext':ext, 'context': context})
+            {'ext':ext, 'context': context})
     r = rows.fetchone()
     db.remove()
     return r.ct
@@ -88,7 +86,7 @@ def make_agent(name=None,volume=0,talk_time=0):
     a.agent_name = name
     a.volume = volume
     a.talk_time = talk_time
-    
+
     return a
 
 def make_broker_user(name, id, customer_id, email, mobile, ext, uuid, is_online):
@@ -98,10 +96,10 @@ def make_broker_user(name, id, customer_id, email, mobile, ext, uuid, is_online)
     b.customer_id = customer_id
     b.email = email
     b.mobile = mobile
-    b.ext = ext 
+    b.ext = ext
     b.uuid = uuid
     b.is_online = is_online
-    
+
     return b
 
 def make_caller(dest, cid_name, cid_num, direction, created, time_in_queue, to_user, uuid, status):
@@ -115,7 +113,7 @@ def make_caller(dest, cid_name, cid_num, direction, created, time_in_queue, to_u
     c.to_user = to_user
     c.uuid = uuid
     c.status = status
-    
+
     return c
 
 def make_res_message(msg):
@@ -143,8 +141,7 @@ pyamf.register_class(ResMessage, 'com.vwci.broker.model.ResMessage')
 
 
 class VoiceWareService(object):
-    '''
-    This is the controller that acts as a broker and object serialization
+    '''This is the controller that acts as a broker and object serialization
     between the flash components and FreeSWITCH.'''
 
     def __init__(self, sid=None):
@@ -154,31 +151,31 @@ class VoiceWareService(object):
         agents = []
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            context = user.get_context()    
+            context = user.get_context()
         else:
             raise Exception("No user in session...")
-            
+
         for row in User.query.filter(User.customer_id==user.customer_id).all():
             if not len(row.portal_extension):
-                continue      
+                continue
             else:
                 extension = row.portal_extension
-            
+
             agent = make_agent(row.first_name+' '+row.last_name,  get_volume(extension, context), get_talk_time(extension, context))
-            agents.append(agent)       
+            agents.append(agent)
         db.remove()
-        return agents     
-        
+        return agents
+
     def getUsers(self, sid):
         users = []
         ep_stats = []
         user = User.query.filter_by(session_id=sid).first()
-        
+
         if user:
-            context = user.get_context()    
+            context = user.get_context()
         else:
             raise Exception("No session id in db matching the user calling this method.")
-                        
+
         for r in db.execute("SELECT DISTINCT users.first_name, users.last_name, users.id, users.customer_id, "
                             "customers.context AS context, users.portal_extension, "
                             "users.tel, users.mobile, users.username, sip_dialogs.uuid AS uuid "
@@ -189,23 +186,24 @@ class VoiceWareService(object):
 
             for pbx_reg in PbxRegistration.query.filter(PbxRegistration.sip_realm==context).filter(PbxRegistration.sip_user==r[5]).all():
                 ep_stats.append({'ip': pbx_reg.network_ip, 'port':pbx_reg.network_port})
-                
-            is_online = True if len(ep_stats) > 0 else False 
+
+            is_online = True if len(ep_stats) > 0 else False
             ep_stats = []
 
             users.append(make_broker_user(r[0]+' '+r[1], r[2], r[3], r[8], r[7], r[5], r[9], is_online))
-            
+
         db.remove()
         return users
 
-    def getCallers(self, sid):        
+    def getCallers(self, sid):
         callers = []
         user = User.query.filter_by(session_id=sid).first()
         if user:
             context = user.get_context()
-        
+
         for row in PbxDid.query.filter(PbxDid.context==context).all():
-            for cal in PbxChannel.query.filter(PbxChannel.dest==row.did).all():
+            for cal in db.execute("SELECT * FROM channels WHERE dest like :did", {'did': "%"+row.did}).fetchall():
+                #PbxChannel.query.filter(PbxChannel.dest.like('%'+row.did).all():
                 l =  PbxChannel.query.filter_by(uuid=cal.uuid).first()
                 if l:
                     to_user = l.dest
@@ -218,42 +216,42 @@ class VoiceWareService(object):
                     cid_num = cal.cid_num[len(cal.cid_num)-10:]
                 else:
                     cid_num = cal.cid_num
-                
+
                 time_in_queue = db.execute("SELECT now() FROM channels WHERE uuid = :uuid", {'uuid': cal.uuid}).fetchone()
                 callers.append(make_caller(cal.dest, cal.cid_name,cid_num, direction, cal.created, time_in_queue[0], to_user, cal.uuid, status))
-                
+
         for cal in PbxChannel.query.filter_by(context=context).distinct(PbxChannel.call_uuid).all():
             if len(cal.presence_id)>3:
                 if cal.presence_id.split("@")[1] == context:
                     time_in_queue = db.execute("SELECT now() FROM channels WHERE uuid = :uuid", {'uuid': cal.uuid}).fetchone()
-            callers.append(make_caller(cal.dest, cal.cid_name, cal.cid_num, "outbound", cal.created, "", cal.dest, cal.uuid, cal.callstate))          
-          
-        db.remove()  
+            callers.append(make_caller(cal.dest, cal.cid_name, cal.cid_num, "outbound", cal.created, "", cal.dest, cal.uuid, cal.callstate))
+
+        db.remove()
         return callers
-        
+
     def callExtension(self, sid, ext):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            context = user.get_context()        
+            context = user.get_context()
         else:
-            return                
+            return
 
-        con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)    
+        con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
         if con.connected:
             con.bgapi("originate", "{ringback=\'%(2000,4000,440.0,480.0)\'}user/"+str(user.portal_extension)+"@"+str(context)+" "+str(ext)+" XML "+str(context))
 
     def callOutbound(self, sid, did):
         user = User.query.filter_by(session_id=sid).first()
         if user:
-            context = user.get_context()        
+            context = user.get_context()
         else:
-            return                
-        
+            return
+
         ep = db.execute("SELECT pbx_endpoints.outbound_caller_id_number AS pbx_endpoints_outbound_caller_id_number, customers.tel AS customers_tel "
                         "FROM pbx_endpoints "
                         "INNER JOIN customers on customers.context  = pbx_endpoints.user_context "
                         "WHERE customers.context = :context AND customers.id = :customer_id AND pbx_endpoints.auth_id = :auth_id",
-                        {'context': context,'customer_id': user.customer_id, 'auth_id': user.portal_extension}).fetchone()
+                {'context': context,'customer_id': user.customer_id, 'auth_id': user.portal_extension}).fetchone()
         if len(ep[0])==10:
             origination_caller_id_number = ep[0]
         else:
@@ -271,7 +269,7 @@ class VoiceWareService(object):
         else:
             return
 
-        con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)   
+        con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
         if con.connected:
             con.events("plain", "all")
             msg =  con.api("reload", "mod_callcenter")

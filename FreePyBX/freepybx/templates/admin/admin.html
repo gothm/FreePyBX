@@ -120,8 +120,8 @@
 
     function hidePreloader(){
         dojo.fadeOut({
-            node:"preloader",
-            duration:700,
+            node: "preloader",
+            duration: 700,
             onEnd: function(){
                 dojo.style("preloader", "display", "none");
             }
@@ -259,6 +259,10 @@
         <div dojoType="dijit.layout.BorderContainer" title="Services" gutters="true">
             <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px;" style="width:195px; background-color: #E0E4EA;" spliter="true">
                 <div dojoType="dijit.Menu" id="servicesNavMenu" style="border: 1px solid #c0c0c0;width:195px;">
+                    <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
+                         onClick='dijit.byId("servicesContent").set("href", "/services/service_list.html");'>
+                        Services
+                    </div>
                     <div dojoType="dijit.MenuItem" style="padding-left: 10px;" iconClass="dijitIconUsers"
                          onClick='dijit.byId("servicesContent").set("href", "/services/service_plans.html");'>
                         Service Plans

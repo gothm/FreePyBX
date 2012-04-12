@@ -24,7 +24,7 @@
 
 
 import formencode
-from formencode import validators 
+from formencode import validators
 import shutil, os, sys
 from datetime import datetime
 from pylons import request, response, session, tmpl_context as c, url
@@ -278,7 +278,7 @@ def get_volume(ext):
 
 def get_ivr(name):
     return PbxIVR.query.filter(PbxIVR.name==name)\
-                .filter(PbxIVR.context==session['context']).all()
+    .filter(PbxIVR.context==session['context']).all()
 
 def get_usernames(username):
     return User.query.filter_by(username=username).all()
@@ -294,31 +294,31 @@ def get_faxes(fax):
 
 def get_extensions(extension):
     return PbxEndpoint.query.filter(PbxEndpoint.auth_id==extension)\
-                .filter(PbxEndpoint.user_context==session['context']).all()
+    .filter(PbxEndpoint.user_context==session['context']).all()
 
 def get_vextensions(vextension):
     return PbxVirtualExtension.query.filter(PbxVirtualExtension.extension==vextension)\
-            .filter(PbxVirtualExtension.context==session['context']).all()
+    .filter(PbxVirtualExtension.context==session['context']).all()
 
 def get_vmbox(vmbox):
     return PbxVirtualMailbox.query.filter(PbxVirtualMailbox.extension==vmbox)\
-                .filter(PbxVirtualMailbox.context==session['context']).all()
+    .filter(PbxVirtualMailbox.context==session['context']).all()
 
 def get_groups(group):
     return PbxGroup.query.filter(PbxGroup.name==group)\
-                .filter(PbxGroup.context==session['context']).all()
+    .filter(PbxGroup.context==session['context']).all()
 
 def get_conf_bridge(ext):
     return PbxConferenceBridge.query.filter(PbxConferenceBridge.extension==ext)\
-            .filter(PbxConferenceBridge.context==session['context']).all()
+    .filter(PbxConferenceBridge.context==session['context']).all()
 
 def get_tod_name(name):
     return PbxTODRoute.query.filter(PbxTODRoute.name==name)\
-                .filter(PbxTODRoute.context==session['context']).all()
+    .filter(PbxTODRoute.context==session['context']).all()
 
 def get_tts(name):
     return PbxTTS.query.filter(PbxTTS.name==name)\
-                .filter(PbxTTS.context==session['context']).all()
+    .filter(PbxTTS.context==session['context']).all()
 
 def get_campaigns(name):
     return CrmCampaign.name.query.filter(CrmCampaign.name==name).all()
@@ -328,12 +328,12 @@ def get_context(domain):
 
 
 class UniqueUsername(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_usernames(value)) > 0:
-             raise formencode.Invalid(
-                 'That username already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if len(get_usernames(value)) > 0:
+            raise formencode.Invalid(
+                'That username already exists',
+                value, state)
+        return value
 
 
 class UniqueProfile(formencode.FancyValidator):
@@ -346,42 +346,42 @@ class UniqueProfile(formencode.FancyValidator):
 
 
 class UniqueIVR(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_ivr(value)) > 0:
-             raise formencode.Invalid(
-                 'That ivr already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if len(get_ivr(value)) > 0:
+            raise formencode.Invalid(
+                'That ivr already exists',
+                value, state)
+        return value
 
 class UniqueExtension(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_vextensions(value)) > 0:
-             raise formencode.Invalid(
-                 'That extension already exists',
-                 value, state)
-         elif  len(get_extensions(value)) > 0:
-             raise formencode.Invalid(
-                 'That extension already exists',
-                 value, state)
-         elif len(get_conf_bridge(value)) > 0:
-             raise formencode.Invalid(
-                 'That extension already exists',
-                 value, state)
-         elif len(get_vmbox(value)) > 0:
-             raise formencode.Invalid(
-                 'That extension already exists',
-                 value, state)
+    def _to_python(self, value, state):
+        if len(get_vextensions(value)) > 0:
+            raise formencode.Invalid(
+                'That extension already exists',
+                value, state)
+        elif  len(get_extensions(value)) > 0:
+            raise formencode.Invalid(
+                'That extension already exists',
+                value, state)
+        elif len(get_conf_bridge(value)) > 0:
+            raise formencode.Invalid(
+                'That extension already exists',
+                value, state)
+        elif len(get_vmbox(value)) > 0:
+            raise formencode.Invalid(
+                'That extension already exists',
+                value, state)
 
-         return value     
+        return value
 
 
 class UniqueGroup(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_groups(value)) > 0:
-             raise formencode.Invalid(
-                 'That group already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if len(get_groups(value)) > 0:
+            raise formencode.Invalid(
+                'That group already exists',
+                value, state)
+        return value
 
 class UniqueDID(formencode.FancyValidator):
     def _to_python(self, value, state):
@@ -392,58 +392,58 @@ class UniqueDID(formencode.FancyValidator):
         return value
 
 class UniqueFax(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_faxes(value)) > 0:
-             raise formencode.Invalid(
-                 'That fax already exists',
-                 value, state)
-         return value     
-     
-     
+    def _to_python(self, value, state):
+        if len(get_faxes(value)) > 0:
+            raise formencode.Invalid(
+                'That fax already exists',
+                value, state)
+        return value
+
+
 class UniqueTTS(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_tts(value)) > 0:
-             raise formencode.Invalid(
-                 'That TTS name already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if len(get_tts(value)) > 0:
+            raise formencode.Invalid(
+                'That TTS name already exists',
+                value, state)
+        return value
 
 class UniqueTOD(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_tod_name(value)) > 0:
-             raise formencode.Invalid(
-                 'That TOD already exists',
-                 value, state)
-         return value
-     
+    def _to_python(self, value, state):
+        if len(get_tod_name(value)) > 0:
+            raise formencode.Invalid(
+                'That TOD already exists',
+                value, state)
+        return value
+
 
 class UniqueCampaign(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if len(get_campaigns(value)) > 0:
-             raise formencode.Invalid(
-                 'That campaign already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if len(get_campaigns(value)) > 0:
+            raise formencode.Invalid(
+                'That campaign already exists',
+                value, state)
+        return value
 
 
 class ObjEncoder(json.JSONEncoder):
-     def default(self, obj):
-         if isinstance(obj, (datetime, datetime.date)):
-             return obj.ctime()
-         elif isinstance(obj, datetime.time):
-             return obj.isoformat()
-         elif isinstance(obj, ObjectId):
-             return str(obj)
-         return json.JSONEncoder.default(self, obj)
-     
+    def default(self, obj):
+        if isinstance(obj, (datetime, datetime.date)):
+            return obj.ctime()
+        elif isinstance(obj, datetime.time):
+            return obj.isoformat()
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
+
 
 class UniqueQueue(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if has_queue(value):
-             raise formencode.Invalid(
-                 'That Queue already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if has_queue(value):
+            raise formencode.Invalid(
+                'That Queue already exists',
+                value, state)
+        return value
 
 class UniqueContext(formencode.FancyValidator):
     def _to_python(self, value, state):
@@ -455,23 +455,23 @@ class UniqueContext(formencode.FancyValidator):
 
 
 class UniqueAgent(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if has_agent(value):
-             raise formencode.Invalid(
-                 'That agent already exists',
-                 value, state)
-         return value
+    def _to_python(self, value, state):
+        if has_agent(value):
+            raise formencode.Invalid(
+                'That agent already exists',
+                value, state)
+        return value
 
 
 class UniqueTier(formencode.FancyValidator):
-     def _to_python(self, value, state):
-         if has_tier(value):
-             raise formencode.Invalid(
-                 'That Tier already exists',
-                 value, state)
-         return value     
+    def _to_python(self, value, state):
+        if has_tier(value):
+            raise formencode.Invalid(
+                'That Tier already exists',
+                value, state)
+        return value
 
-     
+
 class SecurePassword(validators.FancyValidator):
     words_filename = '/usr/share/dict/words'
 
@@ -481,9 +481,9 @@ class SecurePassword(validators.FancyValidator):
 
     messages = {
         'too_few': 'Your password must be longer than %(min)i '
-                  'characters long',
+                   'characters long',
         'non_letter': 'You must include at least %(non_letter)i '
-                     'characters in your password',
+                      'characters in your password',
         }
     def _to_python(self, value, state):
         # _to_python gets run before validate_python.  Here we
@@ -499,13 +499,13 @@ class SecurePassword(validators.FancyValidator):
 
     def validate_python(self, value, state):
         if len(value) < self.min:
-            raise formencode.Invalid(self.message("too_few", state, \
-                                                  min=self.min), value, state)
+            raise formencode.Invalid(self.message("too_few", state,\
+                min=self.min), value, state)
         non_letters = self.letter_regex.sub('', value)
 
         if len(non_letters) < self.non_letter:
-            raise formencode.Invalid(self.message("non_letter", state, \
-                                                  non_letter=self.non_letter), value, state)
+            raise formencode.Invalid(self.message("non_letter", state,\
+                non_letter=self.non_letter), value, state)
 class QueueForm(formencode.Schema):
     allow_extra_fields = True
     name =  formencode.All(UniqueQueue(), validators.NotEmpty())
@@ -519,18 +519,18 @@ class AgentForm(formencode.Schema):
 
 class TierForm(formencode.Schema):
     allow_extra_fields = True
-    extension = validators.String(not_empty=True)
-    name = validators.String(not_empty=True)
+    agent_extension = validators.String(not_empty=True)
+    queue_name = validators.String(not_empty=True)
 
 
 class QueueEditForm(formencode.Schema):
     allow_extra_fields = True
     strategy = validators.String(not_empty=True)
-    
-    
+
+
 class AgentEditForm(formencode.Schema):
     allow_extra_fields = True
-    extension = validators.String(not_empty=True)          
+    extension = validators.String(not_empty=True)
 
 
 class CustomerForm(formencode.Schema):
@@ -573,14 +573,14 @@ class CrmAccountForm(formencode.Schema):
     zip = validators.String(not_empty=False)
     tel = validators.String(not_empty=False)
     mobile = validators.String(not_empty=False)
-    
-    
+
+
 class CrmCampaignForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
-    campaign_name = formencode.All(UniqueCampaign(), validators.MinLength(3), \
-                                validators.String(not_empty=True), \
-                                validators.MaxLength(32))    
+    campaign_name = formencode.All(UniqueCampaign(), validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(32))
     campaign_extensions = validators.String(not_empty=True)
 
 
@@ -683,17 +683,17 @@ class GatewayEditForm(formencode.Schema):
 
 class PbxBlacklistedForm(formencode.Schema):
     allow_extra_fields = True
-    cid_number = formencode.All(validators.NotEmpty(), \
-                               validators.MinLength(10), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(10))
-    
-    
+    cid_number = formencode.All(validators.NotEmpty(),\
+        validators.MinLength(10),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(10))
+
+
 class GroupForm(formencode.Schema):
     allow_extra_fields = True
-    group_name = formencode.All(UniqueGroup(), validators.MinLength(3), \
-                                validators.String(not_empty=True), \
-                                validators.MaxLength(32))
+    group_name = formencode.All(UniqueGroup(), validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(32))
     group_extensions = validators.String(not_empty=True)
 
 
@@ -707,10 +707,10 @@ class DIDForm(formencode.Schema):
 
 class FaxForm(formencode.Schema):
     allow_extra_fields = True
-    fax_name = formencode.All(UniqueFax(), validators.MinLength(3), \
-                                validators.String(not_empty=True), \
-                                validators.MaxLength(32))
-    
+    fax_name = formencode.All(UniqueFax(), validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(32))
+
 
 class TTSForm(formencode.Schema):
     allow_extra_fields = True
@@ -725,36 +725,36 @@ class IVRForm(formencode.Schema):
 
 class IVREditForm(formencode.Schema):
     allow_extra_fields = True
-    ivr_id = validators.Number(not_empty=True)  
+    ivr_id = validators.Number(not_empty=True)
 
 
 class ConferenceForm(formencode.Schema):
     allow_extra_fields = True
-    extension = formencode.All(UniqueExtension(), validators.NotEmpty(), \
-                               validators.MinLength(3), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(4))
-    pin = formencode.All(validators.NotEmpty(), \
-                               validators.MinLength(3), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(4))
+    extension = formencode.All(UniqueExtension(), validators.NotEmpty(),\
+        validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(4))
+    pin = formencode.All(validators.NotEmpty(),\
+        validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(4))
 
 
 class CIDForm(formencode.Schema):
     allow_extra_fields = True
-    cid_number = formencode.All(validators.NotEmpty(), \
-                               validators.MinLength(10), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(10))
+    cid_number = formencode.All(validators.NotEmpty(),\
+        validators.MinLength(10),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(10))
     pbx_route_id = validators.Number(not_empty=True)
 
 
 class ExtensionForm(formencode.Schema):
     allow_extra_fields = True
-    extension = formencode.All(UniqueExtension(), validators.NotEmpty(), \
-                               validators.MinLength(3), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(4))
+    extension = formencode.All(UniqueExtension(), validators.NotEmpty(),\
+        validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(4))
     password = validators.String(not_empty=True)
 
 class AdminUserForm(formencode.Schema):
@@ -775,34 +775,34 @@ class AdminEditUserForm(formencode.Schema):
 
 class VirtualExtensionForm(formencode.Schema):
     allow_extra_fields = True
-    vextension_number = formencode.All(UniqueExtension(), \
-                               validators.NotEmpty(), \
-                               validators.MinLength(3), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(4))
-    vextension_did = validators.Number(not_empty=True)    
-    
-    
+    vextension_number = formencode.All(UniqueExtension(),\
+        validators.NotEmpty(),\
+        validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(4))
+    vextension_did = validators.Number(not_empty=True)
+
+
 class VirtualMailboxForm(formencode.Schema):
     allow_extra_fields = True
-    vmbox_number = formencode.All(UniqueExtension(), validators.NotEmpty(), \
-                               validators.MinLength(3), \
-                               validators.String(not_empty=True), \
-                               validators.MaxLength(4))
-    vmbox_pin = validators.Number(not_empty=True)      
-    
-    
+    vmbox_number = formencode.All(UniqueExtension(), validators.NotEmpty(),\
+        validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(4))
+    vm_password = validators.Number(not_empty=True)
+
+
 class TODForm(formencode.Schema):
     allow_extra_fields = True
     name =  formencode.All(UniqueTOD(), validators.NotEmpty())
     day_start = validators.String(not_empty=True)
     day_end = validators.String(not_empty=True)
     time_start = validators.String(not_empty=True)
-    time_end = validators.String(not_empty=True)        
+    time_end = validators.String(not_empty=True)
     match_route_id = validators.String(not_empty=True)
     nomatch_route_id = validators.String(not_empty=True)
-    
-    
+
+
 class UserForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
