@@ -73,6 +73,8 @@ def make_map(config):
     map.connect('services', '/services/voip_profiles.html', controller='services', action='voip_profile_grid')
     map.connect('services', '/services/voip_policies.html', controller='services', action='voip_policy_grid')
 
+    map.connect('provisioning', '/provisioning/{manufacturer}/{mac}/{model}.xml', controller='provisioning', action='get_config')
+
     map.connect('/flash_gateway', controller='flash_gateway')
     map.connect('root', '/pbx/user_edit.html', controller='root', action='user_edit')
     map.connect('root', '/pbx/ext_edit.html', controller='root', action='ext_edit')
@@ -81,8 +83,7 @@ def make_map(config):
     map.connect('root', '/pbx/broker_users.html', controller='root', action='broker_users')
     map.connect('pbx', '/pbx/extension_add.html', controller='root', action='extension_add')
     map.connect('pbx', '/pbx/cdr_ext_summary', controller='pbx', action='cdr_ext_summary')
-
-    map.connect('provisioning', '/provisioning/{manufacturer}/{mac}/{model}.xml', controller='provisioning', action='get_config')
+    map.connect('pbx', '/pbx/ticket_view/{id}', controller='root', action='ticket_view')
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')

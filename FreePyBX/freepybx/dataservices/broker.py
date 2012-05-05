@@ -57,8 +57,8 @@ decoder = Decoder(amf3=True)
 encoder = Encoder(amf3=True)
 
 ESL_HOST = "127.0.0.1"
-ESL_PORT = "8888"
-ESL_PASS = "3v3lyn888"
+ESL_PORT = "8021"
+ESL_PASS = "ClueCon"
 
 def make_message(type, command, context, data, ext=None):
     m = Message()

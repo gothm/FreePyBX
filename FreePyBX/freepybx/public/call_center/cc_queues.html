@@ -40,15 +40,15 @@
     dojo.require("dojox.grid.EnhancedGrid");
     dojo.require("dojo.data.ItemFileWriteStore");
     dojo.require("dojox.grid.enhanced.plugins.Pagination");
-    dojo.require("dojox.grid.enhanced.plugins.Filter");
-
+    dojo.require("dojox.grid.enhanced.plugins.Filter");    
+    
     var queueGrid;
     var queueStore = new dojo.data.ItemFileWriteStore({url: '/call_center/queues'});
-
+    
     var plugins = {
         pagination: true
-    };
-
+    };     
+    
     function editQueue() {
         var item = queueGrid.selection.getSelected();
         tmpObj = item[0];
@@ -56,13 +56,13 @@
     }
 
 
-    queue_grid = function () {
+    queue_grid = function () {      
         var queueLayout = [{
             name: 'Name',
             field: 'name',
-            width: '100%',
-        }];
-
+            width: '100%',        
+        }];            
+                
         queueGrid = new dojox.grid.EnhancedGrid({
             id: 'queueGrid',
             jsid: 'queueGrid',
@@ -75,16 +75,16 @@
             region: "center",
             autoHeight: true
         },document.createElement('div'));
-
+                
         dojo.byId("queueGridDiv").appendChild(queueGrid.domNode);
         queueGrid.startup();
-    }
+    }    
+    
 
-
-    function delete_queue() {
-
+    function delete_queue() {        
+        
         var del_queue = queueGrid.selection.getSelected()[0];
-
+                        
         dojo.xhrGet({
             url: "/call_center/delete_queue?id="+del_queue.id,
             handleAs: "text",
@@ -101,10 +101,10 @@
                 new voiceware.notice.Error({message: err});
                 return err;
             }
-        });
-    }
+        });            
+    }   
 
-    dojo.addOnLoad(function() {
+    dojo.addOnLoad(function() {   
         queue_grid()
     });
 </script>

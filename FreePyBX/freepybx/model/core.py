@@ -1,5 +1,4 @@
-"""
-    This Source Code Form is subject to the terms of the Mozilla Public
+""" This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -19,8 +18,7 @@
     copyright notices, patent notices, disclaimers of warranty, or limitations
     of liability) contained within the Source Code Form of the Covered Software,
     except that You may alter any license notices to the extent required to
-    remedy known factual inaccuracies.
-"""
+    remedy known factual inaccuracies."""
 
 import datetime
 from datetime import datetime
@@ -265,7 +263,7 @@ class User(Base):
     session_id =  Column(Unicode(128), nullable=True)
     portal_extension = Column(Unicode(15), default=u'Unknown')
     has_crm = Column(Boolean, default=False)
-    customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    customer_id = Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
 
     def __repr__(self):
         return "<User({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22})>".format(
@@ -276,7 +274,6 @@ class User(Base):
     def __unicode__(self):
         return self.customer_name
 
-    # u = User(first_name, last_name, username, password, 1, form_result.get('customer_id'), True)
     def __init__(self, first_name=None, last_name=None, username=None,
                  password=None, customer_id=None, active=False):
         self.first_name = first_name
@@ -291,12 +288,17 @@ class User(Base):
         for g in self.groups:
             perms = g.permissions
         return perms
+
     @property
     def group_id(self):
         g = db.execute("SELECT group_id FROM user_groups WHERE user_id = :user_id", {'user_id': self.id}).first()
         return g[0]
 
     def get_name(self):
+        return User.first_name + ' ' + User.last_name
+
+    @property
+    def name(self):
         return User.first_name + ' ' + User.last_name
 
     def get_gateway(self):
@@ -454,7 +456,7 @@ class Contact(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
-    user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE"))
+    user_id = Column(Integer, default=0)
     first_name = Column(Unicode(64), unique=True, nullable=False)
     last_name = Column(Unicode(64), unique=True, nullable=False)
     email = Column(Unicode(64), unique=True, nullable=False)
@@ -489,7 +491,7 @@ class CustomerNote(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
-    created = Column(DateTime,default=datetime.date(datetime.now()))
+    created = Column(DateTime,default=datetime.now())
     subject  =  Column(Unicode(128), nullable=True)
     note = Column(UnicodeText, nullable=False)
 
@@ -501,12 +503,31 @@ class Ticket(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     customer_id =  Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    opened_by = Column(Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
+    ticket_status_id = Column(Integer, ForeignKey('ticket_statuses.id', onupdate="CASCADE", ondelete="CASCADE"))
     ticket_priority_id =  Column(Integer, ForeignKey('ticket_priorities.id', onupdate="CASCADE", ondelete="CASCADE"))
-    ticket_type =  Column(Integer, ForeignKey('ticket_types.id', onupdate="CASCADE", ondelete="CASCADE"))
-    created = Column(DateTime,default=datetime.date(datetime.now()))
-    expected_resolve_date = Column(DateTime,default=datetime.date(datetime.now()))
-    is_resolved = Column(Boolean, default=False)
-    subject  =  Column(Unicode(128), nullable=True)
+    ticket_type_id = Column(Integer, ForeignKey('ticket_types.id', onupdate="CASCADE", ondelete="CASCADE"))
+    created = Column(DateTime,default=datetime.now())
+    expected_resolve_date = Column(DateTime,default=datetime.now())
+    subject  =  Column(Unicode(255), nullable=True)
+    description = Column(UnicodeText, nullable=False)
+
+    ticket_note = relationship('TicketNote', backref='ticket_notes')
+    ticket_type = relationship('TicketType', backref='ticket_types')
+    ticket_priority = relationship('TicketPriority', backref='ticket_priorities')
+    ticket_status = relationship('TicketStatus', backref='ticket_statuses')
+
+
+class TicketNote(Base):
+    __tablename__='ticket_notes'
+
+    query = db.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    ticket_id = Column(Integer, ForeignKey('tickets.id', onupdate="CASCADE", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
+    created = Column(DateTime,default=datetime.now())
+    subject  =  Column(Unicode(255), nullable=True)
     description = Column(UnicodeText, nullable=False)
 
 
@@ -516,7 +537,7 @@ class TicketPriority(Base):
     query = db.query_property()
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    name = Column(Unicode(32), default=u'Unknown')
+    name = Column(Unicode(128), default=u'Unknown')
     description = Column(Unicode(255), default=u'Unknown')
 
 
@@ -527,7 +548,17 @@ class TicketType(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     name = Column(Unicode(32), default=u'Unknown')
-    type = Column(Integer, default=1)
+    description = Column(Unicode(255), default=u'Unknown')
+
+
+class TicketStatus(Base):
+    __tablename__='ticket_statuses'
+
+    query = db.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    name = Column(Unicode(32), default=u'Unknown')
+    description = Column(Unicode(255), default=u'Unknown')
 
 
 class Shift(Base):

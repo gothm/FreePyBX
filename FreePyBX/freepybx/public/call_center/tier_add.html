@@ -29,14 +29,14 @@
     dojo.require("dijit.form.DateTextBox");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
-    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.Button"); 
     dojo.require("dojox.validate.web");
     dojo.require("dojox.validate._base");
     dojo.require("dijit.form.FilteringSelect");
     dojo.require("dojo.data.ItemFileReadStore");
-
+    
     function tierAddHandler() {
-        if(dijit.byId("tier_add_form").validate()) {
+        if(dijit.byId("tier_add_form").validate()) { 
             dojo.xhrPost({
                 url: "/call_center/tier_add",
                 handleAs: "text",
@@ -54,7 +54,7 @@
                     new voiceware.notice.Error({message: err});
                     return err;
                 }
-            });
+            });    
         }
     }
 </script>

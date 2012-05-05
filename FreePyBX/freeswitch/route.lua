@@ -194,8 +194,8 @@ end
 
 function get_sequential_group_members(route, context)
     db = assert(con:execute(string.format("SELECT * from pbx_group_members inner join pbx_groups " ..
-            "on pbx_groups.id = pbx_group_members.pbx_group_id " ..
-            "where pbx_groups.name='%s' and context='%s'", route["name"], context)))
+                                          "on pbx_groups.id = pbx_group_members.pbx_group_id " ..
+                                          "where pbx_groups.name='%s' and context='%s'", route["name"], context)))
     return db:fetch ({}, "a")
 end
 
@@ -360,19 +360,19 @@ function bridge_local(route, context)
         transfer_local(route, context)
     end
 
+    if ext["record_inbound_calls"] == "t" then
+        log("record inbound")
+        session:execute("record_session", "${base_dir}/htdocs/vm/" .. context ..
+                "/extension-recordings/${caller_id_number}_${uuid}_inbound_${strftime(%Y-%m-%d-%H-%M-%S)}.mp3")
+    end
+
     session:execute("set","user_id=" .. ext["user_id"])
     session:execute("set","customer_id=" .. ext["customer_id"])
     session:execute("set","call_timeout=" .. ext["call_timeout"])
     session:execute("set","continue_on_fail=true")
     session:execute("set","hangup_after_bridge=true")
-    session:execute("set","ringback=%(2000,4000,440.0,480.0)")
-
-    if ext["record_inbound_calls"] == "t" then
-        session:execute("record_session", "${base_dir}/htdocs/vm/" .. context .. "/extension-recordings/" ..
-                ext["auth_id"] .. "_${uuid}_inbound_${strftime(%Y-%m-%d-%H-%M-%S)}.mp3")
-    end
-
     session:execute("bridge","user/" .. route['name'] .. "@" .. context)
+
     if ext["timeout_destination"] == nil then
         session:answer()
         session:sleep(1000)
@@ -530,6 +530,13 @@ caller_name = session:getVariable("caller_id_name")
 profile = session:getVariable("profile")
 
 log(called_num)
+
+if string.len(called_num) == 12 then
+    called_num = string.sub(called_num, string.len(called_num)-9, string.len(called_num))
+end
+if string.len(called_num) == 11 then
+    called_num = string.sub(called_num, string.len(called_num)-8, string.len(called_num))
+end
 
 --[[
     Inbound/Outbound routes

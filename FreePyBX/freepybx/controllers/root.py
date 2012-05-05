@@ -145,8 +145,21 @@ class RootController(BaseController):
         c.has_call_center = session['has_call_center']
         return render('pbx/user_edit.html')
 
+    @authorize(credential('pbx_admin'))
+    def ticket_view(self, id):
+        notes = []
+        ticket = Ticket.query.filter_by(customer_id=session['customer_id']).filter(Ticket.id==int(id)).first()
+        u = User.query.filter_by(id=ticket.opened_by).first()
 
-    
+        for note in TicketNote.query.filter_by(ticket_id=ticket.id).all():
+            notes.append({'id': note.id, 'ticket_id': note.ticket_id, 'user_id': note.user_id,
+                              'created': note.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'subject': note.subject,
+                              'description': note.description})
+        c.ticket = ticket
+        c.notes = notes
+        c.u = u
+        return render('pbx/ticket_view.html')
+
 
 
 

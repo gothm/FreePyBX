@@ -78,18 +78,18 @@
                    dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a Queue name."/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="audio_name">Enter Queue Audio</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value="" id="audio_name"
+            <label class="fieldlabel">Enter Queue Audio</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value=""
                    searchAttr="name" name="audio_name">
         </li>
         <li class="even">
-            <label class="fieldlabel" for="moh_sound">Queue Music on Hold</label>
-            <input dojoType="dijit.form.FilteringSelect" required="false" store="ccAudioStore" value="" id="moh_sound"
+            <label class="fieldlabel">Queue Music on Hold</label>
+            <input dojoType="dijit.form.FilteringSelect" required="false" store="ccAudioStore" value=""
                    searchAttr="name" name="moh_sound">
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="strategy">Call Distribution Strategy</label>
-            <select name="strategy" id="strategy" dojoType="dijit.form.Select">
+            <label class="fieldlabel">Call Distribution Strategy</label>
+            <select name="strategy" dojoType="dijit.form.Select">
                 <option value="ring-all"> Ring All Simultaneously</option>
                 <option value="longest-idle-agent" selected="selected"> Longest Idle Agent</option>
                 <option value="round-robin"> Round Robin</option>
@@ -101,15 +101,15 @@
             </select>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="time_base_score">Time Base Score</label>
-            <select name="time_base_score" id="time_base_score" dojoType="dijit.form.Select">
+            <label class="fieldlabel">Time Base Score</label>
+            <select name="time_base_score" dojoType="dijit.form.Select">
                 <option value="system" selected="selected"> Total Time in System</option>
                 <option value="queue"> Time in Current Queue</option>
             </select>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="max_wait_time">Max Wait Time</label>
-            <input type="text" id="max_wait_time" name="max_wait_time" size="30"
+            <label class="fieldlabel">Max Wait Time</label>
+            <input type="text" name="max_wait_time" size="30"
                    dojoType="dijit.form.ValidationTextBox" value="300"
                    required="true"
                    regExp="\b[0-9]{1,6}\b"
@@ -118,8 +118,8 @@
                    trim="true"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="max_wait_time_with_no_agent">Max Wait Time No Agent</label>
-            <input type="text" id="max_wait_time_with_no_agent" name="max_wait_time_with_no_agent" size="30"
+            <label class="fieldlabel">Max Wait Time No Agent</label>
+            <input type="text" name="max_wait_time_with_no_agent" size="30"
                    dojoType="dijit.form.ValidationTextBox" value="1800"
                    required="true"
                    regExp="\b[0-9]{1,6}\b"
@@ -128,8 +128,8 @@
                    trim="true"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="max_wait_time_with_no_agent_reached">Max Wait Unavailable</label>
-            <input type="text" id="max_wait_time_with_no_agent_reached" name="max_wait_time_with_no_agent_reached"
+            <label class="fieldlabel">Max Wait Unavailable</label>
+            <input type="text" name="max_wait_time_with_no_agent_reached"
                    size="30"
                    dojoType="dijit.form.ValidationTextBox" value="900"
                    required="true"
@@ -139,13 +139,13 @@
                    trim="true"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="">Tier Rules Apply</label>
-            <input id="tier_rules_apply" name="tier_rules_apply" dojoType="dijit.form.CheckBox" value="true"
+            <label class="fieldlabel" >Tier Rules Apply</label>
+            <input name="tier_rules_apply" dojoType="dijit.form.CheckBox" value="true"
                    checked="false"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="">Tier Rule Wait Time</label>
-            <input type="text" id="tier_rule_wait_second" name="tier_rule_wait_second" size="30"
+            <label class="fieldlabel">Tier Rule Wait Time</label>
+            <input type="text" name="tier_rule_wait_second" size="30"
                    dojoType="dijit.form.ValidationTextBox" value="300"
                    required="true"
                    regExp="\b[0-9]{1,6}\b"
@@ -154,18 +154,18 @@
                    trim="true"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="tier_rule_wait_multiply_level">Tier Rule Multiply Level</label>
-            <input id="tier_rule_wait_multiply_level" name="tier_rule_wait_multiply_level"
+            <label class="fieldlabel">Tier Rule Multiply Level</label>
+            <input name="tier_rule_wait_multiply_level"
                    dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="tier_rule_agent_no_wait">Skip Tier No Agent</label>
-            <input id="tier_rule_agent_no_wait" name="tier_rule_agent_no_wait" dojoType="dijit.form.CheckBox"
+            <label class="fieldlabel">Skip Tier No Agent</label>
+            <input name="tier_rule_agent_no_wait" dojoType="dijit.form.CheckBox"
                    value="true" checked="false"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="discard_abandoned_after">Discard Abandoned After</label>
-            <input type="text" id="discard_abandoned_after" name="discard_abandoned_after" size="30"
+            <label class="fieldlabel">Discard Abandoned After</label>
+            <input type="text"  name="discard_abandoned_after" size="30"
                    dojoType="dijit.form.ValidationTextBox" value="1800"
                    required="true"
                    regExp="\b[0-9]{1,6}\b"
@@ -174,29 +174,29 @@
                    trim="true"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="abandoned_resume_allowed">Abandoned Resume</label>
-            <input name="abandoned_resume_allowed" id="abandoned_resume_allowed" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <label class="fieldlabel">Abandoned Resume</label>
+            <input name="abandoned_resume_allowed" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="record_calls">Record All Calls</label>
-            <input name="record_calls" id="record_calls" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <label class="fieldlabel" >Record All Calls</label>
+            <input name="record_calls" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="announce_position">Announce Position</label>
-            <input name="announce_position" id="announce_position" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <label class="fieldlabel" >Announce Position</label>
+            <input name="announce_position" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="even">
-            <label class="fieldlabel" for="failed_route_id">Failed Call Destination</label>
+            <label class="fieldlabel" >Failed Call Destination</label>
             <input dojoType="dijit.form.FilteringSelect" required="true" store="ccRouteStore" value=""
-                   id="failed_route_id" searchAttr="name" name="failed_route_id">
+                   searchAttr="name" name="failed_route_id">
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="announce_sound">Recurring Audio</label>
+            <label class="fieldlabel">Recurring Audio</label>
             <input dojoType="dijit.form.FilteringSelect" required="false" store="adAudioStore" value=""
-                   searchAttr="name" name="announce_sound" id="announce_sound">
+                   searchAttr="name" name="announce_sound">
         </li>
         <li class="even">
-            <label class="fieldlabel" for="announce_frequency">Audio Frequency</label>
+            <label class="fieldlabel">Audio Frequency</label>
             <input type="text" name="announce_frequency" size="30"
                    dojoType="dijit.form.ValidationTextBox"
                    required="false" value="60"

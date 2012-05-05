@@ -253,8 +253,11 @@ def fix_date(t):
         return ""
     return t.strftime("%m/%d/%Y %I:%M:%S %p")
 
-def get_default_gateway():
-    co = Customer.query.filter_by(id=session['customer_id']).first()
+def get_default_gateway(cid=None):
+    if not cid:
+        co = Customer.query.filter_by(id=session['customer_id']).first()
+    else:
+        co = Customer.query.filter_by(id=cid).first()
     return co.default_gateway
 
 def get_type(id):
@@ -474,15 +477,31 @@ def delete_conditions(route_id):
 
 def get_findme(name, context):
     e = PbxEndpoint.query.filter_by(user_context=context).filter_by(auth_id=name).first()
-    ds = None
+    fm = db.execute("SELECT default_gateway FROM Customers "
+                    "INNER JOIN Users on Users.customer_id=Customers.id "
+                    "WHERE Users.id = :user_id", {'user_id': e.user_id}).fetchone()
+    ds = []
     if e.find_me:
-        ds = u"sofia/gateway/"+str(get_default_gateway())+"/{0}".format(e.follow_me_1)
-        if len(e.follow_me_2) == 10:
-            ds+= u",sofia/gateway/"+str(get_default_gateway())+"/{0}".format(e.follow_me_2)
-        if len(e.follow_me_3) == 10:
-            ds+= u",sofia/gateway/"+str(get_default_gateway())+"/{0}".format(e.follow_me_3)
-        if len(e.follow_me_4) == 10:
-            ds+= u",sofia/gateway/"+str(get_default_gateway())+"/{0}".format(e.follow_me_4)
+        if e.follow_me_1:
+            if len(e.follow_me_1) < 8:
+                ds.append(u"user/"+e.follow_me_1+"@"+str(context))
+            else:
+                ds.append(u"sofia/gateway/"+str(fm[0])+"/{0}".format(e.follow_me_1))
+        if e.follow_me_2:
+            if len(e.follow_me_2) < 8:
+                ds.append(u"user/"+e.follow_me_2+"@"+str(context))
+            else:
+                ds.append(u"sofia/gateway/"+str(fm[0])+"/{0}".format(e.follow_me_2))
+        if e.follow_me_3:
+            if len(e.follow_me_3) < 8:
+                ds.append(u"user/"+e.follow_me_3+"@"+str(context))
+            else:
+                ds.append(u"sofia/gateway/"+str(fm[0])+"/{0}".format(e.follow_me_3))
+        if e.follow_me_4:
+            if len(e.follow_me_4) < 8:
+                ds.append(u"user/"+e.follow_me_4+"@"+str(context))
+            else:
+                ds.append(u"sofia/gateway/"+str(fm[0])+"/{0}".format(e.follow_me_4))
     return ds
 
 def is_iter_obj(obj):

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<div class="help">
+    <h3>Extension Number</h3>
+    <hr>
+    <p>This is a 3 or 4 digit number that is used in the PBX to identify your SIP device to the PBX system</p>
+    <h3>SIP Password</h3>
+    <hr>
+    <p>Use something other's will not know, but is easily configurable from the phone. This is how your SIP device authenticates to the PBX system.</p>
+    <h3>Outbound Caller ID Name</h3>
+    <hr>
+    <p>This is the name passed to the network to identify your name in your caller ID.</p>
+    <h3>Outbound Caller ID Number</h3>
+    <hr>
+    <p>This is the number passed to the network to identify your name in your caller ID.</p>
+    <h3>Internal Caller ID Name</h3>
+    <hr>
+    <p>The name your associates connected to the PBX see when you make calls within the PBX internally.</p>
+    <h3>Internal Caller ID Number</h3>
+    <hr>
+    <p>The number your associates connected to the PBX see when you make calls within the PBX internally. Typically your extension number.</p>
+    <h3>Call Timeout</h3>
+    <hr>
+    <p>How many seconds your device will ring before going to voicemail, find-me routes, or call back destinations. If you are using find-me routes, it is suggested that you use approximately 12 seconds, or your voicemail on a connecting device may pickup before traversing all of the routes in your find me collection. If no device in your find me route picks up, it will connect to your voicemail system located here in your PBX.</p>
+    <h3>Include in XML Directory</h3>
+    <hr>
+    <p>Whether this extension is included in the XML directory. This feature is not supported by all phones, but the URL is https://company.mysipdomain.com/xml/directory</p>
+    <h3>Auto Provision</h3>
+    <hr>
+    <p>When enabled, and the correct mac address has been entered into the extension MAC Address field, your phone can be auto provisioned by the settings here by pointing your URL in your sip device profile rule setting e.g. https://sip.domain.com/provisioning/cisco/${MAC}/SPA5XX.xml Please check with you ITSP to for automated firmware upgrades to the correct provisioning XML schema.</p>
+    <h3>Device Type</h3>
+    <hr>
+    <p>This drop down selection determines by your provider whether or not your device is supported for auto provisioning, or needs to be manually configured. It is for informational purposes only.</p>
+    <h3>Find/Follow Me Routes</h3>
+    <hr>
+    <p>When Find/Follow Me is active, the PBX system will attempt to connect to each device listed sequentially.</p>
+    <h3>Attach Voicemail to Email</h3>
+    <hr>
+    <p>Attach your voicemail to email and send to the email listed under VoiceMAil Email.</p>
+    <h3>Notify of Voicemail by Email</h3>
+    <hr>
+    <p>To receive notifications from the system that you have received a voicemail.</p>
+    <h3>Keep Voicemail After Email</h3>
+    <hr>
+    <p>Leave a copy of your voicemail on the system in addition to sending it to your email if Attach Voicemail to Email is selected.</p>
+    <h3>VoiceMail Email</h3>
+    <hr>
+    <p>This is the Email address used for unified messaging. You can edit your extension to provide call notifications and even forward voicemail messages to.</p>
+    <h3>VoiceMail PIN</h3>
+    <hr>
+    <p>This is the 4 digit PIN code used to access your voicemail when internally dialing *97 or from outside lines pressing * during recording.</p>
+    <h3>Transfer Fallback Extension</h3>
+    <hr>
+    <p>If a transfer attempt has been made and fails, this is the fallback extension the transfer will be transferred to.</p>
+    <h3>Timeout Destination</h3>
+    <hr>
+    <p>This is the destination route that the calls will be transferred to if a Call timeout occurs. Note: This function will override your voicemail settings and you will not receive voicemail messages when chosen. Simply delete the route to disable this function and begin receiving voicemails again by selecting text and pressing delete or backspace.</p>
+    <h3>Record Inbound/Outbound Calls</h3>
+    <hr>
+    <p>You can chose to record calls on a specific extension, and they will be available in the Call Reporting section of the PBX with times, length, and caller ID for future listening, and are only available to PBX Administrator group accounts.</p>
+
+</div>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
             </extension>                           
         <py:for each="did in c.dids">                 
             <extension name="${did.did}">
-              <condition field="destination_number" expression="^(${did.did})$">
+              <condition field="destination_number" expression="^(\+1)?(${did.did})$">
                 <action application="export" data="context=${did.context}"/>
                 <action application="export" data="domain=${did.domain}"/>
                 <action application="export" data="domain_name=${did.domain}"/>
@@ -98,10 +98,14 @@
                 </py:for>                             
                 <py:for each="route in account.routes">
                     <extension name="${route.name}" continue="${route.continue_route}">
-                        <action application="set" data="extension=${route.name}"/>
                         <py:for each="condition in route.conditions">
+                            <condition>
+                                <action application="set" data="extension=${route.name}"/>
+                                <action application="set" data="user_id=${route.user_id}"/>
+                                <action application="set" data="customer_id=${route.customer_id}"/>
+                            </condition>
                             <condition field="${condition.field}" expression="${condition.expression}">
-                                <action py:if="route.record_inbound_calls" application="record_session" data="$${base_dir}/htdocs/vm/${account.domain}/extension-recordings/$${destination_number}_$${uuid}_inbound_/$${strftime(%Y-%m-%d-%H-%M-%S)}.mp3"/>
+                                <action py:if="route.record_inbound_calls" application="record_session" data="$${base_dir}/htdocs/vm/${account.domain}/extension-recordings/$${destination_number}_$${uuid}_inbound_$${strftime(%Y-%m-%d-%H-%M-%S)}.mp3"/>
                                 <py:for each="action in condition.actions">
                                     <action application="${action.application}" data="${action.data}"/>
                                 </py:for>

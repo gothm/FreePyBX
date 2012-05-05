@@ -47,6 +47,7 @@
                 </list>
 
                 <list name="gateways" default="deny">
+                    <node type="allow" cidr="108.60.221.6/32"/>
                     <py:for each="gw in c.pbx_gateways">
                         <node type="allow" cidr="${gw.proxy}/${gw.mask}"/>
                     </py:for>

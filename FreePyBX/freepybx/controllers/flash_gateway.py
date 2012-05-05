@@ -47,8 +47,8 @@ amf3.use_proxies_default = True
 log = logging.getLogger(__name__)
 
 ESL_HOST = "127.0.0.1"
-ESL_PORT = "8888"
-ESL_PASS = "3v3lyn888"
+ESL_PORT = "8021"
+ESL_PASS = "ClueCon"
 
 namespace = 'com.vwci.charting.model'
 pyamf.register_package(model, namespace)

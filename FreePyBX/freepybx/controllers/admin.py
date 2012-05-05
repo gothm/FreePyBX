@@ -1033,3 +1033,180 @@ class AdminController(BaseController):
     @authorize(super_user)
     def billing(self, **kw):
         return render('admin/billing.html')
+
+    @authorize(super_user)
+    def active_tickets(self):
+        items=[]
+        for row in Ticket.query.filter(Ticket.ticket_status_id!=4).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def closed_tickets(self):
+        items=[]
+        for row in Ticket.query.filter(Ticket.ticket_status_id==4).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+
+    @authorize(super_user)
+    def internal_tickets(self):
+        items=[]
+        for row in Ticket.query.filter(Ticket.ticket_status_id==7).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+
+    @authorize(super_user)
+    def ticket_data(self):
+        ticket_status_id =[]
+        ticket_status_name =[]
+        ticket_type_id = []
+        ticket_type_name = []
+        ticket_priority_id = []
+        ticket_priority_name = []
+        opened_by_id = []
+        opened_by_name = []
+
+        for row in TicketStatus.query.all():
+            ticket_status_id.append(row.id)
+            ticket_status_name.append(row.name)
+        for row in TicketType.query.all():
+            ticket_type_id.append(row.id)
+            ticket_type_name.append(row.name)
+        for row in TicketPriority.query.all():
+            ticket_priority_id.append(row.id)
+            ticket_priority_name.append(row.name)
+        for row in AdminUser.query.all():
+            opened_by_id.append(row.id)
+            opened_by_name.append(row.first_name+' '+row.last_name)
+
+        db.remove()
+
+        out = dict({'ticket_status_names': ticket_status_name, 'ticket_status_ids': ticket_status_id,
+                    'ticket_type_names': ticket_type_name, 'ticket_type_ids': ticket_type_id,
+                    'ticket_priority_names': ticket_priority_name, 'ticket_priority_ids': ticket_priority_id,
+                    'opened_by_names': opened_by_name, 'opened_by_ids': opened_by_id})
+
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def ticket_types(self):
+        items=[]
+        for row in TicketType.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def ticket_statuses(self):
+        items=[]
+        for row in TicketStatus.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def ticket_priorities(self):
+        items=[]
+        for row in TicketPriority.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def ticket_add(self, **kw):
+        schema = TicketForm()
+        try:
+            form_result = schema.to_python(request.params)
+            t = Ticket()
+            t.subject = form_result.get('subject')
+            t.description = form_result.get('description')
+            t.customer_id = form_result.get('customer_id')
+            t.opened_by = form_result.get('user_id')
+            t.ticket_status_id = form_result.get('status_id')
+            t.ticket_priority_id = form_result.get('priority_id')
+            t.ticket_type_id = form_result.get('type_id')
+            t.expected_resolution_date = form_result.get('expected_resolution_date')
+
+            db.add(t)
+            db.commit()
+            db.flush()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Validation Error: %s' % error
+
+        db.remove()
+        return "Successfully added ticket."
+
+    @authorize(super_user)
+    def update_ticket_grid(self, **kw):
+
+        w = loads(urllib.unquote_plus(request.params.get("data")))
+
+        for i in w['modified']:
+            ticket = Ticket.query.filter_by(id=i['id']).first()
+            ticket.ticket_status_id = int(i['status'])
+            ticket.ticket_type_id = int(i['type'])
+            ticket.ticket_priority_id = int(i['priority'])
+
+            db.commit()
+            db.flush()
+            db.remove()
+
+        return "Successfully updated ticket."

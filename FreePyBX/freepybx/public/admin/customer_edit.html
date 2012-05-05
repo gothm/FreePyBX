@@ -88,7 +88,7 @@
         dijit.byId("contact_email").set("value", obj.contact_email);
         dijit.byId("url").set("value", obj.url);
         dijit.byId("default_gateway").set("value", obj.default_gateway);
-        dijit.byId("pbx_profile_id").set("value", obj.pbx_profile_id);
+        dijit.byId("pbx_profile").set("value", obj.pbx_profile_id);
     }
 
     function getCustomerByID() {
@@ -228,8 +228,8 @@
                    searchAttr="name" name="default_gateway"/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="pbx_profile_id">Sip Profile</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value="" id="pbx_profile_id"
+            <label class="fieldlabel" for="pbx_profile">Sip Profile</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="profileStore" value="" id="pbx_profile"
                    searchAttr="name" name="pbx_profile_id"/>
         </li>
 

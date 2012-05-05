@@ -281,6 +281,31 @@
                  minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true">
             </div>
         </div>
+        <div dojoType="dijit.layout.BorderContainer" title="Trouble Tickets" id="tabTicketing" class="admin_context">
+            <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="background-color: #E0E4EA;width:200px;" splitter="true">
+                <div dojoType="dijit.Menu" id="ticket_menu" style="width:195px;border: 1px solid #c0c0c0;">
+                    <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                         onClick='dijit.byId("adminTicketContent").set("href", "/admin/tickets.html");'>
+                        Active Tickets
+                    </div>
+                    <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                         onClick='dijit.byId("adminTicketContent").set("href", "/admin/closed_tickets.html");'>
+                        Closed Tickets
+                    </div>
+                    <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                         onClick='dijit.byId("adminTicketContent").set("href", "/admin/internal_tickets.html");'>
+                        Internal Tickets
+                    </div>
+                    <div dojoType="dijit.MenuItem" iconClass="reportIcon"
+                         onClick='dijit.byId("adminTicketContent").set("href", "/admin/ticket_add.html");'>
+                        Create New Ticket
+                    </div>
+                </div>
+            </div>
+            <div id="adminTicketContent" dojoType="dojox.layout.ContentPane" tabindex="0" region="client" renderStyles="true" href="/admin/tickets.html"
+                 minSize="200" executeScripts="true" parseOnLoad="true" preventCache="true" scriptHasHooks="true" refreshOnShow="true" style="background-color: #E0E4EA;">
+            </div>
+        </div>
         <div dojoType="dijit.layout.BorderContainer" title="Customer Billing Reports" gutters="true">
             <div dojoType="dojox.layout.ContentPane" region="leading" minSize="100px" style="width:195px;" splitter="true">
 

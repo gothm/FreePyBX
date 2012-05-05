@@ -869,4 +869,84 @@ td[headers='h-btns'] {
 	display: block;
 }
 
+.help div {
+    background-color: #FFF;
+    width: 400px;
+    height: 100%;
+    margin: 20px;
+    font-family: SANS-SERIF;
+    font-size: 11px;
+    color: #000;
 
+}
+
+.help h3 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #777;
+    margin-top: -5px;
+}
+
+.help p {
+    margin-top: -4px;
+    line-height: 90%;
+}
+
+.help hr {
+    margin-top: -4px;
+}
+
+.fieldlabel {
+    width: 170px;
+    text-align: right;
+    float: left;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+.ticketTitle {
+    width: 100%;
+    border-top: 1px solid #999999;
+    border-bottom: 1px solid #999999;
+    background-color: rgb(224, 224, 224);
+    height: 40px;
+    margin: 0;
+}
+
+.ticketTitle h3 {
+    margin-left: 20px;
+    vertical-align: middle;;
+}
+
+.ticketContent {
+    width: 700px;
+    background-color: rgba(128, 201, 252, 0.38);
+    margin-top: 10px;
+    border:1px solid #b5bcc7;
+    border-radius:3pt;
+    -moz-border-radius:3pt;
+    -webkit-border-radius:4pt;
+    -o-border-radius:4pt;
+    -ms-border-radius:4pt;
+}
+
+.ticketContent h3 {
+    margin-left: 20px;
+}
+
+.ticketContent p {
+    margin-height: -10px;
+    margin-left: 20px;
+}
+
+.res_date {
+    color: red;
+    float: right;
+    margin-right: 20px;
+    margin-top: -20px;
+}
+
+.btnSub {
+    float: right;
+    margin-right: 20px;
+}

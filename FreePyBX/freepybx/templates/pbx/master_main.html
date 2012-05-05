@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- This Source Code Form is subject to the terms of the Mozilla Public
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this 
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -19,7 +20,8 @@
     copyright notices, patent notices, disclaimers of warranty, or limitations 
     of liability) contained within the Source Code Form of the Covered Software, 
     except that You may alter any license notices to the extent required to 
-    remedy known factual inaccuracies. -->
+    remedy known factual inaccuracies.
+-->
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:py="http://genshi.edgewall.org/"
@@ -36,7 +38,7 @@
         </title>
         ${select('*[local-name()!="title"]')}
         <script type="text/javascript" charset="UTF-8">
-            var djConfig = {parseOnLoad: true, isDebug: true, baseUrl: "/js/", modulePaths: {voiceware: "voiceware", dojo: "dojo", dijit: "dijit", dojox: "dojox"}};
+            var djConfig = {parseOnLoad: true, isDebug: false, baseUrl: "/js/", modulePaths: {voiceware: "voiceware", dojo: "dojo", dijit: "dijit", dojox: "dojox"}};
         </script>
         <script src="/js/dojo/dojo.js.uncompressed.js" type="text/javascript"></script>
         <!--<script src="https://ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojo/dojo.js"></script>-->
@@ -88,7 +90,6 @@
             ${dashboard()}
             <div py:replace="select('*|text()')"/>
             <div dojoType="dijit.layout.BorderContainer" title="PBX" gutters="true" class="admin_context" id="PBXContainer">
-
                 <div dojoType="dijit.layout.AccordionContainer" id="pbxNav"
                          region="leading" minSize="100px" style="width:235px;" splitter="true">                     
                     ${pbx_menu()}
@@ -104,6 +105,7 @@
                 ${crm()}
             </py:if>
                 ${call_reporting()}
+                ${tickets()}
                 ${help()}
         </div>
         ${footer_pane()}

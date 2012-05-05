@@ -57,7 +57,8 @@ __all__=['CustomerForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm'
          'get_campaigns', 'LoginForm', 'ObjEncoder', 'UniqueQueue', 'ProfileEditForm',
          'UniqueAgent','UniqueTier', 'QueueForm', 'AgentForm', 'TierForm',
          'QueueEditForm','AgentEditForm', 'DIDForm', 'GatewayForm', 'ProfileForm',
-         'ContextEditForm','ContextForm', 'AdminEditUserForm']
+         'ContextEditForm','ContextForm', 'AdminEditUserForm', 'TicketForm',
+         'TicketNoteForm']
 
 
 
@@ -531,6 +532,17 @@ class QueueEditForm(formencode.Schema):
 class AgentEditForm(formencode.Schema):
     allow_extra_fields = True
     extension = validators.String(not_empty=True)
+
+class TicketForm(formencode.Schema):
+    allow_extra_fields = True
+    subject = validators.String(not_empty=True)
+    description = validators.String(not_empty=True)
+
+
+class TicketNoteForm(formencode.Schema):
+    allow_extra_fields = True
+    ticket_subject = validators.String(not_empty=True)
+    ticket_note = validators.String(not_empty=True)
 
 
 class CustomerForm(formencode.Schema):

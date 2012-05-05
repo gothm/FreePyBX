@@ -1,5 +1,4 @@
-"""
-    This Source Code Form is subject to the terms of the Mozilla Public
+""" This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -19,9 +18,7 @@
     copyright notices, patent notices, disclaimers of warranty, or limitations
     of liability) contained within the Source Code Form of the Covered Software,
     except that You may alter any license notices to the extent required to
-    remedy known factual inaccuracies.
-"""
-
+    remedy known factual inaccuracies."""
 
 import logging
 from datetime import datetime
@@ -360,11 +357,16 @@ class CallCenterController(BaseController):
     def del_agent(self, **kw):
 
         try:
-            del_agent(request.params['id'])
+            CallCenterAgent.query.filter_by(id=request.params.get('id', 0)).delete()
+            db.commit()
+            db.flush()
+            db.remove()
+
         except:
             return "Error deleting agent."
 
         return  "Successfully deleted agent."
+
 
     def cca_by_id(self, id, **kw):
         items=[]
@@ -453,6 +455,7 @@ class CallCenterController(BaseController):
 
         db.remove()
         return "Successfully created tier agent."
+
 
     @authorize(logged_in)
     def update_tier_grid(self):

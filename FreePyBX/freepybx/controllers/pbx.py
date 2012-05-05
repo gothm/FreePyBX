@@ -207,7 +207,7 @@ class PbxController(BaseController):
                                          "INNER JOIN pbx_profiles "
                                          "ON pbx_profiles.id = pbx_gateways.pbx_profile_id "
                                          "WHERE pbx_profiles.name = :profile_name",
-                            {'profile_name': str(request.params["profile"])})
+                                         {'profile_name': str(request.params["profile"])})
                     c.gateway = {'name': str(request.params["profile"]), 'gateway': gateway}
                     db.remove()
                     return render('xml/gateways.xml')
@@ -323,6 +323,7 @@ class PbxController(BaseController):
                 gateway = PbxGateway.query.join(PbxProfile).filter(PbxProfile.name==c.profile).first()
 
                 for route in PbxRoute.query.filter_by(context=context.context).all():
+                    ep = None
                     if route.pbx_route_type_id not in range(1,3):
                         continue
                     if route.pbx_route_type_id == 2:
@@ -330,6 +331,7 @@ class PbxController(BaseController):
                     route_conditions = is_iter_obj(PbxCondition.query.filter_by(pbx_route_id=route.id).all())
                     if route.pbx_route_type_id == 1:
                         ep = PbxEndpoint.query.filter_by(id=route.pbx_to_id).first()
+                        user = User.query.filter_by(id=ep.user_id).first()
                         rec = ep.record_inbound_calls
                     else:
                         rec = None
@@ -338,8 +340,11 @@ class PbxController(BaseController):
                             for action in PbxAction.query.filter_by(pbx_condition_id=condition.id).order_by(PbxAction.precedence).all():
                                 actions.append({'application': action.application, 'data': action.data})
                             ds = get_findme(route.name, context.context)
-                            if ds:
-                                actions.append({'application': "bridge", 'data': ds})
+                            if len(ds):
+                                actions.append({'application': "set", 'data': "ignore_early_media=true"})
+                            for d in ds:
+                                actions.append({'application': "set", 'data': "call_timeout="+str(ep.call_timeout)})
+                                actions.append({'application': "bridge", 'data': d})
                             conditions.append({'field': condition.field, 'expression': condition.expression, 'actions': actions})
                             actions  = []
                     else:
@@ -350,7 +355,7 @@ class PbxController(BaseController):
                         conditions.append({'field': "destination_number", 'expression': "^("+route.name+")", 'actions': actions})
                         actions  = []
 
-                    routes.append({'name': route.name, 'continue_route': str(route.continue_route).lower(), 'conditions': conditions,
+                    routes.append({'name': route.name, 'continue_route': str(route.continue_route).lower(), 'conditions': conditions, 'user_id': user.id, 'customer_id': user.customer_id,
                                    'voicemail_enabled': str(route.voicemail_enabled).lower(), 'voicemail_ext': route.voicemail_ext, 'record_inbound_calls': rec})
                     conditions = []
 
@@ -364,7 +369,6 @@ class PbxController(BaseController):
             return render('xml/dialplan.xml')
 
         except Exception, e:
-            log.debug("Exception: %s" % e)
             return render('xml/notfound.xml')
 
         finally:
@@ -393,7 +397,7 @@ class PbxController(BaseController):
                 extension = "No Extension"
             else:
                 extension = ",".join(exts)
-            items.append({'id': row.id, 'extension': extension, 'username': row.username, 'password': row.password, 'first_name': row.first_name,
+            items.append({'id': row.id, 'extension': extension, 'username': row.username, 'password': row.password, 'first_name': row.first_name, 'name': row.first_name +' '+row.last_name,
                           'last_name': row.last_name, 'address': row.address, 'address_2': row.address_2, 'city': row.city, 'state': row.state, 'zip': row.zip,
                           'tel': row.tel, 'mobile': row.mobile, 'notes': row.notes, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'updated': row.updated.strftime("%m/%d/%Y %I:%M:%S %p"), 'active': row.active,
                           'group_id': row.group_id, 'last_login': row.last_login.strftime("%m/%d/%Y %I:%M:%S %p"), 'remote_addr': row.remote_addr, 'session_id': row.session_id, 'customer_id': row.customer_id})
@@ -936,7 +940,7 @@ class PbxController(BaseController):
             s.domain = session['context']
             s.precedence = 2
             s.application = u'set'
-            s.data = u'call_timeout=20'
+            s.data = u'call_timeout='+form_result.get('call_timeout', 20)
 
             db.add(s)
             db.commit()
@@ -971,14 +975,17 @@ class PbxController(BaseController):
 
         w = loads(urllib.unquote_plus(request.params.get("data")))
 
+        e = None
+
         for i in w['modified']:
             if i['name'].isdigit():
                 id = i['name']
+                u = User.query.filter(User.id==int(id)).filter_by(customer_id=session['customer_id']).first()
+                e = PbxEndpoint.query.filter(PbxEndpoint.auth_id==i['extension']).filter_by(user_context=session['context']).first()
+                e.user_id = u.id
             else:
-                id = i['id']
-            u = User.query.filter(User.id==int(id)).filter_by(customer_id=session['customer_id']).first()
-            e = PbxEndpoint.query.filter(PbxEndpoint.auth_id==i['extension']).filter_by(user_context=session['context']).first()
-            e.user_id = u.id
+                e = PbxEndpoint.query.filter(PbxEndpoint.auth_id==i['extension']).filter_by(user_context=session['context']).first()
+
             e.password = i['password']
 
             db.commit()
@@ -2275,16 +2282,16 @@ class PbxController(BaseController):
         for row in db.execute("SELECT DISTINCT users.id, users.first_name ||' '|| users.last_name AS agent, users.portal_extension as extension, "
                               "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context = customers.context) AS call_count_in, "
-                                                                                           "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                                                                                           "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS call_count_out, "
-                                                                                                                                                        "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                                                                                                                                                        "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context =  customers.context) AS time_on_call_in, "
-                                                                                                                                                                                                                     "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
-                                                                                                                                                                                                                     "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS time_on_call_out "
-                                                                                                                                                                                                                                                                                  "FROM users "
-                                                                                                                                                                                                                                                                                  "INNER JOIN customers ON customers.id = users.customer_id "
-                                                                                                                                                                                                                                                                                  "WHERE customers.id = :customer_id "
-                                                                                                                                                                                                                                                                                  "ORDER BY extension", {'customer_id': session['customer_id']}).fetchall():
+                              "(SELECT COUNT(uuid) FROM cdr WHERE (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS call_count_out, "
+                              "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'inbound' AND cdr.context =  customers.context) AS time_on_call_in, "
+                              "(SELECT coalesce(sum(billsec),0) FROM cdr WHERE  (cdr.caller_id_number = users.portal_extension or cdr.destination_number = users.portal_extension) "
+                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" AND call_direction = 'outbound' AND cdr.context =  customers.context) AS time_on_call_out "
+                              "FROM users "
+                              "INNER JOIN customers ON customers.id = users.customer_id "
+                              "WHERE customers.id = :customer_id "
+                              "ORDER BY extension", {'customer_id': session['customer_id']}).fetchall():
 
             m, s = divmod(row.time_on_call_in, 60)
             h, m = divmod(m, 60)
@@ -2325,9 +2332,9 @@ class PbxController(BaseController):
                               "INNER JOIN customers ON cdr.context = customers.context "
                               "WHERE customers.id = :customer_id "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" "
-                                                                                           "AND cdr.call_direction IS NOT NULL "
-                                                                                           "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
-                                                                                           "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
+                              "AND cdr.call_direction IS NOT NULL "
+                              "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
+                              "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
 
             num = row.caller_id_number if len(row.caller_id_number)<=10 else row.caller_id_number[len(row.caller_id_number)-10:]
 
@@ -2364,9 +2371,9 @@ class PbxController(BaseController):
                               "INNER JOIN customers ON cdr.context = customers.context "
                               "WHERE customers.id = :customer_id "
                               "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" "
-                                                                                           "AND cdr.call_direction IS NOT NULL "
-                                                                                           "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
-                                                                                           "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
+                              "AND cdr.call_direction IS NOT NULL "
+                              "AND (cdr.caller_id_number = :extension or cdr.destination_number = :extension) "
+                              "ORDER BY id", {'customer_id': session['customer_id'], 'extension': ext}).fetchall():
 
             num = row.caller_id_number if len(row.caller_id_number)<=10 else row.caller_id_number[len(row.caller_id_number)-10:]
 
@@ -2376,11 +2383,10 @@ class PbxController(BaseController):
 
         db.remove()
 
-        fpath = "/tmp/Report_ext-"+ext+"_"+str(datetime.today().strftime("%m-%d-%Y"))+".csv"
-
-        f = open(fpath, "wb+")
+        f = open("/tmp/Report_ext"+ext+".csv", "wb+")
         csv_file = csv.writer(f)
 
+        #f=csv.writer(open("/tmp/Report_ext"+ext+".csv",'wb+'))
         csv_file.writerow(["Name","Number","Destination","Start Time","End Time", "Duration Seconds","Hangup Cause"])
 
         for csv_items in items:
@@ -2388,14 +2394,15 @@ class PbxController(BaseController):
 
         f.close()
 
-        size = os.path.getsize(fpath)
+        size = os.path.getsize("/tmp/Report_ext"+ext+".csv")
 
-        response = make_file_response(fpath)
+        response = make_file_response("/tmp/Report_ext"+ext+".csv")
         response.headers = [("Content-type", "application/octet-stream"),
-            ("Content-Disposition", "attachment; filename="+str(fpath.split("/")[:len(fpath.split("/"))][2])),
+            ("Content-Disposition", "attachment; filename="+"Report_ext"+ext+".csv"),
             ("Content-length", str(size)),]
 
         return response(request.environ, self.start_response)
+
 
     @authorize(logged_in)
     def customer_by_id(self, **kw):
@@ -2624,6 +2631,36 @@ class PbxController(BaseController):
         return response(request.environ, self.start_response)
 
     @authorize(logged_in)
+    def ext_recordings2(self):
+        files = []
+
+        dir = fs_vm_dir+session['context']+"/extension-recordings/"
+
+        try:
+            for i in os.listdir(dir):
+                id = i.split("_")[1].split("_")[0].strip()
+                direction = i.split("_")[2]
+                ext = i.split("_")[0]
+                row = PbxCdr.query.filter(PbxCdr.uuid==id).first()
+                if not row:
+                    continue
+                path = dir+"/"+i
+                tpath = "/vm/"+session['context']+"/extension-recordings/"+i
+                received = str(modification_date(path)).strip("\"")
+                fsize = str(os.path.getsize(path))
+                caller = row.caller_id_number[len(row.caller_id_number)-10:]
+                dest = row.destination_number[len(row.destination_number)-10 if len(row.destination_number) > 10 else 0:]
+                files.append({'name': caller, 'dest': dest, 'path': tpath, 'received': received, 'size': fsize, 'extension': ext, 'id': id, 'direction': direction})
+        except Exception, e:
+            raise
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': files})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
     def ext_recordings(self):
         files = []
 
@@ -2652,3 +2689,241 @@ class PbxController(BaseController):
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
         return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def active_tickets(self):
+        items=[]
+        for row in Ticket.query.filter_by(customer_id=session['customer_id']).filter(Ticket.ticket_status_id!=4).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def closed_tickets(self):
+        items=[]
+        for row in Ticket.query.filter_by(customer_id=session['customer_id']).filter(Ticket.ticket_status_id==4).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+
+    @authorize(logged_in)
+    def internal_tickets(self):
+        items=[]
+        for row in Ticket.query.filter_by(customer_id=session['customer_id']).filter(Ticket.ticket_status_id==7).all():
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+
+    @authorize(logged_in)
+    def ticket_data(self):
+        ticket_status_id =[]
+        ticket_status_name =[]
+        ticket_type_id = []
+        ticket_type_name = []
+        ticket_priority_id = []
+        ticket_priority_name = []
+        opened_by_id = []
+        opened_by_name = []
+
+        for row in TicketStatus.query.all():
+            ticket_status_id.append(row.id)
+            ticket_status_name.append(row.name)
+        for row in TicketType.query.all():
+            ticket_type_id.append(row.id)
+            ticket_type_name.append(row.name)
+        for row in TicketPriority.query.all():
+            ticket_priority_id.append(row.id)
+            ticket_priority_name.append(row.name)
+        for row in User.query.filter_by(customer_id=session['customer_id']).all():
+            opened_by_id.append(row.id)
+            opened_by_name.append(row.first_name+' '+row.last_name)
+
+        db.remove()
+
+        out = dict({'ticket_status_names': ticket_status_name, 'ticket_status_ids': ticket_status_id,
+                    'ticket_type_names': ticket_type_name, 'ticket_type_ids': ticket_type_id,
+                    'ticket_priority_names': ticket_priority_name, 'ticket_priority_ids': ticket_priority_id,
+                    'opened_by_names': opened_by_name, 'opened_by_ids': opened_by_id})
+
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ticket_types(self):
+        items=[]
+        for row in TicketType.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ticket_statuses(self):
+        items=[]
+        for row in TicketStatus.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ticket_priorities(self):
+        items=[]
+        for row in TicketPriority.query.all():
+            items.append({'id': row.id, 'name': row.name, 'description': row.description})
+
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ticket_add(self, **kw):
+        schema = TicketForm()
+        try:
+            form_result = schema.to_python(request.params)
+            t = Ticket()
+            t.subject = form_result.get('subject')
+            t.description = form_result.get('description')
+            t.customer_id = session['customer_id']
+            t.opened_by = form_result.get('user_id')
+            t.ticket_status_id = form_result.get('status_id')
+            t.ticket_priority_id = form_result.get('priority_id')
+            t.ticket_type_id = form_result.get('type_id')
+            t.expected_resolution_date = form_result.get('expected_resolution_date')
+
+            db.add(t)
+            db.commit()
+            db.flush()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Validation Error: %s' % error
+
+        db.remove()
+        return "Successfully added ticket."
+
+    @authorize(logged_in)
+    def update_ticket_grid(self, **kw):
+
+        w = loads(urllib.unquote_plus(request.params.get("data")))
+
+        for i in w['modified']:
+            ticket = Ticket.query.filter_by(id=i['id']).first()
+            ticket.ticket_status_id = int(i['status'])
+            ticket.ticket_type_id = int(i['type'])
+            ticket.ticket_priority_id = int(i['priority'])
+
+            db.commit()
+            db.flush()
+            db.remove()
+
+        return "Successfully updated ticket."
+
+    @authorize(logged_in)
+    def ticket_view_by_id(self, id):
+        items=[]
+        notes=[]
+        for row in Ticket.query.filter_by(customer_id=session['customer_id']).filter(Ticket.id==id).all():
+            for note in TicketNote.query.filter_by(ticket_id=row.id).all():
+                notes.append({'id': note.id, 'ticket_id': note.ticket_id, 'user_id': note.user_id,
+                              'created': note.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'subject': note.subject,
+                              'description': note.description})
+
+
+
+            items.append({'id': row.id, 'customer_id': row.customer_id, 'opened_by': row.opened_by,
+                          'status': row.ticket_status_id, 'priority': row.ticket_priority_id,
+                          'type': row.ticket_type_id, 'created': row.created.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'expected_resolve_date': row.expected_resolve_date.strftime("%m/%d/%Y %I:%M:%S %p"),
+                          'subject': row.subject, 'description': row.description, 'notes': notes})
+
+
+        out = dict({'identifier': 'id', 'label': 'id', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def ticket_notes_by_id(self, id):
+        items=[]
+        for note in TicketNote.query.filter_by(ticket_id=id).all():
+            items.append({'id': note.id, 'ticket_id': note.ticket_id, 'user_id': note.user_id,
+                          'created': note.created.strftime("%m/%d/%Y %I:%M:%S %p"), 'subject': note.subject,
+                          'description': note.description})
+
+        out = dict({'identifier': 'id', 'label': 'subject', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def add_ticket_note(self, **kw):
+        schema = TicketNoteForm()
+        try:
+            form_result = schema.to_python(request.params)
+            t = TicketNote()
+            t.ticket_id = form_result.get('ticket_note_id')
+            t.subject = form_result.get('ticket_subject')
+            t.description = form_result.get('ticket_note')
+            t.user_id = form_result.get('user_id')
+
+            db.add(t)
+            db.commit()
+            db.flush()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Validation Error: %s' % error
+
+        db.remove()
+        return "Successfully added ticket note."

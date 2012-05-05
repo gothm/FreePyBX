@@ -115,32 +115,7 @@
         });            
     }
     
-    note_grid = function () {      
-        var noteLayout = [{        
-            name: 'Date',
-            field: 'created',
-            width: 'auto'
-        },{
-            name: 'Note',
-            field: 'note',
-            width: 'auto'
-    }];            
-                
-    noteGrid = new dojox.grid.EnhancedGrid({
-        id: 'noteGrid',
-        jsid: 'noteGrid',
-        query: {id: '*'},
-        store: crmAccountNoteStore,
-        structure: noteLayout,
-        region: "center",
-        style: "width: 100%; height: 100%;",
-        columnReordering: true,
-        escapeHTMLInData: false,
-        autoHeight: true,
-    },document.createElement('div'));
-    dojo.byId("crmAccountNoteGridDiv").appendChild(noteGrid.domNode);
-    noteGrid.startup();
-    }    
+
     
     dojo.addOnLoad(function() { 
          getCrmAccountByID();

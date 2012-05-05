@@ -32,19 +32,19 @@
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
     dojo.require("dijit.form.Textarea");
-    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.Button"); 
     dojo.require("dojox.validate.web");
     dojo.require("dojox.validate._base");
-    dojo.require("dijit.form.ValidationTextBox");
-
-
+    dojo.require("dijit.form.ValidationTextBox"); 
+    
+    
     function ccqEditFormHandler() {
-        if(dijit.byId("ccq_edit_form").validate()) {
+        if(dijit.byId("ccq_edit_form").validate()) { 
             dojo.xhrPost({
                 url: "/call_center/ccq_edit",
                 handleAs: "text",
                 form: dojo.byId("ccq_edit_form"),
-
+        
                 load: function(res) {
                     if (res.indexOf("Error") == -1) {
                         new voiceware.notice.Notice({message: res});
@@ -58,15 +58,15 @@
                     new voiceware.notice.Error({message: err});
                     return err;
                 }
-            });
+            });    
         }
-    }
-
-    function setCCQForm(obj) {
+    }    
+        
+    function setCCQForm(obj) {    
         console.log(dojo.toJson(obj, true));
         dojo.byId("name").value = obj.name;
         dojo.byId("ccq_id").value = obj.id;
-        dijit.byId("audio_name").set("value", obj.audio_name);
+        dijit.byId("enter_audio_name").set("value", obj.audio_name);
         dijit.byId("audio").set("value", obj.moh_sound);
         dijit.byId("time_base_score").set("value", obj.time_base_score);
         dijit.byId("max_wait_time").set("value", obj.max_wait_time);
@@ -84,8 +84,8 @@
         dijit.byId("announce_position").set("value", obj.announce_position);
         dijit.byId("announce_frequency").set("value", obj.announce_frequency);
         dijit.byId("announce_sound").set("value", obj.announce_sound);
-    }
-
+     }    
+     
     function getCCQByID() {
         dojo.xhrGet({
             url: "/call_center/ccq_by_id/"+tmpObj.id,
@@ -98,13 +98,13 @@
                 new voiceware.notice.Error({message: res});
                 return err;
             }
-        });
-    }
-
-    dojo.addOnLoad(function() {
-        getCCQByID();
+        });            
+    }         
+    
+    dojo.addOnLoad(function() { 
+         getCCQByID();
     });
-
+ 
 
 </script>
 
@@ -126,8 +126,8 @@
                    dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a Queue name."/>
         </li>
         <li class="odd">
-            <label class="fieldlabel" for="audio_name">Enter Queue Audio</label>
-            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value="" id="audio_name"
+            <label class="fieldlabel" for="enter_audio_name">Enter Queue Audio</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="audioStore" value="" id="enter_audio_name"
                    searchAttr="name" name="audio_name">
         </li>
         <li class="even">

@@ -130,7 +130,7 @@
                 {
                     return '<a href="get_detail_by_ext('+dat+');">view</a>';
                 }
-                else 
+                else
                 {
                     return ret;
                 }
@@ -169,8 +169,8 @@
             <tr>
                 <td><label for="from_date">From Date:</label>
                     <input type="text" name="from_date" id="cdr_from_date" value=""
-                       data-dojo-type="dijit.form.DateTextBox"
-                       required="false" />
+                           data-dojo-type="dijit.form.DateTextBox"
+                           required="false" />
                 </td>
                 <td><label for="to_date">To Date:</label>
                     <input type="text" name="to_date" id="cdr_to_date" value=""
@@ -179,9 +179,9 @@
                 </td>
                 <td>
                     <button data-dojo-type="dijit.form.Button" type="button">Get Date Range
-                    <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
-                        setStore();
-                    </script>
+                        <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
+                            setStore();
+                        </script>
                     </button>
                 </td>
             </tr>
@@ -191,5 +191,3 @@
     </div>
     <div id="cdrByExtGridDiv" width="100%" height="100%"></div>
 </div>
-
-

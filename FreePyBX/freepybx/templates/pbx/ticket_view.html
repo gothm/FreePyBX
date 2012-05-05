@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<script type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.SimpleTextarea");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+
+    var ticketNoteStore = new dojo.data.ItemFileReadStore({url: "/pbx/ticket_notes_by_id/"+${c.ticket.id}});
+
+    function addTicketNote() {
+        if(dijit.byId("ticket_note_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/pbx/add_ticket_note",
+                handleAs: "text",
+                form: dojo.byId("ticket_note_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("crmContent").set("href", "/pbx/ticket_view/"+${c.ticket.id});
+                        var ticketNoteStore = new dojo.data.ItemFileReadStore({url: "/pbx/ticket_notes_by_id/"+${c.ticket.id}});
+                        ticketNoteStore.close();
+                        noteGrid.setStore(ticketNoteStore);
+                        noteGrid._refresh();
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+    note_grid = function (data) {
+        var noteLayout = [{
+            name: 'Date',
+            field: 'created',
+            width: 'auto'
+        },{
+            name: 'User',
+            field: 'user_id',
+            width: 'auto',
+            editable: 'true',
+            type: dojox.grid.cells.Select,
+            options: data.opened_by_names,
+            values: data.opened_by_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        },{
+            name: 'Subject',
+            field: 'subject',
+            width: 'auto'
+        },{
+            name: 'Description',
+            field: 'description',
+            width: 'auto'
+        }];
+
+        noteGrid = new dojox.grid.EnhancedGrid({
+            jsid: 'noteGrid',
+            query: {id: '*'},
+            store: ticketNoteStore,
+            structure: noteLayout,
+            region: "center",
+            style: "width: 100%; height: 100%;",
+            columnReordering: true,
+            escapeHTMLInData: false,
+            autoHeight: true,
+        },document.createElement('div'));
+        dojo.byId("ticketNoteGridDiv").appendChild(noteGrid.domNode);
+        noteGrid.startup();
+    }
+
+    dojo.addOnLoad(function() {
+        dojo.xhrGet({
+            url:"/pbx/ticket_data",
+            handleAs:"json",
+            load: function(data) {
+                note_grid(data);
+            }
+        });
+    });
+
+</script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="user_store" url="/pbx/users"></div>
+<div class="ticketTitle"><h3>Ticket from ${c.u.first_name+' '+c.u.last_name} of ${c.u.get_customer_name(c.u.customer_id)} on ${c.ticket.created.strftime("%m/%d/%Y %I:%M:%S %p")}</h3></div>
+<div class="ticketContent">
+    <h3>${c.ticket.subject}</h3>
+    <span class="res_date"> Expected Resolution: ${c.ticket.expected_resolve_date.strftime("%m/%d/%Y")}</span>
+    <p>${c.ticket.description}</p>
+</div>
+
+<div id="ticketNoteGridDiv" style="width: 700px; margin-top: 20px;"></div>
+
+<div class="ticketContent">
+    <form dojoType="dijit.form.Form" id="ticket_note_add_form">
+        <input type="hidden" name="ticket_note_id" id="ticket_note_id" value="${c.ticket.id}"/>
+        <table>
+            <tr><td><h3>Note</h3></td><td></td></tr>
+            <tr><td><label class="fieldlabel">Added By</label></td>
+                <td>
+                    <input dojoType="dijit.form.FilteringSelect" required="true" store="user_store" value=""
+                           searchAttr="name" name="user_id"/></td></tr>
+            <tr><td><label class="fieldlabel">Subject</label></td>
+                <td>
+                    <input type="text" required="true" name="ticket_subject"
+                           dojoType="dijit.form.ValidationTextBox" missingMessage="Please add ticket subject."/>
+                </td></tr>
+            <tr><td><label class="fieldlabel">Note</label></td>
+                <td><textarea name="ticket_note" data-dojo-type="dijit.form.SimpleTextarea" rows="4" cols="50"
+                        style="width:auto;"></textarea></td></tr>
+            <tr><td><label class="fieldlabel"></label></td><td><input type="button" value="Save Note" label=" Save Note " dojoType="dojox.form.BusyButton"
+                                                    busyLabel="Adding Note.." timeout="2000" onclick="addTicketNote()"/></td></tr>
+
+        </table>
+
+    </form>
+</div>
+</html>

@@ -1,0 +1,112 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.SimpleTextarea");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+
+    function ticketAddHandler() {
+        if(dijit.byId("ticket_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/ticket_add",
+                handleAs: "text",
+                form: dojo.byId("ticket_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("ticketContent").set("href", "/tickets/tickets.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+</script>
+
+<div dojoType="dojo.data.ItemFileReadStore" jsId="user_store" url="/admin/admins"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="status_store" url="/pbx/ticket_statuses"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="type_store" url="/pbx/ticket_types"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="priority_store" url="/pbx/ticket_priorities"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="customer_store" url="/admin/customers"></div>
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Ticket',legend:'Ticket Information',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'ticket_add_form',helpCategory:'add_ticket', submitFunc:'ticketAddHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Customer</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="customer_store" value="name" searchAttr="name" name="customer_id">
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Status</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="status_store" value="New" searchAttr="name" name="status_id">
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Priority</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="priority_store" value="Medium" searchAttr="name" name="priority_id">
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Type</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="type_store" value="PBX" searchAttr="name" name="type_id">
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Ticket Subject</label>
+            <input type="text" required="true" name="subject" placeholder="e.g. No dialtone"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please add ticket subject."  />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Ticket Description</label>
+            <textarea name="description" data-dojo-type="dijit.form.SimpleTextarea" rows="4" cols="50" style="width:auto;"></textarea>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Opened By</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="user_store" value="" searchAttr="name" name="user_id">
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Excpeted Resolution Date</label>
+            <input type="text" name="expected_date" value=""
+                   data-dojo-type="dijit.form.DateTextBox"
+                   required="true" />
+        </li>
+    </ul>
+</div>

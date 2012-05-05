@@ -43,7 +43,7 @@ import sys
 
 import socket
 
-host = "108.60.221.10"
+host = "localhost"
 port = 8447
 
 decoder = Decoder(amf3=True)

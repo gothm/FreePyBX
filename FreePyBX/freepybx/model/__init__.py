@@ -31,10 +31,9 @@ def init_model(engine):
     Session.configure(bind=engine)
 
     """Call me before using any of the tables or classes in the model"""
-    Session.configure(bind=engine, expire_on_commit=False )
+    Session.configure(bind=engine)
     Base.query = Session.query_property()
     metadata = Base.metadata
-
 
 __all__ = ['Customer','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxContext','PbxIVR','PbxIVROption',
            'PbxVirtualExtension','PbxCallerIDRoute','PbxBlacklistedNumber','PbxVirtualMailbox','PbxTTS',
@@ -44,7 +43,7 @@ __all__ = ['Customer','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxC
            'CallCenterQueue', 'CallCenterAgent', 'CallCenterTier', 'CallCenterCaller', 'VoiceMail', 'PbxChannel', 'PbxDialog',
            'CrmAccountStatusType', 'CrmGroup', 'CrmGroupMember', 'CrmCampaign','CrmLeadType', 'CrmCampaignGroup','CrmAccount',
            'Base', 'Session', 'PbxAclBlacklist', 'Provider', 'e911Address', 'e911DirectionalType', 'admin_user_groups','admin_group_permissions',
-           'e911UnitType', 'e911StreetType', 'CustomerNote', 'Ticket', 'TicketPriority', 'TicketType', 'AdminGroup',
+           'e911UnitType', 'e911StreetType', 'CustomerNote', 'Ticket', 'TicketPriority', 'TicketType', 'TicketStatus', 'TicketNote', 'AdminGroup',
            'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'customer_contexts','condition_actions',
            'PbxDeviceType', 'PbxDeviceManufacturer', 'BillingServiceType', 'VoipServiceType', 'BillingService',
            'VoipService', 'VoipServicePolicy', 'VoipExtensionServiceProfile', 'VoipTrunkServiceProfile', 'VoipPbxServiceProfile',
@@ -86,7 +85,7 @@ condition_actions = Table('condition_actions', metadata,
 
 
 from freepybx.model.core import AdminUser, AdminGroup, Provider, Customer, User, Group, Permission, \
-    AdminPermission, EmailAccount, Contact, CustomerNote, Ticket, TicketPriority, TicketType, Shift
+    AdminPermission, EmailAccount, Contact, CustomerNote, Ticket, TicketPriority, TicketType, TicketStatus, TicketNote, Shift
 
 from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExtension,\
     PbxCallerIDRoute, PbxBlacklistedNumber, PbxVirtualMailbox, PbxTTS, PbxTODRoute,\

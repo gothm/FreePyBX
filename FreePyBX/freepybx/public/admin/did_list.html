@@ -237,19 +237,19 @@
 
 <div style="border: 1px solid #c0c0c0;">
         <div dojoType="dijit.Toolbar">
-            <button id="addDidBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+            <button dojoType="dijit.form.Button" iconClass="plusIcon">
                 Add Did
                 <script type="dojo/method" event="onClick">
-                    dijit.byId("adminContent").set("href", "/admin/did_add.html")
+                    dijit.byId("customerContent").set("href", "/admin/did_add.html")
                 </script>
             </button>
-            <button id="saveDIDBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
+            <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
                 Save
                 <script type="dojo/method" event="onClick">
                     didStore.save();
                 </script>
             </button>
-            <button id="delDIDbtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            <button dojoType="dijit.form.Button" iconClass="dijitIconDelete">
                 &nbsp;Delete
                 <script type="dojo/method" event="onClick">
                     delete_did();

@@ -1,0 +1,274 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script type="text/javascript">
+
+dojo.require("dojo.io.script");
+dojo.require("dojo.parser");
+dojo.require("dijit.dijit");
+dojo.require("dijit.form.Button");
+dojo.require("dijit.Dialog");
+dojo.require("dijit.Toolbar");
+dojo.require("dijit.form.TextBox");
+dojo.require("dijit.form.Textarea");
+dojo.require("dijit.form.DateTextBox");
+dojo.require("dijit.form.TimeTextBox");
+dojo.require("dijit.layout.TabContainer");
+dojo.require("dijit.layout.ContentPane");
+dojo.require("dojox.grid.enhanced.plugins.Menu");
+dojo.require("dojox.grid.EnhancedGrid");
+dojo.require("dojo.data.ItemFileWriteStore");
+dojo.require("dojox.grid.enhanced.plugins.Pagination");
+dojo.require("dojox.grid.enhanced.plugins.Filter");
+
+var ticketGrid;
+var ticketStore = new dojo.data.ItemFileWriteStore({url:'/pbx/closed_tickets'});
+
+var plugins = {
+    pagination:true,
+    filter:true
+};
+
+ticketStore._saveCustom = function (saveComplete, saveFailed) {
+    var changeSet = ticketStore._pending;
+    var changes = {};
+    changes.modified = [];
+
+    for (var i in changeSet._modifiedItems) {
+        var item = null;
+        if (ticketStore._itemsByIdentity) {
+            item = ticketStore._itemsByIdentity[i];
+        } else {
+            item = ticketStore._arrayOfAllItems[i];
+        }
+        changes.modified.push(itemToJS(ticketStore, item));
+    }
+
+    if (changes.modified.length == 0) {
+        alert("Nothing to save!");
+        saveComplete();
+        return;
+    }
+
+    update_ticket_grid(dojo.toJson(changes, true));
+    console.log(dojo.toJson(changes, true));
+    saveComplete();
+};
+
+
+function viewTicket(id) {
+    var item = ticketGrid.selection.getSelected();
+    dijit.byId("ticketContent").set("href", "/pbx/ticket_view/"+id.id);
+}
+
+
+ticket_grid = function (data) {
+    var ticketLayout = [
+        {
+            name:'Status',
+            field:'status',
+            width:'auto',
+            editable: 'true',
+            type: dojox.grid.cells.Select,
+            options: data.ticket_status_names,
+            values: data.ticket_status_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        },
+        {
+            name:'Subject',
+            field:'subject',
+            width:'auto'
+        },
+        {
+            name:'Opened By',
+            field:'opened_by',
+            width:'auto',
+            editable: 'true',
+            type: dojox.grid.cells.Select,
+            options: data.opened_by_names,
+            values: data.opened_by_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        },
+        {
+            name:'Created',
+            field:'created',
+            width:'auto'
+        },
+        {
+            name:'Type',
+            field:'type',
+            width:'auto',
+            editable: 'true',
+            type: dojox.grid.cells.Select,
+            options: data.ticket_type_names,
+            values: data.ticket_type_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        },
+        {
+            name:'Priority',
+            field:'priority',
+            width:'auto',
+            editable: 'true',
+            type: dojox.grid.cells.Select,
+            options: data.ticket_priority_names,
+            values: data.ticket_priority_ids,
+            formatter: function(dat)
+            {
+                var ret = "...";
+                if(!isNaN(dat))
+                {
+                    var index = dojo.indexOf(this.values, dat);
+                    ret = this.options[index];
+                }
+                else
+                {
+                    ret = dat;
+                }
+                return ret;
+            }
+        },
+        {
+            name:'Expected Resolve Date',
+            field:'expected_resolve_date',
+            width:'auto'
+        }
+    ];
+
+    ticketGrid = new dojox.grid.EnhancedGrid({
+        query:{},
+        store:ticketStore,
+        structure:ticketLayout,
+        selectionMode:'single',
+        plugins:plugins,
+        columnReordering:true,
+        escapeHTMLInData:false,
+        region:"center",
+        autoHeight:true
+    }, document.createElement('div'));
+
+    dojo.byId("ticketCGridDiv").appendChild(ticketGrid.domNode);
+    ticketGrid.startup();
+}
+
+function update_ticket_grid(obj) {
+    dojo.xhrGet({
+        url:"/pbx/update_ticket_grid?data=" + obj,
+        handleAs:"text",
+        load:function (res) {
+            if (res.indexOf("Error") == -1) {
+                new voiceware.notice.Notice({message:res});
+            } else {
+                new voiceware.notice.Error({message:res});
+            }
+            return res;
+        },
+        error:function (err, ioArgs) {
+            new voiceware.notice.Error({message:err});
+            return err;
+        }
+    });
+}
+
+dojo.addOnLoad(function() {
+    dojo.xhrGet({
+        url:"/pbx/ticket_data",
+        handleAs:"json",
+        load: function(data) {
+            ticket_grid(data);
+        }
+    });
+});
+
+
+</script>
+
+<div style="border: 1px solid #c0c0c0;">
+    <div dojoType="dijit.Toolbar" region="top">
+        <button dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add Ticket
+            <script type="dojo/method" event="onClick">
+                dijit.byId("ticketContent").set("href", "/tickets/ticket_add.html")
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
+            Save
+            <script type="dojo/method" event="onClick">
+                ticketStore.save();
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="dijitIconNewTask">
+            View Ticket Notes
+            <script type="dojo/method" event="onClick">
+                if (ticketGrid.selection.getSelected()[0] == undefined) {
+                alert("Please select a ticket to view!");
+                return false;
+                }
+                viewTicket(ticketGrid.selection.getSelected()[0]);
+            </script>
+        </button>
+    </div>
+    <div id="ticketCGridDiv" style="width:100%;height:100%"></div>
+</div>
+
+
+
