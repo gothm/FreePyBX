@@ -729,7 +729,7 @@ class PbxController(BaseController):
         return response(request.environ, self.start_response)
 
     @authorize(logged_in)
-    def extension_add(self):
+    def add_extension(self):
         schema = ExtensionForm()
         msg=""
         co = Customer.query.filter(Customer.id==session['customer_id']).first()
@@ -858,7 +858,7 @@ class PbxController(BaseController):
 
     @restrict("POST")
     @authorize(logged_in)
-    def ext_edit(self, **kw):
+    def edit_extension(self, **kw):
         schema = ExtEditForm()
         msg=""
         try:
@@ -868,7 +868,7 @@ class PbxController(BaseController):
             e.outbound_caller_id_name = form_result.get('outbound_caller_id_name')
             e.outbound_caller_id_number = form_result.get('outbound_caller_id_number')
             e.internal_caller_id_name = form_result.get('internal_caller_id_name')
-            e.internal_caller_id_number = form_result.get('outbound_caller_id_number')
+            e.internal_caller_id_number = form_result.get('internal_caller_id_number')
             e.vm_email = form_result.get('vm_email')
             e.vm_password = form_result.get('vm_password')
             e.vm_attach_email = True if form_result.get('vm_attach_email')=="true" else False
@@ -1183,7 +1183,7 @@ class PbxController(BaseController):
         for group in PbxGroup.query.filter_by(context=session['context']).all():
             for extension in PbxGroupMember.query.filter_by(pbx_group_id=group.id).all():
                 members.append(extension.extension)
-            items.append({'id': group.id, 'name': group.name, 'ring_strategy': group.ring_strategy, 'members': ",".join(members)})
+            items.append({'id': group.id, 'name': group.name, 'ring_strategy': group.ring_strategy, 'no_answer_destination': group.no_answer_destination, 'members': ",".join(members)})
             members = []
 
         db.remove()
@@ -1250,6 +1250,11 @@ class PbxController(BaseController):
 
         try:
             for i in w['modified']:
+                g = PbxGroup.query.filter_by(id=i['id']).first()
+                g.no_answer_destination = i['no_answer_destination']
+                g.ring_strategy = i['ring_strategy']
+                db.commit()
+                db.flush()
                 PbxGroupMember.query.filter(PbxGroupMember.pbx_group_id==i['id']).delete()
 
                 for gm in i['members'].split(","):
@@ -2500,6 +2505,19 @@ class PbxController(BaseController):
     @authorize(logged_in)
     def route_id_names(self):
         return db.query(PbxRoute.name, PbxRoute.id).filter_by(context=session['context']).all()
+
+    @jsonify
+    @authorize(logged_in)
+    def route_ids(self):
+        names=[]
+        ids=[]
+
+        for r in db.query(PbxRoute.name, PbxRoute.id).filter_by(context=session['context']).order_by(PbxRoute.name).all():
+            names.append(r.name)
+            ids.append(r.id)
+
+        return dict({'names': names, 'ids': ids})
+
 
     @authorize(logged_in)
     def call_stats(self):

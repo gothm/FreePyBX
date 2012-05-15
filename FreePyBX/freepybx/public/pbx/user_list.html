@@ -81,7 +81,7 @@
     function editUserData() {
         var item = userGrid.selection.getSelected();
         tmpObj = item[0];
-        dijit.byId("mainContent").set("href", "/pbx/user_edit.html");
+        dijit.byId("mainContent").set("href", "/pbx/user_edit");
     }
     
         
@@ -233,7 +233,7 @@
             <button id="addUserBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
                 Add User
                 <script type="dojo/method" event="onClick">
-                    dijit.byId("mainContent").set("href", "/pbx/user_add.html")
+                    dijit.byId("mainContent").set("href", "/pbx/user_add")
                 </script>
             </button>
             <button id="editUserBtn" dojoType="dijit.form.Button" iconClass="editIcon">

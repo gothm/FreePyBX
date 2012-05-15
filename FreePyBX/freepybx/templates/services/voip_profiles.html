@@ -189,7 +189,7 @@
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message: res});
-                    dijit.byId("servicesContent").set("href", "/services/voip_profiles.html")
+                    dijit.byId("servicesContent").set("href", "/services/voip_profiles")
                 } else {
                     new voiceware.notice.Error({message: res});
                 }

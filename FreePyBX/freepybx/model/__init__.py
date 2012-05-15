@@ -49,7 +49,7 @@ __all__ = ['Customer','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxC
            'VoipService', 'VoipServicePolicy', 'VoipExtensionServiceProfile', 'VoipTrunkServiceProfile', 'VoipPbxServiceProfile',
            'BillingServiceFee', 'BillingServiceFeeType', 'BillingCycleType', 'ProviderBillingProfile', 'VoipServicePlan',
            'ProviderBillingGateway', 'ProviderBillingApiType', 'AuthorizeNetAccount', 'Invoice', 'InvoiceItem', 'Payment',
-           'PaymentType', 'BillingProduct', 'BillingProductType', 'BillingProductFee']
+           'PaymentType', 'BillingProduct', 'BillingProductType', 'BillingProductFee', 'PbxDidVendor', 'PbxDidPool']
 
 
 
@@ -93,7 +93,7 @@ from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExten
     PbxRouteType, PbxCondition, PbxConditionTmpl, PbxAction, PbxActionTmpl, PbxGroup,\
     PbxGroupMember, PbxEndpoint, PbxDeviceType, PbxDeviceManufacturer, PbxCdr,\
     PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog,\
-    PbxChannel, e911Address, e911DirectionalType, e911UnitType, e911StreetType
+    PbxChannel, e911Address, e911DirectionalType, e911UnitType, e911StreetType, PbxDidVendor, PbxDidPool
 
 from freepybx.model.call_center import CallCenterAgent, CallCenterAgentLog,\
     CallCenterCaller, CallCenterQueue, CallCenterTier

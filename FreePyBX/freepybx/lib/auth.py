@@ -155,7 +155,7 @@ class HasCredential(object):
                         return True
             raise AuthenticationError(self.error_msg)
         else:
-            raise AuthenticationError("You're not even logged in!")
+            redirect("/admin/logout")
 
 
 class IsLoggedIn(object):
@@ -167,18 +167,21 @@ class IsLoggedIn(object):
 
 class IsSuperUser(object):
     def check(self):
-        if 'user' in session:
-            row = AdminUser.query.filter_by(id=session['user_id']).filter_by(session_id=session.id).first()
-            if not row:
-                session.invalidate()
+        try:
+            if 'user' in session:
+                row = AdminUser.query.filter_by(id=session['user_id']).filter_by(session_id=session.id).first()
+                if not row:
+                    session.invalidate()
+                    redirect("/admin/logout")
+                c.perms = row.permissions
+                for p in c.perms:
+                    if 'superuser' in p:
+                        return True
+                raise AuthenticationError("You have no rights here.")
+            else:
                 redirect("/admin/logout")
-            c.perms = row.permissions
-            for p in c.perms:
-                if 'superuser' in p:
-                    return True
-            raise AuthenticationError("You have no rights here.")
-        else:
-            raise AuthenticationError("You're not even logged in!")
+        except:
+            redirect("/admin/logout")
 
 
 def authorize(valid):

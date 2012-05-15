@@ -1,5 +1,4 @@
-'''
-    This Source Code Form is subject to the terms of the Mozilla Public 
+""" This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this 
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -19,9 +18,7 @@
     copyright notices, patent notices, disclaimers of warranty, or limitations 
     of liability) contained within the Source Code Form of the Covered Software, 
     except that You may alter any license notices to the extent required to 
-    remedy known factual inaccuracies.
-    
-'''
+    remedy known factual inaccuracies."""
 
 import logging
 import pylons.test
@@ -112,6 +109,85 @@ def insert_data():
     Session.add(BillingCycleType(u'Prepay Pool', u'Prepay Service Deducted from account funds.'))
     Session.add(PaymentType(u'Credit Card Auto Bill', u'Charged credit card via merchant gateway automatically.'))
     Session.add(PaymentType(u'Credit Card By Employee', u'Manually charged credit card via merchant gateway by employee.'))
+
+    tp = TicketPriority()
+    tp.name = u'Critical'
+    tp.description = u'Significant risk of negative financial or public relations impact. Significant systems degradation/loss.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketPriority()
+    tp.name = u'High'
+    tp.description = u'Small risk of negative financial or public relations impact.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketPriority()
+    tp.name = u'Medium'
+    tp.description = u'Verified, but isolated instance.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketPriority()
+    tp.name = u'Low'
+    tp.description = u'Limited, but verified system instance.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketStatus()
+    tp.name = u'Open'
+    tp.description = u'Modified since originally created.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketStatus()
+    tp.name = u'In Progress'
+    tp.description = u'Currently being addressed.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketStatus()
+    tp.name = u'Closed'
+    tp.description = u'Work required has been completed.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'PBX'
+    tp.description = u'Feture not working.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'Feature Request'
+    tp.description = u'New Feature Request.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'Device Connectivity'
+    tp.description = u'Device Not Connecting/Authenticating.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'Network Related'
+    tp.description = u'Not Connecting to switch.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'Call Detail'
+    tp.description = u'Inncorrect Call Detail.'
+    Session.add(tp)
+    Session.commit()
+
+    tp = TicketType()
+    tp.name = u'Feature Request'
+    tp.description = u'New Feature Request.'
+    Session.add(tp)
+    Session.commit()
+
 
     Session.commit()
     Session.flush()

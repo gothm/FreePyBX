@@ -44,7 +44,7 @@
     function extensionHandler() {
         if(dijit.byId("extension_add_form").validate()) { 
             dojo.xhrPost({
-                url: "/pbx/extension_add",
+                url: "/pbx/add_extension",
                 handleAs: "text",
                 form: dojo.byId("extension_add_form"),
                 load: function(res) {

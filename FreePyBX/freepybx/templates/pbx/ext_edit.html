@@ -47,7 +47,7 @@
     
     function extEditFormHandler() {
         dojo.xhrPost({
-                    url: "/pbx/ext_edit",
+                    url: "/pbx/edit_extension",
                     handleAs: "text",
                     form: dojo.byId("ext_edit_form"),
     
@@ -56,6 +56,7 @@
                             new voiceware.notice.Notice({message: res});
                             dijit.byId("mainContent").set("href", "/pbx/extension_list.html");
                         } else {
+                            alert(res);
                             new voiceware.notice.Error({message: res});
                         }
                         return res;

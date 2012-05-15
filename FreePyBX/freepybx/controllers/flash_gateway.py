@@ -272,7 +272,7 @@ class VoiceWareService(object):
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
         if con.connected:
             con.events("plain", "all")
-            msg =  con.api("reload", "mod_callcenter")
+            msg = con.api("reload", "mod_callcenter")
         else:
             msg = "Failed!"
         return msg.getBody()

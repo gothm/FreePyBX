@@ -173,7 +173,7 @@
     function editExtData() {
         var item = extGrid.selection.getSelected();
         tmpObj = item[0];
-        dijit.byId("mainContent").set("href", "/pbx/ext_edit.html");
+        dijit.byId("mainContent").set("href", "/pbx/ext_edit");
     }
 
     dojo.addOnLoad(function() {   
@@ -201,7 +201,7 @@
     <button id="addExtBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
         Add Extension
         <script type="dojo/method" event="onClick">
-            dijit.byId("mainContent").set("href", "/pbx/extension_add.html")
+            dijit.byId("mainContent").set("href", "/pbx/extension_add")
         </script>
     </button>
     <button id="editExtBtn" dojoType="dijit.form.Button" iconClass="editIcon">

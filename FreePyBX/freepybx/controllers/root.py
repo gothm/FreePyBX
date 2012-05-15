@@ -101,24 +101,27 @@ class RootController(BaseController):
 
     @authorize(logged_in)
     def main(self, **kw):
-        c.is_admin = True if session['group_id'] == 1 else False
+        if 'group_id' in session:
+            c.is_admin = True if session['group_id'] == 1 else False
+        else:
+            redirect("/logout")
         c.has_crm = session['has_crm']
-        c.has_call_center = session['has_call_center']            
-        c.queues = get_queue_directory()    
+        c.has_call_center = session['has_call_center']
+        c.queues = get_queue_directory()
         if c.has_crm:
             c.campaigns = get_campaigns()
         return render('pbx/main.html')
-    
+
     @authorize(credential('pbx_admin'))
     def user_add(self, **kw):
         c.has_crm = session['has_crm']
         c.has_call_center = session['has_call_center']
         return render('pbx/user_add.html')
-    
+
     @authorize(logged_in)
     def pbx_users_list(self, **kw):
         return render('pbx/pbx_users_list.html')
-    
+
     @authorize(logged_in)
     def broker_users(self, **kw):
         c.is_admin = True if session['group_id'] == 1 else False
@@ -126,7 +129,7 @@ class RootController(BaseController):
         c.has_call_center = session['has_call_center']
         c.flashvars = "sid="+session.id+"&user_id="+str(session['user_id'])+"&my_name="+session['name']
         return render('pbx/broker_users.html')
-    
+
     @authorize(credential('pbx_admin'))
     def ext_edit(self, **kw):
         c.has_crm  = session['has_crm']

@@ -230,8 +230,10 @@ class PbxDid(Base):
     t38 = Column(Boolean, default=False)
     cnam = Column(Boolean, default=False)
     e911 = Column(Boolean, default=False)
+    did_vendor_id = Column(Integer, ForeignKey('did_vendors.id', onupdate="CASCADE", ondelete="CASCADE"))
     customer_id = Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
     pbx_route_id = Column(Integer, default=0)
+    created = Column(DateTime, default=datetime.now())
 
     def __init__(self, did, customer_id, context, domain, t38, e911, cnam, active=True, pbx_route_id=0):
         self.did = did
@@ -249,6 +251,63 @@ class PbxDid(Base):
 
     def __str__(self):
         return self.did
+
+
+class PbxDidPool(Base):
+    __tablename__='pbx_did_pool'
+
+    query = Session.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    did = Column(Unicode(20), nullable=False)
+    active = Column(Boolean, default=True)
+    domain = Column(Unicode(64), default=u"sip.freepybx.org")
+    context = Column(Unicode(128), default=u"sip.freepybx.org")
+    t38 = Column(Boolean, default=False)
+    cnam = Column(Boolean, default=False)
+    e911 = Column(Boolean, default=False)
+    customer_id = Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    did_vendor_id = Column(Integer, ForeignKey('did_vendors.id', onupdate="CASCADE", ondelete="CASCADE"))
+    pbx_route_id = Column(Integer, default=0)
+    created = Column(DateTime, default=datetime.now())
+    deactivated = Column(DateTime, default=datetime.now())
+
+
+    def __init__(self, did, customer_id, context, domain, t38, e911, cnam, active=True, pbx_route_id=0):
+        self.did = did
+        self.customer_id = customer_id
+        self.context = context
+        self.domain = domain
+        self.t38 = t38
+        self.e911 = e911
+        self.cnam = cnam
+        self.active = active
+        self.pbx_route_id = pbx_route_id
+
+    def get_domain(self):
+        return self.domain
+
+    def __str__(self):
+        return self.did
+
+
+class PbxDidVendor(Base):
+    __tablename__='did_vendors'
+
+    query = Session.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    name = Column(Unicode(100),nullable=False)
+    email = Column(Unicode(100))
+    address = Column(Unicode(100))
+    address_2 = Column(Unicode(100))
+    city = Column(Unicode(100))
+    state = Column(Unicode(100))
+    zip = Column(Unicode(15))
+    url = Column(Unicode(100))
+    tel = Column(Unicode(100))
+    mobile = Column(Unicode(100))
+    active = Column(Boolean, default=True)
 
 
 class PbxProfile(Base):

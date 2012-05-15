@@ -45,25 +45,8 @@
     var vmboxGrid;
     var vmboxStore = new dojo.data.ItemFileWriteStore({url: '/pbx/vmboxes'});
 
-    var menusObject = {
-        headerMenu: new dijit.Menu()
-    };
-    menusObject.headerMenu.addChild(new dijit.MenuItem({
-        label: "Do something.",
-        onClick: "alert('Did it!');"
-    }));
-    menusObject.headerMenu.addChild(new dijit.MenuItem({
-        label: "Do something else.",
-        onClick: "alert('Did it!');"
-    }));        
-    menusObject.headerMenu.startup();
-
     var plugins = {
         pagination: true,
-        filter: true,
-        dnd: {copyOnly: true, dndConfig: {out:{ row: true, cell: false}} }, 
-        indirectSelection: true,
-        menus: menusObject
     };           
 
     vmboxStore._saveCustom = function(saveComplete, saveFailed) {
@@ -212,6 +195,16 @@
                 Add Virtual Mailbox
                 <script type="dojo/method" event="onClick">
                     dijit.byId("mainContent").set("href", "/pbx/virtual_mailbox_add.html")
+                </script>
+            </button>
+            <button id="editExtBtn" dojoType="dijit.form.Button" iconClass="editIcon">
+                Edit Extension
+                <script type="dojo/method" event="onClick">
+                    if (extGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select an extension to edit!");
+                    return false;
+                    }
+                    editExtData();
                 </script>
             </button>
             <button id="saveVMboxBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
