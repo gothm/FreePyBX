@@ -40,7 +40,7 @@
     
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
-                    new voiceware.notice.Notice({message: "Group successfully created."});
+                    new voiceware.notice.Notice({message: res});
                     dijit.byId("mainContent").set("href", "/pbx/group_list.html");
                 } else {
                     new voiceware.notice.Error({message: res});
@@ -76,7 +76,7 @@
         </li>
         <li class="odd">
             <label class="fieldlabel">Group Members</label>
-            <input type="text" required="true" name="group_extensions" id="group_extensions" placeholder="Comma separated. e.g. 101, 102"
+            <input type="text" required="true" name="group_extensions" placeholder="Comma separated. e.g. 101, 102"
                    dojoType="dijit.form.ValidationTextBox" missingMessage="Please add members for this group."  />
         </li>
         <li class="even">

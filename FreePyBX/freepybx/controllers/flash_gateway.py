@@ -89,13 +89,14 @@ def make_agent(name=None,volume=0,talk_time=0):
 
     return a
 
-def make_broker_user(name, id, customer_id, email, mobile, ext, uuid, is_online):
+def make_broker_user(name, id, customer_id, email, tel, mobile, ext, uuid, is_online):
     b = BrokerUser()
     b.name = name
     b.id = id
     b.customer_id = customer_id
     b.email = email
     b.mobile = mobile
+    b.tel = tel
     b.ext = ext
     b.uuid = uuid
     b.is_online = is_online
@@ -176,6 +177,8 @@ class VoiceWareService(object):
         else:
             raise Exception("No session id in db matching the user calling this method.")
 
+
+
         for r in db.execute("SELECT DISTINCT users.first_name, users.last_name, users.id, users.customer_id, "
                             "customers.context AS context, users.portal_extension, "
                             "users.tel, users.mobile, users.username, sip_dialogs.uuid AS uuid "
@@ -190,7 +193,8 @@ class VoiceWareService(object):
             is_online = True if len(ep_stats) > 0 else False
             ep_stats = []
 
-            users.append(make_broker_user(r[0]+' '+r[1], r[2], r[3], r[8], r[7], r[5], r[9], is_online))
+            # make_broker_user(name, id, customer_id, email, tel, mobile, ext, uuid, is_online):
+            users.append(make_broker_user(r[0]+' '+r[1], r[2], r[3], r[8], r[6], r[7], r[5], r[9], is_online))
 
         db.remove()
         return users
@@ -231,14 +235,14 @@ class VoiceWareService(object):
 
     def callExtension(self, sid, ext):
         user = User.query.filter_by(session_id=sid).first()
-        if user:
+        if user and ext.isdigit():
             context = user.get_context()
         else:
             return
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
         if con.connected:
-            con.bgapi("originate", "{ringback=\'%(2000,4000,440.0,480.0)\'}user/"+str(user.portal_extension)+"@"+str(context)+" "+str(ext)+" XML "+str(context))
+            con.api("originate", "{origination_caller_id_name=Click-To-Call,ringback=\'%(2000,4000,440.0,480.0)\'}user/"+str(user.portal_extension)+"@"+str(context)+"  &transfer('"+str(ext)+" XML sbc10.vwna.com')")
 
     def callOutbound(self, sid, did):
         user = User.query.filter_by(session_id=sid).first()
@@ -251,7 +255,8 @@ class VoiceWareService(object):
                         "FROM pbx_endpoints "
                         "INNER JOIN customers on customers.context  = pbx_endpoints.user_context "
                         "WHERE customers.context = :context AND customers.id = :customer_id AND pbx_endpoints.auth_id = :auth_id",
-                {'context': context,'customer_id': user.customer_id, 'auth_id': user.portal_extension}).fetchone()
+                        {'context': context,'customer_id': user.customer_id, 'auth_id': user.portal_extension}).fetchone()
+
         if len(ep[0])==10:
             origination_caller_id_number = ep[0]
         else:

@@ -135,9 +135,9 @@ end
 
 function get_route_by_ivr_opt(option, id)
     db = assert(con:execute(string.format("SELECT * from pbx_routes INNER JOIN pbx_ivr_options " ..
-            "ON pbx_routes.id = pbx_ivr_options.pbx_route_id " ..
-            "WHERE pbx_ivr_options.option ='%s' " ..
-            "AND pbx_ivr_options.pbx_ivr_id=%d", option, tonumber(id))))
+                                          "ON pbx_routes.id = pbx_ivr_options.pbx_route_id " ..
+                                          "WHERE pbx_ivr_options.option ='%s' " ..
+                                          "AND pbx_ivr_options.pbx_ivr_id=%d", option, tonumber(id))))
     return db:fetch({}, "a")
 end
 
@@ -157,7 +157,12 @@ function get_default_gateway(context)
 end
 
 function get_extension(extension, context)
-    db = assert(con:execute(string.format("SELECT pbx_endpoints.*, customers.id as customer_id from pbx_endpoints inner join customers on pbx_endpoints.user_context = customers.context where auth_id= '%s' and user_context ='%s'", extension, context)))
+    db = assert(con:execute(string.format("SELECT pbx_endpoints.*, customers.id as customer_id " ..
+                                          "FROM pbx_endpoints "..
+                                          "INNER JOIN customers "..
+                                          "ON pbx_endpoints.user_context = customers.context "..
+                                          "WHERE auth_id= '%s' "..
+                                          "AND user_context ='%s'", extension, context)))
     return db:fetch({}, "a")
 end
 
@@ -172,7 +177,7 @@ function get_tts(route,context)
 end
 
 function get_outbound_caller_id(user_name, context)
-    db = assert(con:execute(string.format("SELECT pbx_endpoints.outbound_caller_id_name as ext_name, pbx_endpoints.outbound_caller_id_number as ext_number, pbx_endpoints.user_id as user_id, customers.tel as tel, customers.name as customer_name, customers.default_gateway as gateway, customers.id as customer_id from pbx_endpoints inner join customers on pbx_endpoints.user_context = customers.context  where customers.context= '%s' and pbx_endpoints.auth_id ='%s'", context, user_name)))
+    db = assert(con:execute(string.format("SELECT pbx_endpoints.outbound_caller_id_name AS ext_name, pbx_endpoints.outbound_caller_id_number as ext_number, pbx_endpoints.user_id as user_id, customers.tel as tel, customers.name as customer_name, customers.default_gateway as gateway, customers.id as customer_id from pbx_endpoints inner join customers on pbx_endpoints.user_context = customers.context  where customers.context= '%s' and pbx_endpoints.auth_id ='%s'", context, user_name)))
     return db:fetch({}, "a")
 end
 
@@ -391,8 +396,6 @@ function bridge_external(route, context)
     session:execute("set","hangup_after_bridge=true")
     session:execute("set", "effective_caller_id_name=" .. caller_name)
     session:execute("set", "effective_caller_id_number=" .. caller_num)
-    session:execute("set", "origination_caller_id_name=" .. caller_name)
-    session:execute("set", "origination_caller_id_number=" .. caller_num)
     session:execute("set", "ringback=%(2000,4000,440.0,480.0)")
     session:execute("bridge","sofia/gateway/" .. gw["default_gateway"] .. "/" .. route["did"])
     send_route(get_route_by_id(route["timeout_destination"]), context)
@@ -425,7 +428,6 @@ function bridge_group(route, context)
     virtual_members = get_virtual_group_members(route, context)
     group = get_group(route["name"], context)
     session:sleep(1000)
-    session:execute("playback", "ivr/ivr-please_hold_while_party_contacted.wav")
     session:setVariable("effective_caller_id_name", "PBX " .. route["name"])
     session:execute("set","call_timeout=" .. group["timeout"])
 
@@ -444,9 +446,12 @@ function bridge_group(route, context)
             session:execute("bridge","user/" .. row.extension .. "@" .. context)
             row = db:fetch (row, "a")
         end
-        db = assert(con:execute(string.format("SELECT * from pbx_group_members inner join pbx_groups " ..
-                "on pbx_groups.id = pbx_group_members.pbx_group_id where pbx_groups.name='%s' and context='%s'",
-            route["name"], context)))
+        db = assert(con:execute(string.format("SELECT * from pbx_group_members "..
+                                              "inner join pbx_groups " ..
+                                              "on pbx_groups.id = pbx_group_members.pbx_group_id "..
+                                              "where pbx_groups.name='%s' "..
+                                              "and context='%s'",
+                                              route["name"], context)))
         row = db:fetch ({}, "a")
 
         while row do
@@ -477,7 +482,6 @@ function transfer_local(route, context)
     session:sleep(1000)
     session:execute("transfer", route['name'] .. " XML" .. " " .. context)
 end
-
 
 
 function send_route(route, context)
@@ -531,11 +535,8 @@ profile = session:getVariable("profile")
 
 log(called_num)
 
-if string.len(called_num) == 12 then
+if string.len(called_num) > 10 then
     called_num = string.sub(called_num, string.len(called_num)-9, string.len(called_num))
-end
-if string.len(called_num) == 11 then
-    called_num = string.sub(called_num, string.len(called_num)-8, string.len(called_num))
 end
 
 --[[
@@ -560,11 +561,12 @@ if is_outbound and is_authed then
 
     session:execute("set", "call_direction=outbound")
     session:execute("set", "extension=" .. user_name)
+
     row = get_outbound_caller_id(user_name, context)
     session:execute("set", "customer_id=" .. row["customer_id"])
     session:execute("set", "user_id=" .. row["user_id"])
 
-    if string.len(row["ext_number"]) == 10 then
+    if string.len(row["ext_number"]) > 6 then
         bridge_outbound(row["ext_name"], row["ext_number"], called_num)
     else
         bridge_outbound(row["customer_name"], row["tel"], called_num)

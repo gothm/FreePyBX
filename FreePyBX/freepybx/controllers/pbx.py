@@ -1199,6 +1199,10 @@ class PbxController(BaseController):
         schema = GroupForm()
         try:
             form_result = schema.to_python(request.params)
+
+            if len(form_result.get('group_extensions').split(","))==1:
+                return "Error: You need to have at least two extensions to make a group."
+
             sg = PbxGroup()
             sg.name = form_result.get('group_name')
             sg.context = session['context']
@@ -1210,16 +1214,24 @@ class PbxController(BaseController):
             db.commit()
             db.flush()
 
-            for i in form_result.get('group_extensions').split(","):
-                if not i.isdigit():
-                    continue
-                sm = PbxGroupMember()
-                sm.pbx_group_id = sg.id
-                sm.extension = i
 
-                db.add(sm)
-                db.commit()
-                db.flush()
+
+
+            if not form_result.get('group_extensions').split(","):
+                if not form_result.get('group_extensions').isdigit():
+                    return "You need to have at least one extension to make a group."
+                else:
+                    db.add(PbxGroupMember(sg.id, form_result.get('group_extensions')))
+                    db.commit()
+                    db.flush()
+            else:
+                for ext in form_result.get('group_extensions').split(","):
+                    if not ext.isdigit():
+                        continue
+                    db.add(PbxGroupMember(sg.id, ext))
+                    db.commit()
+                    db.flush()
+
 
         except validators.Invalid, error:
             db.remove()
