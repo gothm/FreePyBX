@@ -4,13 +4,13 @@ you would include information such as the information below:
 Installation and Setup
 ======================
 
-Install ``PythonPBX`` using easy_install::
+Install ``FreePyBX`` using easy_install::
 
-    easy_install PythonPBX
+    easy_install FreePyBX
 
 Make a config file as follows::
 
-    paster make-config PythonPBX config.ini
+    paster make-config FreePyBX config.ini
 
 Tweak the config file as appropriate and then setup the application::
 
