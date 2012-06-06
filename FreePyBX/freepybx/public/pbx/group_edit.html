@@ -24,19 +24,47 @@
     dojo.require("dijit.form.DateTextBox");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
-    dojo.require("dijit.form.Button"); 
-    dojo.require("dijit.form.RadioButton");
+    dojo.require("dijit.form.Button");
     dojo.require("dojox.validate.web");
     dojo.require("dojox.validate._base");
-    dojo.require("dijit.form.FilteringSelect");
-    dojo.require("dojo.data.ItemFileReadStore");
-    
-    function groupFormHandler() {
-        if(dijit.byId("group_add_form").validate()) {
+
+    function setGroupForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("group_id").value = obj.id;
+        dijit.byId("group_name").set("value", obj.name);
+        dijit.byId("group_extensions").set("value", obj.members);
+        dijit.byId("group_timeout").set("value", obj.timeout);
+        dijit.byId("group_no_answer_destination").set("value", obj.no_answer_destination);
+
+        if (obj.group_ring_strategy == 'sim') {
+            dijit.byId("group_sim").set("checked", true);
+        } else {
+            dijit.byId("group_seq").set("checked", true);
+        }
+
+    }
+
+    function getGroupByID() {
+        dojo.xhrGet({
+            url: "/pbx/group_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setGroupForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    function groupEditFormHandler() {
+        if(dijit.byId("group_edit_form").validate()) {
             dojo.xhrPost({
-                url: "/pbx/group_add",
+                url: "/pbx/group_edit",
                 handleAs: "text",
-                form: dojo.byId("group_add_form"),
+                form: dojo.byId("group_edit_form"),
 
                 load: function(res) {
                     if (res.indexOf("Error") == -1) {
@@ -44,7 +72,6 @@
                         dijit.byId("mainContent").set("href", "/pbx/group_list.html");
                     } else {
                         new voiceware.notice.Error({message: res});
-                        dijit.byId("mainContent").set("href", "/pbx/group_add.html");
                     }
                     return res;
                 },
@@ -55,18 +82,23 @@
             });
         }
     }
-    
+
+    dojo.addOnLoad(function() {
+        getGroupByID();
+    });
+
 </script>
 
 
 <div dojoType="voiceware.PbxForm"
-     data-dojo-props="title:'Add Group',legend:'Group Settings',delStyle:'display:none', noticeClass: 'noNotice',
-     formName:'group_add_form',helpCategory:'add_group', submitFunc:'groupFormHandler();',
+     data-dojo-props="title:'Edit Group',legend:'Group Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'group_edit_form',helpCategory:'edit_group', submitFunc:'groupEditFormHandler();',
      delFunc:'this.form.rest();'">
+    <input type="hidden" name="group_id" id="group_id" />
     <ul class="field_list">
         <li class="even">
             <label class="fieldlabel">Group Name</label>
-            <input type="text" required="true" name="group_name" placeholder="e.g. Sales"
+            <input type="text" required="true" name="group_name" id="group_name" placeholder="e.g. Sales"
                    dojoType="dijit.form.ValidationTextBox"
                    missingMessage="Please add a group name."
                    regExp="\b[a-zA-Z0-9_]{2,16}\b"
@@ -77,18 +109,18 @@
         </li>
         <li class="odd">
             <label class="fieldlabel">Group Members</label>
-            <input type="text" required="true" name="group_extensions" placeholder="Comma separated. e.g. 101, 102"
+            <input type="text" required="true" name="group_extensions" id="group_extensions" placeholder="Comma separated. e.g. 101, 102"
                    dojoType="dijit.form.ValidationTextBox" missingMessage="Please add members for this group."  />
         </li>
         <li class="even">
             <label class="fieldlabel">Ring Simultaneously</label>
-            <input type="radio" name="group_ring_strategy"
+            <input type="radio" name="group_ring_strategy" id="group_sim"
                    data-dojo-type="dijit.form.RadioButton"
                    data-dojo-props="name: 'group_ring_strategy', value: 'sim', checked: true"/>
         </li>
         <li class="odd">
             <label class="fieldlabel">Ring Sequentially</label>
-            <input type="radio" name="group_ring_strategy"
+            <input type="radio" name="group_ring_strategy" id="group_seq"
                    data-dojo-type="dijit.form.RadioButton"
                    data-dojo-props="name: 'group_ring_strategy', value: 'seq'"/>
             <br />
@@ -98,7 +130,7 @@
         </li>
         <li class="even">
             <label class="fieldlabel">Timeout (seconds)</label>
-            <input type="text" name="timeout" size="30"
+            <input type="text" id="group_timeout" name="timeout" size="30"
                    dojoType="dijit.form.ValidationTextBox"  value="13"
                    required="true"
                    regExp="\b[0-9]{1,2}\b"
@@ -110,7 +142,7 @@
         <li class="odd">
             <label class="fieldlabel">Timeout Destination</label>
             <div dojoType="dojo.data.ItemFileReadStore" jsId="destinationsStore" url="/pbx/routes"></div>
-            <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" searchAttr="name" name="no_answer_destination" />
+            <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" searchAttr="name" name="no_answer_destination" id="group_no_answer_destination"/>
         </li>
     </ul>
 </div>

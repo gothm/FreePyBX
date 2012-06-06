@@ -136,6 +136,12 @@
         return js;
     };
 
+    function editMailbox() {
+        var item = vmboxGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("mainContent").set("href", "/pbx/virtual_mailbox_edit.html");
+    }
+
     vmailbox_grid = function () {      
         var vmboxLayout = [{
             name: 'Extension',
@@ -198,13 +204,13 @@
                 </script>
             </button>
             <button id="editExtBtn" dojoType="dijit.form.Button" iconClass="editIcon">
-                Edit Extension
+                Edit Mailbox
                 <script type="dojo/method" event="onClick">
-                    if (extGrid.selection.getSelected()[0] == undefined) {
-                    alert("Please select an extension to edit!");
-                    return false;
+                    if (vmboxGrid.selection.getSelected()[0] == undefined) {
+                        alert("Please select a virtual mailbox to edit!");
+                        return false;
                     }
-                    editExtData();
+                    editMailbox();
                 </script>
             </button>
             <button id="saveVMboxBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">

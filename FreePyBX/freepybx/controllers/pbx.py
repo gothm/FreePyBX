@@ -64,13 +64,9 @@ from ESL import *
 import re
 import csv
 
-
-
 logged_in = IsLoggedIn()
 credential = HasCredential
-
 log = logging.getLogger(__name__)
-
 DEBUG=False
 
 fs_vm_dir = config['app_conf']['fs_vm_dir']
@@ -460,8 +456,7 @@ class PbxController(BaseController):
             g.users.append(u)
             db.add(g)
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             context = PbxContext.query.filter(PbxContext.customer_id==session['customer_id']).first()
 
@@ -522,8 +517,7 @@ class PbxController(BaseController):
                 e.user_id = u.id
 
                 db.add(e)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
                 r = PbxRoute()
                 r.context = context.context
@@ -536,8 +530,7 @@ class PbxController(BaseController):
                 r.pbx_to_id = e.id
 
                 db.add(r)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
                 con = PbxCondition()
                 con.context = context.context
@@ -547,8 +540,7 @@ class PbxController(BaseController):
                 con.pbx_route_id = r.id
 
                 db.add(c)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
                 s = PbxAction()
                 s.pbx_condition_id = con.id
@@ -559,8 +551,7 @@ class PbxController(BaseController):
                 s.data = u'hangup_after_bridge=true'
 
                 db.add(s)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
                 s = PbxAction()
                 s.pbx_condition_id = con.id
@@ -571,8 +562,7 @@ class PbxController(BaseController):
                 s.data = u'call_timeout=20'
 
                 db.add(s)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
                 s = PbxAction()
                 s.pbx_condition_id = con.id
@@ -583,8 +573,7 @@ class PbxController(BaseController):
                 s.data = u'{force_transfer_context='+context.context+'}sofia/'+str(get_profile())+'/'+form_result.get("extension")+'%'+context.context
 
                 db.add(s)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -619,13 +608,11 @@ class PbxController(BaseController):
             u.active = True if form_result.get("active", None) is not None else False
             u.customer_id = session["customer_id"]
             u.notes = form_result.get("notes")
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
-            db.execute("UPDATE user_groups set group_id = :group_id where user_id = :user_id",\
+            db.execute("UPDATE user_groups SET group_id = :group_id where user_id = :user_id",\
                     {'group_id': form_result.get('group_id', 3) , 'user_id': u.id})
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             db.remove()
 
@@ -646,8 +633,7 @@ class PbxController(BaseController):
             u.username = i['username']
             u.password = i['password']
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
             db.remove()
 
         return "Successfully updated users."
@@ -664,8 +650,7 @@ class PbxController(BaseController):
             if not id.isdigit():
                 raise Exception("YOUR IP: "+str(request.params["HTTP_REMOTE_DUDE"])+" INFO WAS SENT TO THE ADMIN FOR BLOCKING.")
             User.query.filter(User.id==id).filter(User.customer_id==session['customer_id']).delete()
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
         except:
             db.remove()
             return "Error deleting user."
@@ -715,7 +700,7 @@ class PbxController(BaseController):
                               'outbound_caller_id_name': endpoint.outbound_caller_id_name, 'outbound_caller_id_number': endpoint.outbound_caller_id_number,
                               'internal_caller_id_name': endpoint.internal_caller_id_name, 'internal_caller_id_number': endpoint.internal_caller_id_number,
                               'vm_email': endpoint.vm_email, 'vm_password': endpoint.vm_password, 'vm_attach_email': endpoint.vm_attach_email, 'vm_save': endpoint.vm_save,
-                              'vm_notify_email': endpoint.vm_notify_email,
+                              'vm_notify_email': endpoint.vm_notify_email, 'calling_rule_id': endpoint.calling_rule_id,
                               'transfer_fallback_extension': endpoint.transfer_fallback_extension, 'find_me': endpoint.find_me, 'follow_me_1': endpoint.follow_me_1,
                               'follow_me_2': endpoint.follow_me_2, 'follow_me_3': endpoint.follow_me_3, 'follow_me_4': endpoint.follow_me_4, 'call_timeout': endpoint.call_timeout,
                               'timeout_destination': endpoint.timeout_destination, 'record_inbound_calls': endpoint.record_inbound_calls, 'record_outbound_calls': endpoint.record_outbound_calls,
@@ -765,6 +750,7 @@ class PbxController(BaseController):
             e.user_originated = u'true'
             e.toll_allow = u'domestic'
             e.accountcode = co.tel
+            e.calling_rule_id = form_result.get('calling_rule_id')
             e.find_me = True if form_result.get('find_me')=="true" else False
             e.auto_provision = True if form_result.get('auto_provision')=="true" else False
             e.device_type_id = form_result.get('device_type_id') if form_result.get('device_type_id') else 0
@@ -772,8 +758,7 @@ class PbxController(BaseController):
             e.mac = form_result.get('mac', None)
 
             db.add(e)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute()
             r.context = session['context']
@@ -786,8 +771,7 @@ class PbxController(BaseController):
             r.pbx_to_id = e.id
 
             db.add(r)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             con = PbxCondition()
             con.context = session['context']
@@ -797,8 +781,7 @@ class PbxController(BaseController):
             con.pbx_route_id = r.id
 
             db.add(con)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -809,8 +792,7 @@ class PbxController(BaseController):
             s.data = u'hangup_after_bridge=true'
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -821,8 +803,7 @@ class PbxController(BaseController):
             s.data = u'continue_on_fail=true'
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -833,8 +814,7 @@ class PbxController(BaseController):
             s.data = u'call_timeout='+form_result.get('call_timeout', 20)
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -846,8 +826,7 @@ class PbxController(BaseController):
                      +str(get_profile())+'/'+form_result.get("extension")+'%'+session['context']
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -889,10 +868,10 @@ class PbxController(BaseController):
             e.device_type_id = form_result.get('device_type_id') if form_result.get('device_type_id') else 0
             e.include_xml_directory = True if form_result.get('include_xml_directory')=="true" else False
             e.mac = form_result.get('mac', None)
+            e.calling_rule_id = form_result.get('calling_rule_id')
 
             db.add(e)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute.query.filter(PbxRoute.pbx_route_type_id==1).\
             filter(PbxRoute.name==e.auth_id).filter(PbxRoute.context==session['context']).first()
@@ -907,8 +886,7 @@ class PbxController(BaseController):
             con.pbx_route_id = r.id
 
             db.add(con)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -919,8 +897,7 @@ class PbxController(BaseController):
             s.data = u'hangup_after_bridge=true'
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -931,8 +908,7 @@ class PbxController(BaseController):
             s.data = u'continue_on_fail=true'
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -943,8 +919,7 @@ class PbxController(BaseController):
             s.data = u'call_timeout='+form_result.get('call_timeout', 20)
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             s = PbxAction()
             s.pbx_condition_id = con.id
@@ -955,8 +930,7 @@ class PbxController(BaseController):
             s.data = u'{force_transfer_context='+session['context']+'}sofia/'+str(get_profile())+'/'+e.auth_id+'%'+session['context']
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             db.remove()
 
@@ -988,8 +962,7 @@ class PbxController(BaseController):
 
             e.password = i['password']
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
             db.remove()
 
         return "Successfully updated extension."
@@ -1033,8 +1006,7 @@ class PbxController(BaseController):
             sve.pbx_route_id = form_result.get('no_answer_destination')
 
             db.add(sve)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute()
             r.context = session['context']
@@ -1047,8 +1019,7 @@ class PbxController(BaseController):
             r.pbx_to_id = sve.id
 
             db.add(r)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             return 'Validation Error: %s' % error
@@ -1080,8 +1051,7 @@ class PbxController(BaseController):
                 ve.did = i['did']
                 ve.timeout = i['timeout']
                 ve.pbx_route_id = i['pbx_route_id']
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
         except DataInputError, error:
             db.remove()
@@ -1094,7 +1064,6 @@ class PbxController(BaseController):
         items=[]
         for extension in PbxVirtualMailbox.query.filter_by(context=session['context']).all():
             items.append({'id': extension.id, 'extension': extension.extension, 'vm_password': extension.vm_password})
-
         db.remove()
 
         out = dict({'identifier': 'id', 'label': 'extension', 'items': items})
@@ -1102,6 +1071,75 @@ class PbxController(BaseController):
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
         return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def calling_rules(self):
+        items=[]
+        for rule in PbxCallingRule.query.all():
+            items.append({'id': rule.id, 'name': rule.name})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def vmbox_by_id(self, id, **kw):
+        items=[]
+        extension = PbxVirtualMailbox.query.filter_by(context=session['context']).filter_by(id=id).first()
+        items.append({'id': extension.id, 'extension': extension.extension, 'vm_password': extension.vm_password,
+                      'skip_greeting': extension.skip_greeting, 'audio_file': extension.audio_file,
+                      'vm_email': extension.vm_email, 'vm_attach_email': extension.vm_attach_email,
+                      'vm_notify_email': extension.vm_notify_email, 'vm_save': extension.vm_save})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'extension', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def vmbox_edit(self, **kw):
+        schema = VirtualMailboxEditForm()
+        try:
+            form_result = schema.to_python(request.params)
+
+            vm = PbxVirtualMailbox.query.filter_by(id=form_result.get('vmbox_id'))\
+                .filter_by(context=session['context']).first()
+            vm.vm_password = form_result.get('vm_password')
+            vm.context = session['context']
+            vm.skip_greeting =  True if form_result.get('skip_greeting')=="true" else False
+            vm.audio_file = form_result.get('audio_file', None)
+            vm.vm_email = form_result.get('vm_email', None)
+            vm.vm_password = form_result.get('vm_password', u'9999')
+            vm.vm_attach_email = True if form_result.get('vm_attach_email')=="true" else False
+            vm.vm_notify_email = True if form_result.get('vm_notify_email')=="true" else False
+            vm.vm_save = True if form_result.get('vm_save')=="true" else False
+
+            PbxRoute.query.filter_by(pbx_route_type_id=3).filter_by(pbx_to_id=vm.id).delete()
+            db.commit(); db.flush()
+
+            r = PbxRoute()
+            r.context = session['context']
+            r.domain = session['context']
+            r.name = vm.extension
+            r.continue_route = True
+            r.voicemail_enable = True
+            r.voicemail_ext = vm.extension
+            r.pbx_route_type_id = 3
+            r.pbx_to_id = vm.id
+
+            db.add(r)
+            db.commit(); db.flush()
+
+        except validators.Invalid, error:
+            return 'Validation Error: %s' % error
+
+            db.remove()
+            return "Successfully added virtual voicemail box."
 
     @authorize(logged_in)
     def vmbox_add(self, **kw):
@@ -1121,8 +1159,7 @@ class PbxController(BaseController):
             vm.vm_save = True if form_result.get('vm_save')=="true" else False
 
             db.add(vm)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute()
             r.context = session['context']
@@ -1135,8 +1172,7 @@ class PbxController(BaseController):
             r.pbx_to_id = vm.id
 
             db.add(r)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             return 'Validation Error: %s' % error
@@ -1155,8 +1191,7 @@ class PbxController(BaseController):
                     return "A virtual mailbox and pin needs to be exactly 3 or 4 numbers."
                 vm = PbxVirtualMailbox.query.filter_by(id=i['id']).filter_by(context=session['context']).first()
                 vm.vm_password = i['vm_password'].strip()
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
                 db.remove()
 
         except DataInputError, error:
@@ -1178,14 +1213,32 @@ class PbxController(BaseController):
 
     @authorize(logged_in)
     def groups(self):
-        items=[]
-        members = []
+        items=[]; members = []
         for group in PbxGroup.query.filter_by(context=session['context']).all():
             for extension in PbxGroupMember.query.filter_by(pbx_group_id=group.id).all():
                 members.append(extension.extension)
-            items.append({'id': group.id, 'name': group.name, 'ring_strategy': group.ring_strategy, 'no_answer_destination': group.no_answer_destination, 'members': ",".join(members)})
+            items.append({'id': group.id, 'name': group.name, 'ring_strategy': group.ring_strategy,
+                          'no_answer_destination': group.no_answer_destination, 'members': ",".join(members),
+                          'timeout': group.timeout})
             members = []
 
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def group_by_id(self, id, **kw):
+        items=[]; members=[]
+        group = PbxGroup.query.filter_by(context=session['context']).filter_by(id=id).first()
+        for extension in PbxGroupMember.query.filter_by(pbx_group_id=group.id).all():
+            members.append(extension.extension)
+        items.append({'id': group.id, 'name': group.name, 'ring_strategy': group.ring_strategy,
+                      'no_answer_destination': group.no_answer_destination, 'members': ",".join(members),
+                      'timeout': group.timeout})
         db.remove()
 
         out = dict({'identifier': 'id', 'label': 'name', 'items': items})
@@ -1211,11 +1264,65 @@ class PbxController(BaseController):
             sg.timeout = form_result.get('timeout', 13)
 
             db.add(sg)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
+            if not form_result.get('group_extensions').split(","):
+                if not form_result.get('group_extensions').isdigit():
+                    return "You need to have at least one extension to make a group."
+                else:
+                    db.add(PbxGroupMember(sg.id, form_result.get('group_extensions')))
+                    db.commit(); db.flush()
+            else:
+                for ext in form_result.get('group_extensions').split(","):
+                    if not ext.isdigit():
+                        continue
+                    db.add(PbxGroupMember(sg.id, ext))
+                    db.commit(); db.flush()
 
+        except validators.Invalid, error:
+            db.remove()
+            return 'Validation Error: %s' % error
 
+        r = PbxRoute()
+        r.context = session['context']
+        r.domain = session['context']
+        r.name = form_result.get('group_name')
+        r.continue_route = True
+        r.voicemail_enable = True
+        r.voicemail_ext = form_result.get('group_name')
+        r.pbx_route_type_id = 4
+        r.pbx_to_id = sg.id
+
+        db.add(r)
+        db.commit(); db.flush()
+        db.remove()
+
+        return "Successfully added group "+str(form_result.get('group_name'))+"."
+
+    @authorize(logged_in)
+    def group_edit(self, **kw):
+        schema = GroupEditForm()
+        try:
+            form_result = schema.to_python(request.params)
+
+            if len(form_result.get('group_extensions').split(","))==1:
+                return "Error: You need to have at least two extensions to make a group."
+
+            db.delete(PbxGroup.query.filter_by(id=form_result.get('group_id')).first())
+            for member in PbxGroupMember.query.filter_by(pbx_group_id=form_result.get('group_id')).all():
+                db.delete(member)
+            db.delete(PbxRoute.query.filter_by(pbx_route_type_id=4).filter_by(pbx_to_id=form_result.get('group_id')).first())
+            db.commit(); db.flush()
+
+            sg = PbxGroup()
+            sg.name = form_result.get('group_name')
+            sg.context = session['context']
+            sg.ring_strategy = form_result.get('group_ring_strategy', 'sim')
+            sg.no_answer_destination = form_result.get('no_answer_destination', None)
+            sg.timeout = form_result.get('timeout', 13)
+
+            db.add(sg)
+            db.commit(); db.flush()
 
             if not form_result.get('group_extensions').split(","):
                 if not form_result.get('group_extensions').isdigit():
@@ -1248,8 +1355,7 @@ class PbxController(BaseController):
         r.pbx_to_id = sg.id
 
         db.add(r)
-        db.commit()
-        db.flush()
+        db.commit(); db.flush()
 
         db.remove()
 
@@ -1265,8 +1371,7 @@ class PbxController(BaseController):
                 g = PbxGroup.query.filter_by(id=i['id']).first()
                 g.no_answer_destination = i['no_answer_destination']
                 g.ring_strategy = i['ring_strategy']
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
                 PbxGroupMember.query.filter(PbxGroupMember.pbx_group_id==i['id']).delete()
 
                 for gm in i['members'].split(","):
@@ -1323,8 +1428,7 @@ class PbxController(BaseController):
                 sd = PbxDid.query.filter_by(id=i['id']).filter_by(context=session['context']).first()
                 sd.pbx_route_id = i['route_name']
                 db.commit()
-                db.flush()
-                db.remove()
+                db.commit(); db.flush()
         except:
             db.remove()
             return "Error updating DID."
@@ -1378,8 +1482,7 @@ class PbxController(BaseController):
             sf.context = session['context']
 
             db.add(sf)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute()
             r.context = session['context']
@@ -1392,8 +1495,7 @@ class PbxController(BaseController):
             r.pbx_to_id = sf.id
 
             db.add(r)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -1457,7 +1559,7 @@ class PbxController(BaseController):
 
         con = ESLconnection(ESL_HOST, ESL_PORT, ESL_PASS)
         if con.connected:
-            con.bgapi("originate", "{fax_ident='PythonPBX Web Fax',fax_header="+str(origination_caller_id_number)+",fax_enable_t38=true,origination_caller_id_number="+str(origination_caller_id_number)+"}sofia/gateway/voipinnovations/"+str(request.params["fax_recipient"])+" &txfax(/tmp/"+str(converted)+")")
+            con.bgapi("originate", "{fax_ident='FreePyBX Web Fax',fax_header="+str(origination_caller_id_number)+",fax_enable_t38=true,origination_caller_id_number="+str(origination_caller_id_number)+"}sofia/gateway/voipinnovations/"+str(request.params["fax_recipient"])+" &txfax(/tmp/"+str(converted)+")")
 
     @restrict("GET")
     @authorize(logged_in)
@@ -1519,8 +1621,7 @@ class PbxController(BaseController):
             t.nomatch_route_id = form_result.get('nomatch_route_id')
 
             db.add(t)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             r = PbxRoute()
             r.context = session['context']
@@ -1533,14 +1634,55 @@ class PbxController(BaseController):
             r.pbx_to_id = t.id
 
             db.add(r)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             return 'Error: %s' % error
 
         db.remove()
         return "Successfully added time of day route."
+
+    @authorize(logged_in)
+    def tod_by_id(self, id, **kw):
+        items=[]
+        row = PbxTODRoute.query.filter_by(id=id).filter_by(context=session['context']).first()
+        items.append({'id': row.id, 'name': row.name, 'day_start': row.day_start,
+                      'day_end': row.day_end, 'time_start': row.time_start, 'time_end': row.time_end,
+                      'match_route_id': row.match_route_id, 'nomatch_route_id': row.nomatch_route_id})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def edit_tod(self, **kw):
+        try:
+            tod = PbxTODRoute.query.filter_by(context=session['context'])\
+                .filter(PbxTODRoute.id==request.params.get('tod_id')).first()
+
+            if not tod:
+                return "Error: No route found with that id."
+
+            tod.name = request.params.get('name')
+            tod.store_id = request.params.get('store_id')
+            tod.day_start = request.params.get('day_start')
+            tod.day_end = request.params.get('day_end')
+            tod.time_start = request.params.get('time_start')
+            tod.time_end = request.params.get('time_end')
+            tod.active = True if request.params.get('active')=="true" else False
+            tod.match_route_id = request.params.get('match_route_id')
+            tod.nomatch_route_id = request.params.get('nomatch_route_id')
+
+            db.commit(); db.flush()
+            db.remove()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Error: %s' % error
+
+        return "Successfully updated time of day route."
 
     @restrict("GET")
     @authorize(logged_in)
@@ -1568,6 +1710,27 @@ class PbxController(BaseController):
         response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
 
         return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def audio_recordings(self):
+        items = []
+        dir = fs_vm_dir+session['context']+"/recordings/"
+        try:
+            for i in os.listdir(dir):
+                fo = generateFileObject(i, "",  dir)
+                items.append({'id': '1,'+fo["name"], 'name': 'Recording: '+fo["name"] , 'data': fo["path"], 'type': 1, 'real_id': ""})
+
+            db.remove()
+        except:
+            pass
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+
 
     @restrict("POST")
     @authorize(logged_in)
@@ -1648,8 +1811,7 @@ class PbxController(BaseController):
             sc.domain = session['context']
 
             db.add(sc)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -1666,8 +1828,7 @@ class PbxController(BaseController):
         r.pbx_to_id = sc.id
 
         db.add(r)
-        db.commit()
-        db.flush()
+        db.commit(); db.flush()
 
         db.remove()
         return "Successfully added conference bridge."
@@ -1711,8 +1872,7 @@ class PbxController(BaseController):
             sc.domain = session['context']
 
             db.add(sc)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -1758,8 +1918,7 @@ class PbxController(BaseController):
             sc.domain = session['context']
 
             db.add(sc)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -1806,8 +1965,7 @@ class PbxController(BaseController):
             t.voice = u'Allison'
 
             db.add(t)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -1828,8 +1986,7 @@ class PbxController(BaseController):
                 t.text = i['text'].strip()
 
                 db.commit()
-                db.flush()
-                db.remove()
+                db.commit(); db.flush()
 
         except DataInputError, error:
             db.remove()
@@ -1896,8 +2053,7 @@ class PbxController(BaseController):
                 s.direct_dial = False
 
             db.add(s)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             if len(form_result.get('option_1'))>0:
                 i = PbxIVROption()
@@ -1906,8 +2062,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_1')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_2'))>0:
                 i = PbxIVROption()
@@ -1916,8 +2071,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_2')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_3'))>0:
                 i = PbxIVROption()
@@ -1926,8 +2080,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_3')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_4'))>0:
                 i = PbxIVROption()
@@ -1936,8 +2089,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_4')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_5'))>0:
                 i = PbxIVROption()
@@ -1946,8 +2098,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_5')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_6'))>0:
                 i = PbxIVROption()
@@ -1956,8 +2107,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_6')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_7'))>0:
                 i = PbxIVROption()
@@ -1966,8 +2116,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_7')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_8'))>0:
                 i = PbxIVROption()
@@ -1976,8 +2125,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_8')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_9'))>0:
                 i = PbxIVROption()
@@ -1986,8 +2134,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_9')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_0'))>0:
                 i = PbxIVROption()
@@ -1996,8 +2143,7 @@ class PbxController(BaseController):
                 i.pbx_route_id = form_result.get('option_0')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -2014,8 +2160,7 @@ class PbxController(BaseController):
         r.pbx_to_id = s.id
 
         db.add(r)
-        db.commit()
-        db.flush()
+        db.commit(); db.flush()
 
         db.remove()
         return "Successfully added IVR."
@@ -2038,12 +2183,10 @@ class PbxController(BaseController):
             else:
                 s.direct_dial=False
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             PbxIVROption.query.filter_by(pbx_ivr_id=s.id).delete()
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
             if len(form_result.get('option_1'))>0:
                 i = PbxIVROption()
@@ -2052,8 +2195,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_1')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_2'))>0:
                 i = PbxIVROption()
@@ -2062,8 +2204,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_2')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_3'))>0:
                 i = PbxIVROption()
@@ -2072,8 +2213,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_3')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_4'))>0:
                 i = PbxIVROption()
@@ -2082,8 +2222,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_4')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_5'))>0:
                 i = PbxIVROption()
@@ -2092,8 +2231,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_5')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_6'))>0:
                 i = PbxIVROption()
@@ -2102,8 +2240,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_6')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_7'))>0:
                 i = PbxIVROption()
@@ -2112,8 +2249,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_7')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_8'))>0:
                 i = PbxIVROption()
@@ -2122,8 +2258,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_8')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_9'))>0:
                 i = PbxIVROption()
@@ -2132,8 +2267,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_9')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
             if len(form_result.get('option_0'))>0:
                 i = PbxIVROption()
@@ -2142,8 +2276,7 @@ class PbxController(BaseController):
                 i.pbx_route_id=form_result.get('option_0')
 
                 db.add(i)
-                db.commit()
-                db.flush()
+                db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -2165,8 +2298,7 @@ class PbxController(BaseController):
             filter(PbxRoute.pbx_route_type_id==5).filter(PbxRoute.pbx_to_id==int(i['id'])).first()
             route.name = i['name']
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
             db.remove()
 
         return "Successfully updated IVR."
@@ -2279,6 +2411,35 @@ class PbxController(BaseController):
             items.append({'id': row.id, 'caller_id_name': row.caller_id_name, 'caller_id_number': num,
                           'destination_number': row.destination_number, 'start_stamp': fix_date(row.start_stamp), 'answer_stamp': fix_date(row.answer_stamp),
                           'end_stamp': fix_date(row.end_stamp), 'duration': row.duration, 'billsec':row.billsec, 'hangup_cause': row.hangup_cause})
+        db.remove()
+
+        out = dict({'identifier': 'id', 'label': 'caller_id_number', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json; charset=UTF-8'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(logged_in)
+    def cdr_summary(self):
+        items=[]
+        sdate = request.params.get("sdate", 'TIMESTAMP')
+        edate = request.params.get("edate", 'CURRENT_TIMESTAMP')
+
+        sdate = "TIMESTAMP '"+sdate+"'" if sdate != 'TIMESTAMP' else "CURRENT_TIMESTAMP - INTERVAL '1 MONTH'"
+        edate = "TIMESTAMP '"+edate+"' + interval '1 day'" if edate != 'CURRENT_TIMESTAMP' else 'CURRENT_TIMESTAMP'
+
+        for row in db.execute("SELECT * "
+                              "FROM cdr "
+                              "WHERE customer_id = :customer_id "
+                              "AND bleg_uuid IS NOT NULL "
+                              "AND cdr.start_stamp > "+sdate+" AND cdr.end_stamp < "+edate+" "
+                              "ORDER BY start_stamp DESC", {'customer_id': str(session['customer_id'])}).fetchall():
+
+            num = row.caller_id_number if len(row.caller_id_number)<=10 else row.caller_id_number[len(row.caller_id_number)-10:]
+            items.append({'id': row.id, 'caller_id_name': row.caller_id_name, 'caller_id_number': num,
+                          'destination_number': row.destination_number, 'start_stamp': fix_date(row.start_stamp), 'answer_stamp': fix_date(row.answer_stamp),
+                          'end_stamp': fix_date(row.end_stamp), 'duration': row.duration, 'billsec':row.billsec, 'hangup_cause': row.hangup_cause})
+
         db.remove()
 
         out = dict({'identifier': 'id', 'label': 'caller_id_number', 'items': items})
@@ -2457,8 +2618,7 @@ class PbxController(BaseController):
             co.contact_title = form_result.get('contact_title')
             co.contact_email = form_result.get('contact_email')
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -2566,21 +2726,21 @@ class PbxController(BaseController):
 
     @authorize(logged_in)
     def get_find_me_edit(self, id, **kw):
-        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2\
-            , PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
-        .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
-        .filter(PbxEndpoint.user_context==session['context'])\
-        .filter_by(id=id).first()
+        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2,\
+            PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
+                .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
+                .filter(PbxEndpoint.user_context==session['context'])\
+                .filter_by(id=id).first()
         db.remove()
         return render('find_me_edit.html')
 
     @authorize(credential('pbx_admin'))
     def permissions(self, id, **kw):
-        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2\
-            , PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
-        .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
-        .filter(PbxEndpoint.user_context==session['context'])\
-        .filter_by(id=id).first()
+        c.findme = db.query(PbxFindMeRoute.id,PbxFindMeRoute.ring_strategy, PbxFindMeRoute.destination_1, PbxFindMeRoute.destination_2,\
+            PbxFindMeRoute.destination_3, PbxFindMeRoute.destination_4, PbxEndpoint.auth_id)\
+                .select_from(join(PbxFindMeRoute, PbxEndpoint, PbxEndpoint.pbx_find_me))\
+                .filter(PbxEndpoint.user_context==session['context'])\
+                .filter_by(id=id).first()
         db.remove()
         return render('find_me_edit.html')
 
@@ -2870,8 +3030,7 @@ class PbxController(BaseController):
             t.expected_resolution_date = form_result.get('expected_resolution_date')
 
             db.add(t)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()
@@ -2891,8 +3050,7 @@ class PbxController(BaseController):
             ticket.ticket_type_id = int(i['type'])
             ticket.ticket_priority_id = int(i['priority'])
 
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
             db.remove()
 
         return "Successfully updated ticket."
@@ -2948,8 +3106,7 @@ class PbxController(BaseController):
             t.user_id = form_result.get('user_id')
 
             db.add(t)
-            db.commit()
-            db.flush()
+            db.commit(); db.flush()
 
         except validators.Invalid, error:
             db.remove()

@@ -112,8 +112,8 @@
                                     <param py:if="gateway.register_transport" name="register-transport"
                                            value="${gateway.register_transport}"/>
                                     <param name='retry-seconds' value='${gateway.retry_seconds}'/>
-                                    <param py:if="gateway.caller_id_in_from" name="register-caller-id-in-from"
-                                           value="${gateway.caller_id_in_from}"/>
+                                    <param py:if="gateway.caller_id_in_from" name="caller-id-in-from"
+                                           value="${str(gateway.caller_id_in_from).lower()}"/>
                                     <param py:if="gateway.contact_params" name="contact-params"
                                            value="${gateway.contact_params}"/>
                                     <param name="rfc5626" value="${str(gateway.rfc5626).lower()}"/>

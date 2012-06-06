@@ -1,0 +1,194 @@
+<!-- 
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+
+    function todEditFormHandler() {
+        if(dijit.byId("tod_edit_form").validate()) {
+            dojo.xhrPost({
+                url: "/pbx/edit_tod",
+                handleAs: "text",
+                form: dojo.byId("tod_edit_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("mainContent").set("href", "/pbx/tod_route_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+    function setTODForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("tod_id").value = obj.id;
+        dijit.byId("edit_tod_name").set("value", obj.name);
+        dijit.byId("tod_day_end").set("value", obj.day_end);
+        dijit.byId("tod_day_start").set("value", obj.day_start);
+        dijit.byId("tod_time_end").set("value", obj.time_end);
+        dijit.byId("tod_time_start").set("value", obj.time_start);
+        dijit.byId("noMatchTodSelect").set("value", obj.nomatch_route_id);
+        dijit.byId("matchTodSelect").set("value", obj.match_route_id);
+    }
+
+    function getTODByID() {
+        dojo.xhrGet({
+            url: "/pbx/tod_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setTODForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        var routeStore = new dojo.data.ItemFileReadStore({url: "/pbx/routes"});
+        var filteringSelect = new dijit.form.FilteringSelect({
+                    id: "matchTodSelect",
+                    name: "match_route_id",
+                    value: "",
+                    store: routeStore,
+                    searchAttr: "name"
+                },
+                "matchTodSelectInput");
+        var filteringSelect = new dijit.form.FilteringSelect({
+                    id: "noMatchTodSelect",
+                    name: "nomatch_route_id",
+                    value: "",
+                    store: routeStore,
+                    searchAttr: "name"
+                },
+                "noMatchTodSelectInput");
+        getTODByID();
+    });
+
+</script>
+
+
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Edit Time of Day Route',legend:'Time of Day Route Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'tod_edit_form',helpCategory:'edit_tod_route', submitFunc:'todEditFormHandler();',
+     delFunc:'this.form.rest();'">
+    <input type="hidden" name="tod_id"  id="tod_id" />
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Route Friendly Name</label>
+            <input type="text" id="edit_tod_name" name="name" size="30" placeholder="e.g. Business Hours"
+                   dojoType="dijit.form.ValidationTextBox"
+                   required="true"
+                   promptMessage="Please enter a name for this route."
+                   trim="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Day of Week Start</label>
+            <select name="day_start" id="tod_day_start" dojoType="dijit.form.Select">
+                <option value="0">
+                    Sunday
+                </option>
+                <option value="1" selected="selected">
+                    Monday
+                </option>
+                <option value="2">
+                    Tuesday
+                </option>
+                <option value="3">
+                    Wednesday
+                </option>
+                <option value="4">
+                    Thursday
+                </option>
+                <option value="6">
+                    Friday
+                </option>
+                <option value="5">
+                    Saturday
+                </option>
+            </select>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Day of Week End</label>
+            <select name="day_end" id="tod_day_end" dojoType="dijit.form.Select">
+                <option value="0">
+                    Sunday
+                </option>
+                <option value="1">
+                    Monday
+                </option>
+                <option value="2">
+                    Tuesday
+                </option>
+                <option value="3">
+                    Wednesday
+                </option>
+                <option value="4">
+                    Thursday
+                </option>
+                <option value="5" selected="selected">
+                    Friday
+                </option>
+                <option value="6">
+                    Saturday
+                </option>
+            </select>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Time Start</label>
+            <input type="text" name="time_start" id="tod_time_start" value="T08:00:00" dojoType="dijit.form.TimeTextBox" required="true" />
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Time End</label>
+            <input type="text" name="time_end" id="tod_time_end" value="T17:00:00" dojoType="dijit.form.TimeTextBox" required="true" />
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Route If Time Matches</label>
+            <input id="matchTodSelectInput">
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Route If Time No Match</label>
+            <input id="noMatchTodSelectInput">
+        </li>
+    </ul>
+</div>

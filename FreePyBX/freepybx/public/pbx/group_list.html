@@ -45,7 +45,6 @@
     var groupGrid;
     var groupStore = new dojo.data.ItemFileWriteStore({url: '/pbx/groups'});
 
-
     var plugins = {
         pagination: true,
     };
@@ -204,6 +203,12 @@
         });
     }
 
+    function editGroup() {
+        var item = groupGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("mainContent").set("href", "/pbx/group_edit.html");
+    }
+
     dojo.addOnLoad(function() {
         dojo.xhrGet({
             url:"/pbx/route_ids",
@@ -227,6 +232,16 @@
                 dijit.byId("mainContent").set("href", "/pbx/group_add.html")
             </script>
         </button>
+        <button dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit Group
+            <script type="dojo/method" event="onClick">
+                if (groupGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select a group to edit!");
+                    return false;
+                }
+                editGroup();
+            </script>
+        </button>
         <button id="saveGroupBtn" dojoType="dijit.form.Button" iconClass="dijitIconSave">
             Save
             <script type="dojo/method" event="onClick">
@@ -236,27 +251,24 @@
         <button id="groupDelBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
             &nbsp;Delete
             <script type="dojo/method" event="onClick">
-                //function delete_group() {
                 var del_group = groupGrid.selection.getSelected()[0];
-
                 dojo.xhrGet({
-                url: "/pbx/del_group?name="+del_group.name,
-                handleAs: "text",
-                load: function(res) {
-                if (res.indexOf("Error") == -1) {
-                new voiceware.notice.Notice({message: res});
-                dijit.byId("mainContent").set("href", "/pbx/group_list.html")
-                } else {
-                new voiceware.notice.Error({message: res});
-                }
-                return res;
-                },
-                error: function(err, ioArgs) {
-                new voiceware.notice.Error({message: err});
-                return err;
-                }
+                    url: "/pbx/del_group?name="+del_group.name,
+                    handleAs: "text",
+                    load: function(res) {
+                        if (res.indexOf("Error") == -1) {
+                            new voiceware.notice.Notice({message: res});
+                            dijit.byId("mainContent").set("href", "/pbx/group_list.html")
+                        } else {
+                            new voiceware.notice.Error({message: res});
+                        }
+                        return res;
+                    },
+                    error: function(err, ioArgs) {
+                        new voiceware.notice.Error({message: err});
+                        return err;
+                    }
                 });
-                //}
             </script>
         </button>
     </div>

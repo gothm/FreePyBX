@@ -58,7 +58,7 @@ __all__=['CustomerForm', 'PbxBlacklistedForm', 'GroupForm', 'FaxForm', 'TTSForm'
          'UniqueAgent','UniqueTier', 'QueueForm', 'AgentForm', 'TierForm',
          'QueueEditForm','AgentEditForm', 'DIDForm', 'GatewayForm', 'ProfileForm',
          'ContextEditForm','ContextForm', 'AdminEditUserForm', 'TicketForm',
-         'TicketNoteForm']
+         'TicketNoteForm','GroupEditForm','VirtualMailboxEditForm', 'OutboundRouteForm']
 
 
 
@@ -507,6 +507,8 @@ class SecurePassword(validators.FancyValidator):
         if len(non_letters) < self.non_letter:
             raise formencode.Invalid(self.message("non_letter", state,\
                 non_letter=self.non_letter), value, state)
+
+
 class QueueForm(formencode.Schema):
     allow_extra_fields = True
     name =  formencode.All(UniqueQueue(), validators.NotEmpty())
@@ -709,6 +711,14 @@ class GroupForm(formencode.Schema):
     group_extensions = validators.String(not_empty=True)
 
 
+class GroupEditForm(formencode.Schema):
+    allow_extra_fields = True
+    group_name = formencode.All(validators.MinLength(3),\
+        validators.String(not_empty=True),\
+        validators.MaxLength(32))
+    group_extensions = validators.String(not_empty=True)
+
+
 class DIDForm(formencode.Schema):
     allow_extra_fields = True
     did_name = formencode.All(UniqueDID(), validators.MinLength(10),\
@@ -722,6 +732,14 @@ class FaxForm(formencode.Schema):
     fax_name = formencode.All(UniqueFax(), validators.MinLength(3),\
         validators.String(not_empty=True),\
         validators.MaxLength(32))
+
+
+class OutboundRouteForm(formencode.Schema):
+    allow_extra_fields = True
+    name = validators.String(not_empty=True)
+    customer_id = validators.Number(not_empty=True)
+    gateway_id = validators.Number(not_empty=True)
+    pattern = validators.String(not_empty=True)
 
 
 class TTSForm(formencode.Schema):
@@ -769,6 +787,7 @@ class ExtensionForm(formencode.Schema):
         validators.MaxLength(4))
     password = validators.String(not_empty=True)
 
+
 class AdminUserForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
@@ -777,6 +796,7 @@ class AdminUserForm(formencode.Schema):
     username = formencode.All(UniqueUsername())
     password = SecurePassword()
 
+
 class AdminEditUserForm(formencode.Schema):
     allow_extra_fields = True
     ignore_key_missing = True
@@ -784,6 +804,7 @@ class AdminEditUserForm(formencode.Schema):
     first_name = validators.String(not_empty=True)
     last_name = validators.String(not_empty=True)
     password = SecurePassword()
+
 
 class VirtualExtensionForm(formencode.Schema):
     allow_extra_fields = True
@@ -801,6 +822,11 @@ class VirtualMailboxForm(formencode.Schema):
         validators.MinLength(3),\
         validators.String(not_empty=True),\
         validators.MaxLength(4))
+    vm_password = validators.Number(not_empty=True)
+
+
+class VirtualMailboxEditForm(formencode.Schema):
+    allow_extra_fields = True
     vm_password = validators.Number(not_empty=True)
 
 
@@ -838,6 +864,7 @@ class CustUserAdminForm(formencode.Schema):
     last_name = validators.String(not_empty=True)
     username = formencode.All(UniqueUsername())
     password = SecurePassword()
+
 
 class UserEditForm(formencode.Schema):
     allow_extra_fields = True

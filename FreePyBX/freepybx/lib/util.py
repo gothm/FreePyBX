@@ -57,7 +57,7 @@ __all__=['escapeSpecialCharacters','has_queue','has_agent','has_tier',
          'delete_fax_ext','delete_ivr','delete_cid','delete_tts','del_blacklist',
          'delete_conf','delete_tod','delete_conditions','get_findme','is_iter_obj',
          'PbxError', 'DataInputError','PbxEncoder', 'get_presence_hosts', 'has_method',
-         'get_mimetype','make_file_response']
+         'get_mimetype','make_file_response', 'get_gateway']
 
 
 def get_mimetype(path):
@@ -151,6 +151,10 @@ def get_queue_directory():
         dirs.append(i)
 
     return dirs
+
+def get_gateway(id):
+    gw = PbxGateway.query.filter_by(id=id).first()
+    return gw.name
 
 def get_campaigns():
     return db.execute("SELECT crm_campaigns.name FROM crm_campaigns "

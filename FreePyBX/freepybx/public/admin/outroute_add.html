@@ -1,0 +1,104 @@
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Software distributed under the License is distributed on an "AS IS"
+    basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    License for the specific language governing rights and limitations
+    under the License.
+
+    The Original Code is FreePyBX/VoiceWARE.
+
+    The Initial Developer of the Original Code is Noel Morgan,
+    Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
+
+    http://www.vwci.com/
+
+    You may not remove or alter the substance of any license notices (including
+    copyright notices, patent notices, disclaimers of warranty, or limitations
+    of liability) contained within the Source Code Form of the Covered Software,
+    except that You may alter any license notices to the extent required to
+    remedy known factual inaccuracies.
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<script charset="UTF-8" type="text/javascript">
+
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+    dojo.require("dijit.form.Form");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.RadioButton");
+    dojo.require("dojox.validate.web");
+    dojo.require("dojox.validate._base");
+    dojo.require("dijit.form.FilteringSelect");
+    dojo.require("dojo.data.ItemFileReadStore");
+
+    var gwStore = new dojo.data.ItemFileWriteStore({url: '/admin/gateway_store'});
+
+    function outrouteFormHandler() {
+        if(dijit.byId("outroute_add_form").validate()) {
+            dojo.xhrPost({
+                url: "/admin/add_outroute",
+                handleAs: "text",
+                form: dojo.byId("outroute_add_form"),
+                load: function(res) {
+                    if (res.indexOf("Error") == -1) {
+                        new voiceware.notice.Notice({message: res});
+                        dijit.byId("customerContent").set("href", "/admin/outroute_list.html");
+                    } else {
+                        new voiceware.notice.Error({message: res});
+                    }
+                    return res;
+                },
+                error: function(err, ioArgs) {
+                    new voiceware.notice.Error({message: err});
+                    return err;
+                }
+            });
+        }
+    }
+
+</script>
+<div dojoType="voiceware.PbxForm"
+     data-dojo-props="title:'Add Outbound Route',legend:'Outbound Route Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'outroute_add_form',helpCategory:'add_outroute', submitFunc:'outrouteFormHandler();',
+     delFunc:'this.form.rest();'">
+    <ul class="field_list">
+        <li class="even">
+            <label class="fieldlabel">Route Name</label>
+            <input type="text" required="true" name="name" placeholder="e.g. Customer Main"
+                   dojoType="dijit.form.ValidationTextBox"
+                   missingMessage="Please provide a route name."
+                   promptMessage="Please provide a route name."
+                   invalidMessage="Invalid name!"
+                   trim="true"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Customer</label>
+            <div dojoType="dojo.data.ItemFileReadStore" jsId="cust_store" url="/admin/customer_store"></div>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="cust_store" value="" searchAttr="name"
+                   name="customer_id"/>
+        </li>
+        <li class="even">
+            <label class="fieldlabel">Pattern</label>
+            <input type="text" required="true" name="pattern" placeholder="e.g. 312|434|5|1"
+                   dojoType="dijit.form.ValidationTextBox" missingMessage="Please provide a pattern to be matched"/>
+        </li>
+        <li class="odd">
+            <label class="fieldlabel">Gateway</label>
+            <input dojoType="dijit.form.FilteringSelect" required="true" store="gwStore" value=""
+                   searchAttr="name" name="gateway_id"/>
+
+        </li>
+    </ul>
+</div>
+</html>

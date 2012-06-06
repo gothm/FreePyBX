@@ -68,6 +68,8 @@
 
 <div dojoType="dojo.data.ItemFileReadStore" jsId="extension_store" url="/pbx/get_endpoints"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="device_store" url="/pbx/device_store"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="call_rules_store" url="/pbx/calling_rules"></div>
+
 
 <div dojoType="voiceware.PbxForm"
      data-dojo-props="title:'Add Extension',legend:'Extension Settings',delStyle:'display:none', noticeClass: 'noNotice',
@@ -191,10 +193,14 @@
             <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" id="timeout_destination" searchAttr="name" placeholder="Overrides Voicemail" name="timeout_destination" />
         </li>
         <li class="even">
+            <label class="fieldlabel">Calling Rule</label>
+            <input dojoType="dijit.form.FilteringSelect" required="false" store="call_rules_store" value="" searchAttr="name" name="calling_rule_id" />
+        </li>
+        <li class="odd">
             <label class="fieldlabel">Record Inbound Calls</label>
             <input id="record_inbound_calls" name="record_inbound_calls" dojoType="dijit.form.CheckBox" value="true" />
         </li>
-        <li class="odd">
+        <li class="even">
             <label class="fieldlabel">Record Outbound Calls</label>
             <input id="record_outbound_calls" name="record_outbound_calls" dojoType="dijit.form.CheckBox" value="true" />
         </li>

@@ -48,10 +48,6 @@
     var routeStore = new dojo.data.ItemFileWriteStore({url: '/pbx/routes'});
     var plugins = {
         pagination: true,
-        //filter: true,
-        // dnd: {copyOnly: true, dndConfig: {out:{ row: true, cell: false}} }, 
-        // indirectSelection: true,
-        // menus: menusObject
     };           
     
     todStore._saveCustom = function(saveComplete, saveFailed) {
@@ -227,7 +223,6 @@
         tmpObj = item[0];
         dijit.byId("mainContent").set("href", "/pbx/ext_edit");
     }
-        
 
     function delete_tod() {
         var del_tod = todGrid.selection.getSelected()[0];
@@ -249,8 +244,13 @@
                 return err;
             }
         });            
-    }             
-        
+    }
+
+    function editTOD() {
+        var item = todGrid.selection.getSelected();
+        tmpObj = item[0];
+        dijit.byId("mainContent").set("href", "/pbx/tod_edit.html");
+    }
 
     dojo.addOnLoad(function() {   
         dojo.xhrGet({
@@ -266,22 +266,33 @@
 
     });
 </script>
+
 <div style="border: 1px solid #c0c0c0;">
-        <div dojoType="dijit.Toolbar" region="top">
-            <button id="addExtBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
-                Add TOD Route
-                <script type="dojo/method" event="onClick">
-                    dijit.byId("mainContent").set("href", "/pbx/tod_add.html")
-                </script>
-            </button>                  
-            <button id="deleteExtBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
-                &nbsp;Delete
-                <script type="dojo/method" event="onClick">
-                    delete_tod();
-                </script>
-            </button>
-        </div>
-            <div id="todGridDiv" style="width: 100%; height: 100%;"></div>
+    <div dojoType="dijit.Toolbar" region="top">
+        <button id="addExtBtn" dojoType="dijit.form.Button" iconClass="plusIcon">
+            Add TOD Route
+            <script type="dojo/method" event="onClick">
+                dijit.byId("mainContent").set("href", "/pbx/tod_add.html")
+            </script>
+        </button>
+        <button dojoType="dijit.form.Button" iconClass="editIcon">
+            Edit TOD Route
+            <script type="dojo/method" event="onClick">
+                if (todGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select a time of day route to edit!");
+                    return false;
+                }
+                editTOD();
+            </script>
+        </button>
+        <button id="deleteExtBtn" dojoType="dijit.form.Button" iconClass="dijitIconDelete">
+            &nbsp;Delete
+            <script type="dojo/method" event="onClick">
+                delete_tod();
+            </script>
+        </button>
+    </div>
+    <div id="todGridDiv" style="width: 100%; height: 100%;"></div>
 </div>
 
 

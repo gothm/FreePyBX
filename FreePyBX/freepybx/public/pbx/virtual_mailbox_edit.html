@@ -30,22 +30,21 @@
     dojo.require("dijit.form.DateTextBox");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.form.TextBox");
-    dojo.require("dijit.form.Button"); 
+    dojo.require("dijit.form.Button");
     dojo.require("dojox.validate.web");
     dojo.require("dojox.validate._base");
     dojo.require("dijit.form.FilteringSelect");
     dojo.require("dojo.data.ItemFileReadStore");
 
-    function vmboxAddFormHandler() {
-
+    function vmboxEditFormHandler() {
         dojo.xhrPost({
-            url:"/pbx/vmbox_add",
+            url:"/pbx/vmbox_edit",
             handleAs:"text",
-            form:dojo.byId("vmbox_add_form"),
+            form:dojo.byId("vmbox_edit_form"),
 
             load:function (res) {
                 if (res.indexOf("Error") == -1) {
-                    new voiceware.notice.Notice({message:"Mailbox successfully created."});
+                    new voiceware.notice.Notice({message:"Mailbox successfully updated."});
                     dijit.byId("mainContent").set("href", "/pbx/virtual_mailbox_list.html");
                 } else {
                     new voiceware.notice.Error({message:res});
@@ -58,32 +57,65 @@
             }
         });
     }
-    
-</script>
 
+    function setVMBoxForm(obj) {
+        console.log(dojo.toJson(obj, true));
+        dojo.byId("vmbox_id").value = obj.id;
+        dijit.byId("vmbox_extension").set("value", obj.extension);
+        dijit.byId("vmbox_password").set("value", obj.vm_password);
+        dijit.byId("vmb_skip_greeting").set("value", obj.skip_greeting);
+        dijit.byId("vmb_audio_file").set("value", obj.audio_file);
+        dijit.byId("vmb_attach_email").set("value", obj.vm_attach_email);
+        dijit.byId("vmb_notify_email").set("value", obj.vm_notify_email);
+        dijit.byId("vmb_save").set("value", obj.vm_save);
+        dijit.byId("vmb_email").set("value", obj.vm_email);
+    }
+
+    function getVMBoxByID() {
+        dojo.xhrGet({
+            url: "/pbx/vmbox_by_id/"+tmpObj.id,
+            handleAs: "json",
+            load: function(res) {
+                setVMBoxForm(res.items[0]);
+                return res;
+            },
+            error: function(err, ioArgs) {
+                new voiceware.notice.Error({message: err});
+                return err;
+            }
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        getVMBoxByID();
+    });
+
+</script>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="audioStore" url="/pbx/audio_recordings"></div>
 <div dojoType="voiceware.PbxForm"
-     data-dojo-props="title:'Add Virtual Mailbox',legend:'Mailbox Settings',delStyle:'display:none', noticeClass: 'noNotice',
-     formName:'vmbox_add_form',helpCategory:'add_virtual_mailbox', submitFunc:'vmboxAddFormHandler();',
+     data-dojo-props="title:'Edit Virtual Mailbox',legend:'Mailbox Settings',delStyle:'display:none', noticeClass: 'noNotice',
+     formName:'vmbox_edit_form',helpCategory:'edit_virtual_mailbox', submitFunc:'vmboxEditFormHandler();',
      delFunc:'this.form.rest();'">
+    <input type="hidden" name="vmbox_id" id="vmbox_id" />
     <ul class="field_list">
         <li class="even">
             <label class="fieldlabel">Virtual Mailbox Extension</label>
-            <input type="text" required="true" name="vmbox_number" id="vmbox_number" placeholder="Example: 201"
+            <input type="text" required="true" name="vmbox_extension" id="vmbox_extension" placeholder="Example: 201"
                    dojoType="dijit.form.ValidationTextBox"
-                   missingMessage="Please add an extension number."
+                   missingMessage="Please edit an extension number."
                    required="true"
                    regExp="\b[0-9]{3,4}\b"
                    promptMessage="Please enter a valid 3 or 4 digit extension."
                    invalidMessage="Invalid extension."
                    trim="true"
+                   disabled="true"
                     />
         </li>
         <li class="odd">
             <label class="fieldlabel">Virtual Mailbox Pin</label>
-            <input type="text" required="true" name="vm_password" id="vm_password" placeholder="Example: 3425"
+            <input type="text" required="true" name="vm_password" id="vmbox_password" placeholder="Example: 3425"
                    dojoType="dijit.form.ValidationTextBox"
-                   missingMessage="Please add a 4 digit pin."
+                   missingMessage="Please edit a 4 digit pin."
                    dojoType="dijit.form.ValidationTextBox"
                    required="true"
                    regExp="\b[0-9]{4}\b"
@@ -94,31 +126,31 @@
         </li>
         <li class="odd">
             <label class="fieldlabel">Skip Greeting</label>
-            <input id="skip_greeting" name="skip_greeting" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <input id="vmb_skip_greeting" name="skip_greeting" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="even">
             <label class="fieldlabel">Play Audio</label>
-            <input dojoType="dijit.form.FilteringSelect" store="audioStore" value="" id="audio_file" searchAttr="name" name="audio_file">
+            <input dojoType="dijit.form.FilteringSelect" store="audioStore" value="" searchAttr="name" id="vmb_audio_file" name="audio_file">
         </li>
         <li class="odd">
             <label class="fieldlabel">Attach Voicemail to Email</label>
-            <input id="vm_attach_email" name="vm_attach_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <input id="vmb_attach_email" name="vm_attach_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="odd">
             <label class="fieldlabel">Notify of Voicemail by Email</label>
-            <input id="vm_notify_email" name="vm_notify_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <input id="vmb_notify_email" name="vm_notify_email" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="odd">
             <label class="fieldlabel">Keep Voicemail After Email</label>
-            <input id="vm_save" name="vm_save" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
+            <input id="vmb_save" name="vm_save" dojoType="dijit.form.CheckBox" value="true" checked="false"/>
         </li>
         <li class="even">
             <label class="fieldlabel">VoiceMail Email</label>
-            <input type="text" id="vm_email" name="vm_email" size="30"
+            <input type="text" id="vmb_email" name="vm_email" size="30"
                    dojoType="dijit.form.ValidationTextBox"  placeholder="Email to send voicemail recordings to."
                    required="false"
                    regExp="\b[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b"
-                   promptMessage="Please enter a valid email address."
+                   promptMessage="Please enter a valid email editress."
                    invalidMessage="Invalid email."
                    trim="true" />
         </li>

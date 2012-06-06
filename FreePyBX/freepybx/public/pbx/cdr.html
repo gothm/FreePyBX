@@ -20,7 +20,6 @@
     of liability) contained within the Source Code Form of the Covered Software,
     except that You may alter any license notices to the extent required to
     remedy known factual inaccuracies.
-
 -->
 
 <script type="text/javascript">
@@ -45,19 +44,19 @@
 
     var cdrGrid = null;
     var cur_num = null;
-    var cdrStore = new dojo.data.ItemFileReadStore({url: '/pbx/cdr'});
+    var cdrStore = new dojo.data.ItemFileReadStore({url: '/pbx/cdr_summary'});
   
     var menusObject = {
         selectedRegionMenu: new dijit.Menu()
     };
      
     menusObject.selectedRegionMenu.addChild(new dijit.MenuItem({
-                            label: "Call Now",
-                            onClick: selectCell
+        label: "Call Now",
+        onClick: selectCell
     }));
         
     var plugins = {
-        pagination: true,
+        pagination: {defaultPageSize: 25},
         filter: true,
         indirectSelection: false,
         menus: menusObject
@@ -88,6 +87,14 @@
         cdrGrid._refresh();
     }
 
+    function setCDRStore() {
+        var from_date = dojo.byId("cdr_from_date").value;
+        var to_date = dojo.byId("cdr_to_date").value;
+        var cdrStoreDateRange = new dojo.data.ItemFileReadStore({url: '/pbx/cdr_summary?sdate='+from_date+'&edate'+to_date});
+        cdrStoreDateRange.close();
+        cdrGrid.setStore(cdrStoreDateRange);
+        cdrGrid._refresh();
+    }
 
     cdr_grid = function () {      
         var cdrLayout = [{        
@@ -143,7 +150,7 @@
 
 </script>
 
-<div dojoType="dojox.widget.Portlet" title="Call Detail Records">
+<div dojoType="dojox.widget.Portlet" title="Call Detail Records" style="overflow-y: auto;">
     <div data-dojo-type="dojox.widget.PortletSettings">
         <table>
             <tr>
@@ -160,7 +167,7 @@
                 <td>
                     <button data-dojo-type="dijit.form.Button" type="button">Get Date Range
                         <script type="dojo/method" data-dojo-event="onClick" data-dojo-args="evt">
-                            setCDRByExtStore();
+                            setCDRStore();
                         </script>
                     </button>
                 </td>
@@ -174,7 +181,7 @@
             </tr>
         </table>
     </div>
-    <div id="cdrGridDiv" width="100%" height="100%"></div>
+    <div id="cdrGridDiv"></div>
 </div>
 
 

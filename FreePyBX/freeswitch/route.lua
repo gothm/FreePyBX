@@ -24,10 +24,12 @@ require "luasql.postgres"
     remedy known factual inaccuracies.
 ]]--
 
-digits = ""
+digits = digits or ""
+gateway = gateway or nil
 
 env = assert(luasql.postgres())
 con = assert(env:connect("dbname=pbx user=pbxuser password=secretpass1 host=127.0.0.1"))
+session:set_tts_parms("cepstral", "Allison")
 
 function rows(sql)
     local cursor = assert (con:execute (sql))
@@ -37,7 +39,7 @@ function rows(sql)
 end
 
 function session_hangup_hook()
-    freeswitch.consoleLog("NOTICE", "Session hangup\n")
+    freeswitch.consoleLog("NOTICE", "Session hangup hook...\n")
     con:close()
 end
 
@@ -51,6 +53,25 @@ function startswith(sbig, slittle)
         return false
     end
     return string.sub(sbig, 1, string.len(slittle)) == slittle
+end
+
+function split(str, pat)
+    local t = {}
+    local fpat = "(.-)" .. pat
+    local last_end = 1
+    local s, e, cap = str:find(fpat, 1)
+    while s do
+        if s ~= 1 or cap ~= "" then
+            table.insert(t,cap)
+        end
+        last_end = e+1
+        s, e, cap = str:find(fpat, last_end)
+    end
+    if last_end <= #str then
+        cap = str:sub(last_end)
+        table.insert(t, cap)
+    end
+    return t
 end
 
 function key_press(session, input_type, data, args)
@@ -69,11 +90,14 @@ function key_press(session, input_type, data, args)
 end
 
 function log(logval)
-    freeswitch.consoleLog("NOTICE", "----------------->" .. tostring(logval) .. "<------------- \n")
+    freeswitch.consoleLog("NOTICE", "LUA ROUTE ----------------->" .. tostring(logval) .. "<------------- \n")
 end
 
 function blacklisted(num, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_blacklisted_numbers where context= '%s' and cid_number ='%s'", context, tostring(num))))
+    db = assert(con:execute(string.format("SELECT * " ..
+            "FROM pbx_blacklisted_numbers " ..
+            "WHERE context= '%s' " ..
+            "AND cid_number ='%s'", context, tostring(num))))
     if db:numrows() > 0 then
         return true
     else
@@ -82,8 +106,10 @@ function blacklisted(num, context)
 end
 
 function get_cid_route(num, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_caller_id_routes where context= '%s' and cid_number ='%s'", context, tostring(num))))
-    cid_route = db:fetch({}, "a")
+    db = assert(con:execute(string.format("SELECT * FROM pbx_caller_id_routes " ..
+            "WHERE context= '%s' AND cid_number ='%s'",
+        context, tostring(num))))
+    local cid_route = db:fetch({}, "a")
     if db:numrows() > 0 then
         send_route(get_route_by_id(cid_route["pbx_route_id"]), context)
     else
@@ -93,123 +119,144 @@ function get_cid_route(num, context)
 end
 
 function get_route_by_did(did)
-    db = assert(con:execute(string.format("SELECT pbx_routes.* from pbx_routes inner join pbx_dids on pbx_routes.id = pbx_dids.pbx_route_id where pbx_dids.did = '%s'", tostring(did))))
+    db = assert(con:execute(string.format("SELECT pbx_routes.* " ..
+            "FROM pbx_routes " ..
+            "INNER JOIN pbx_dids ON pbx_routes.id = pbx_dids.pbx_route_id " ..
+            "WHERE pbx_dids.did = '%s'", tostring(did))))
     return db:fetch({}, "a")
 end
 
 function get_route_by_id(id)
-    db = assert(con:execute(string.format("SELECT * from pbx_routes where id = %d", tonumber(id))))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_routes WHERE id = %d", tonumber(id))))
     return db:fetch({}, "a")
 end
 
 function get_cc(name, context)
-    db = assert(con:execute(string.format("SELECT * from call_center_queues where name = '%s' and context = '%s'", name, context)))
+    db = assert(con:execute(string.format("SELECT * FROM call_center_queues WHERE name = '%s' AND context = '%s'",
+        name, context)))
     return db:fetch({}, "a")
 end
 
 function get_cc_position(name)
-    db = assert(con:execute(string.format("SELECT count(*) as num from call_center_callers where queue = '%s'", name)))
+    db = assert(con:execute(string.format("SELECT count(*) AS num FROM call_center_callers WHERE queue = '%s'", name)))
     return db:fetch({}, "a")
 end
 
 function get_group(name, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_groups where name = '%s' and context = '%s'", name, context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_groups WHERE name = '%s' AND context = '%s'",
+        name, context)))
     return db:fetch({}, "a")
 end
 
 function get_cc_tier_agents(name)
-    db = assert(con:execute(string.format("SELECT count(*) as agent_num from call_center_tiers where queue = '%s'", name)))
+    db = assert(con:execute(string.format("SELECT count(*) AS agent_num FROM call_center_tiers WHERE queue = '%s'",
+        name)))
     return db:fetch({}, "a")
 end
 
 function get_tts_by_id(name, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_tts where id = %d and context = '%s'", tonumber(name), context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_tts WHERE id = %d AND context = '%s'",
+        tonumber(name), context)))
     return db:fetch({}, "a")
 end
 
 function get_route_by_ext(ext,context)
     log(ext)
-    db = assert(con:execute(string.format("select * from pbx_routes where name = '%s' and context = '%s'", tostring(ext), context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_routes WHERE name = '%s' AND context = '%s'",
+        tostring(ext), context)))
     return db:fetch({}, "a")
 end
 
 function get_route_by_ivr_opt(option, id)
     db = assert(con:execute(string.format("SELECT * from pbx_routes INNER JOIN pbx_ivr_options " ..
-                                          "ON pbx_routes.id = pbx_ivr_options.pbx_route_id " ..
-                                          "WHERE pbx_ivr_options.option ='%s' " ..
-                                          "AND pbx_ivr_options.pbx_ivr_id=%d", option, tonumber(id))))
+            "ON pbx_routes.id = pbx_ivr_options.pbx_route_id " ..
+            "WHERE pbx_ivr_options.option ='%s' " ..
+            "AND pbx_ivr_options.pbx_ivr_id=%d", option, tonumber(id))))
     return db:fetch({}, "a")
 end
 
 function get_virtual_extension(route, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_virtual_extensions where extension= '%s' and context ='%s'", route["name"], context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_virtual_extensions " ..
+            "WHERE extension= '%s' " ..
+            "AND context ='%s'", route["name"], context)))
     return db:fetch({}, "a")
 end
 
 function get_virtual_mailbox(route, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_virtual_mailboxes where extension= '%s' and context ='%s'", route["name"], context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_virtual_mailboxes WHERE extension= '%s' AND context ='%s'",
+        route["name"], context)))
     return db:fetch({}, "a")
 end
 
 function get_default_gateway(context)
-    db = assert(con:execute(string.format("select default_gateway from customers where context = '%s'", context)))
+    db = assert(con:execute(string.format("SELECT default_gateway FROM customers WHERE context = '%s'", context)))
     return db:fetch({}, "a")
 end
 
 function get_extension(extension, context)
-    db = assert(con:execute(string.format("SELECT pbx_endpoints.*, customers.id as customer_id " ..
-                                          "FROM pbx_endpoints "..
-                                          "INNER JOIN customers "..
-                                          "ON pbx_endpoints.user_context = customers.context "..
-                                          "WHERE auth_id= '%s' "..
-                                          "AND user_context ='%s'", extension, context)))
+    db = assert(con:execute(string.format("SELECT pbx_endpoints.*, customers.id AS customer_id "..
+            "FROM pbx_endpoints "..
+            "INNER JOIN customers "..
+            "ON pbx_endpoints.user_context = customers.context "..
+            "WHERE auth_id= '%s' "..
+            "AND user_context ='%s'", extension, context)))
     return db:fetch({}, "a")
 end
 
 function get_ivr(route,context)
-    db = assert(con:execute(string.format("SELECT * from pbx_ivrs where context= '%s' and name ='%s'", context, route["name"])))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_ivrs WHERE context= '%s' AND name ='%s'",
+        context, route["name"])))
     return db:fetch({}, "a")
 end
 
 function get_tts(route,context)
-    db = assert(con:execute(string.format("SELECT * from pbx_tts where context = '%s' and id = %d", context, tonumber(route["data"]))))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_tts WHERE context = '%s' AND id = %d",
+        context, tonumber(route["data"]))))
     return db:fetch({}, "a")
 end
 
 function get_outbound_caller_id(user_name, context)
-    db = assert(con:execute(string.format("SELECT pbx_endpoints.outbound_caller_id_name AS ext_name, pbx_endpoints.outbound_caller_id_number as ext_number, pbx_endpoints.user_id as user_id, customers.tel as tel, customers.name as customer_name, customers.default_gateway as gateway, customers.id as customer_id from pbx_endpoints inner join customers on pbx_endpoints.user_context = customers.context  where customers.context= '%s' and pbx_endpoints.auth_id ='%s'", context, user_name)))
+    db = assert(con:execute(string.format("SELECT pbx_endpoints.outbound_caller_id_name AS ext_name, "..
+            "pbx_endpoints.outbound_caller_id_number AS ext_number, pbx_endpoints.user_id AS user_id, " ..
+            "customers.tel AS tel, customers.name AS customer_name, customers.default_gateway AS gateway, "..
+            "customers.id AS customer_id " ..
+            "FROM pbx_endpoints INNER JOIN customers ON pbx_endpoints.user_context = customers.context "..
+            "WHERE customers.context= '%s' AND pbx_endpoints.auth_id ='%s'", context, user_name)))
     return db:fetch({}, "a")
 end
 
 function get_virtual_group_members(route, context)
-    local gmembers = ""
-    db = assert(con:execute(string.format("SELECT * from pbx_group_members inner join pbx_groups on pbx_groups.id = pbx_group_members.pbx_group_id where pbx_groups.name='%s' and context='%s'", route["name"], context)))
-    row = db:fetch ({}, "a")
-    while row do
-        for ext, gateway in rows(string.format("SELECT did, default_gateway as gateway from pbx_virtual_extensions " ..
-                "inner join customers on customers.context=pbx_virtual_extensions.context " ..
-                "where extension= '%s' and pbx_virtual_extensions.context = '%s'", row.extension, context)) do
+    local gmembers = gmembers
+    db = assert(con:execute(string.format("SELECT * "..
+            "FROM pbx_group_members INNER JOIN pbx_groups ON pbx_groups.id = pbx_group_members.pbx_group_id "..
+            "WHERE pbx_groups.name='%s' "..
+            "AND context='%s'", route["name"], context)))
+    local group_members = db:fetch ({}, "a")
+    while group_members do
+        for ext, gateway in rows(string.format("SELECT did, default_gateway AS gateway "..
+                "FROM pbx_virtual_extensions " ..
+                "INNER JOIN customers ON customers.context=pbx_virtual_extensions.context " ..
+                "WHERE extension= '%s' AND pbx_virtual_extensions.context = '%s'", group_members.extension, context)) do
             gmembers = gmembers .. ",[leg_delay_start=10,leg_timeout=15]sofia/gateway/" .. gateway .. "/" .. ext
-            log(gmembers)
         end
-        row = db:fetch (row, "a")
+        group_members = db:fetch (group_members, "a")
     end
     return gmembers
 end
 
 function get_sequential_group_members(route, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_group_members inner join pbx_groups " ..
-                                          "on pbx_groups.id = pbx_group_members.pbx_group_id " ..
-                                          "where pbx_groups.name='%s' and context='%s'", route["name"], context)))
+    db = assert(con:execute(string.format("SELECT * FROM pbx_group_members "..
+            "INNER JOIN pbx_groups "..
+            "ON pbx_groups.id = pbx_group_members.pbx_group_id "..
+            "WHERE pbx_groups.name='%s' AND context='%s'", route["name"], context)))
     return db:fetch ({}, "a")
 end
 
 function do_cc(name, context)
-    cc = get_cc(name, context)
-    ccp = get_cc_position(name)
-    cc_agents = get_cc_tier_agents(name)
-
-    hold_time = tonumber(ccp["num"]) * tonumber(cc["approx_hold_time"])
+    local cc = get_cc(name, context)
+    local ccp = get_cc_position(name)
+    local cc_agents = get_cc_tier_agents(name)
+    local hold_time = tonumber(ccp["num"]) * tonumber(cc["approx_hold_time"])
 
     if (hold_time > 0) then
         hold_time = hold_time/tonumber(cc_agents["agent_num"])
@@ -217,26 +264,24 @@ function do_cc(name, context)
 
     log("agent num" .. cc_agents["agent_num"])
 
-    cc_num = tonumber(ccp["num"])+1
+    local cc_num = tonumber(ccp["num"])+1
 
     session:sleep(2000)
     if cc["audio_type"] == "1" then
         session:execute("playback", "${base_dir}/htdocs/vm/".. context .."/recordings/" .. cc["audio_name"])
     else
-        tts = get_tts_by_id(cc["audio_name"], context)
+        local tts = get_tts_by_id(cc["audio_name"], context)
         session:set_tts_parms("cepstral", tts["voice"])
         session:speak(tts["text"])
     end
 
-    session:set_tts_parms("cepstral", "Allison")
     session:sleep(2000)
-
     log(cc["announce_position"])
 
     if (cc["announce_position"]=="t") then
-        session:execute("playback", "ivr/ivr-you_are_number.wav")
+        session:execute("playback","ivr/ivr-you_are_number.wav")
         session:speak(tostring(cc_num))
-        session:execute("playback", "ivr/ivr-in_line.wav")
+        session:execute("playback","ivr/ivr-in_line.wav")
         session:speak("Your estimated hold time is " .. tostring(hold_time)  .. " minutes.")
     end
 
@@ -244,21 +289,23 @@ function do_cc(name, context)
 end
 
 function do_tod(name, context)
-    db = assert(con:execute(string.format("SELECT * from pbx_tod_routes where context= '%s' and name ='%s'", context, name)))
-    tod = db:fetch({}, "a")
+    db = assert(con:execute(string.format("SELECT * FROM "..
+            "pbx_tod_routes WHERE context= '%s' AND name ='%s'", context, name)))
+    local tod = db:fetch({}, "a")
 
-    day = os.date("%w")
-    hour = os.date("%H")
-    minutes = os.date("%M")
+    local day = os.date("%w")
+    local hour = os.date("%H")
+    local minutes = os.date("%M")
 
-    shour = string.sub(tod["time_start"], 2, 3)
-    sminutes = string.sub(tod["time_start"], 5, 6)
+    local shour = string.sub(tod["time_start"], 2, 3)
+    local sminutes = string.sub(tod["time_start"], 5, 6)
 
-    ehour = string.sub(tod['time_end'], 2, 3)
-    eminutes = string.sub(tod["time_end"], 5, 6)
+    local ehour = string.sub(tod['time_end'], 2, 3)
+    local eminutes = string.sub(tod["time_end"], 5, 6)
 
     if tonumber(tod["day_start"]) <= tonumber(day) and tonumber(tod["day_end"]) >= tonumber(day) then
-        if tonumber(hour..minutes) >= tonumber(shour..sminutes) and tonumber(hour..minutes) <= tonumber(ehour..eminutes) then
+        if tonumber(hour..minutes) >= tonumber(shour..sminutes) and
+                tonumber(hour..minutes) <= tonumber(ehour..eminutes) then
             return send_route(get_route_by_id(tod["match_route_id"]), context)
         else
             return send_route(get_route_by_id(tod["nomatch_route_id"]), context)
@@ -270,25 +317,25 @@ end
 
 function do_ivr(route, context)
     session:answer()
-    ivr = get_ivr(route, context)
+    local ivr = get_ivr(route, context)
 
     while (session:ready() == true) do
-        freeswitch.consoleLog("NOTICE", string.format("Caller has called pbx for %s\n", context))
+        log(string.format("Caller has called PBX for %s\n", context))
         session:setAutoHangup(true)
         session:sleep(2000)
 
         digits = ""
 
-        if ivr["audio_type"] == "2" then
+        if ivr["audio_type"] == "1" then
+            local path = "/usr/local/freeswitch/htdocs/vm/" .. context .. "/recordings/" .. ivr["data"]
+            digits = session:playAndGetDigits(1, 4, 3, tonumber(ivr["timeout"].."000"), '', path,
+                'voicemail/vm-that_was_an_invalid_ext.wav', '\\d+')
+        elseif ivr["audio_type"] == "2" then
             session:setInputCallback("key_press", "")
-            tts = get_tts(ivr, context)
-            session:set_tts_parms("cepstral", tts["voice"])
+            local tts = get_tts(ivr, context)
             session:sleep(1000)
             session:speak(tts["text"])
             session:sleep(tonumber(ivr["timeout"] .. "000"))
-        elseif ivr["audio_type"] == "1" then
-            path = "/usr/local/freeswitch/htdocs/vm/" .. context .. "/recordings/" .. ivr["data"]
-            digits = session:playAndGetDigits(1, 4, 3, tonumber(ivr["timeout"].."000"), '', path, 'voicemail/vm-that_was_an_invalid_ext.wav', '\\d+')
         end
 
         if string.len(digits) > 1 then
@@ -296,14 +343,14 @@ function do_ivr(route, context)
                 session:transfer("411", "XML", context)
             end
 
-            keyed_route = get_route_by_ext(digits, context)
+            local keyed_route = get_route_by_ext(digits, context)
             if keyed_route == nil or ivr["direct_dial"] ~= "t" then
                 session:execute("playback", "voicemail/vm-that_was_an_invalid_ext.wav")
             else
                 send_route(keyed_route, context)
             end
         elseif string.len(digits) == 1 then
-            opt_route = get_route_by_ivr_opt(digits, ivr['id'])
+            local opt_route = get_route_by_ivr_opt(digits, ivr['id'])
 
             if opt_route == nil then
                 session:execute("playback", "voicemail/vm-that_was_an_invalid_ext.wav")
@@ -318,13 +365,12 @@ end
 
 function check_exists_available(extension, context)
     session:execute("set", "contact_exists=${user_exists(id " .. extension .. " ${domain})}")
-    if(session:getVariable("contact_exists") == "false") then
+    if(session:getVariable("contact_exists")=="false") then
         session:execute("playback", "voicemail/vm-that_was_an_invalid_ext.wav")
     else
         session:execute("set", "contact_available=${sofia_contact(".. profile .. "/" .. extension .. "@${domain})}")
         contact_available = session:getVariable("contact_available")
         if(string.find(contact_available, "error")) then
-            session:set_tts_parms("cepstral", "Allison")
             session:speak("I am sorry, that person is unavailable.")
             session:execute("voicemail", profile .. " ".. context .. " " .. extension)
         else
@@ -336,30 +382,30 @@ function check_exists_available(extension, context)
     end
 end
 
-function virtual_mailbox(route, context)
-    session:execute("set", "contact_exists=${user_exists(id " .. route["name"] .. " ${domain})}")
-    if(true == false) then
-        session:execute("playback", "voicemail/vm-that_was_an_invalid_ext.wav")
-    else
-        log("contact_available=${sofia_contact(vwna/" .. route["name"] .. "@${domain})}")
-        session:execute("set", "contact_available=${sofia_contact(vwna/" .. route["name"] .. "@${domain})}")
-        contact_available = session:getVariable("contact_available")
-        if(string.find(contact_available, "error")) then
-            session:set_tts_parms("cepstral", "Allison")
-            session:speak("I am sorry, that person is unavailable.")
-            session:execute("voicemail", "vwna ".. context .. " " .. route["name"])
-        else
-            session:sleep(2000)
-            session:execute("playback", "ivr/ivr-hold_connect_call.wav")
-            session:execute("set", "transfer_ringback=${hold_music}")
-            bridge_local(get_route_by_ext(route["name"], context), context)
+function outroute(cust_id)
+    local gw = gw
+    db = assert(con:execute(string.format("SELECT o.pattern as pattern, gw.name as name "..
+            "FROM pbx_outbound_routes "..
+            "INNER JOIN pbx_gateways ON o.gateway_id=gw.id "..
+            "WHERE customer_id='%s' ORDER BY id", cust_id)))
+    local outs = db:fetch ({}, "a")
+    while outs do
+        for k,v in pairs(split(outs.pattern, "|")) do
+            if string.match(string.sub(called_num,0, string.len(v)), v)==v then
+                gateway = outs.gateway
+                log("Match: " .. v)
+                return true
+            end
         end
+        outs = db:fetch (outs, "a")
     end
+    log("NO MATCH FOR OUTBOUND GATEWAY")
+    return false
 end
 
 function bridge_local(route, context)
 
-    ext = get_extension(route['name'], context)
+    local ext = get_extension(route['name'], context)
 
     if (ext["find_me"]=="t") then
         transfer_local(route, context)
@@ -388,25 +434,28 @@ function bridge_local(route, context)
 end
 
 function bridge_external(route, context)
-    log("bridge external")
-    gw = get_default_gateway(context)
+    local gw = get_default_gateway(context)
 
     session:execute("set","call_timeout=" .. route["timeout"])
     session:execute("set","continue_on_fail=true")
     session:execute("set","hangup_after_bridge=true")
-    session:execute("set", "effective_caller_id_name=" .. caller_name)
-    session:execute("set", "effective_caller_id_number=" .. caller_num)
-    session:execute("set", "ringback=%(2000,4000,440.0,480.0)")
+    session:execute("set","effective_caller_id_name=" .. caller_name)
+    session:execute("set","effective_caller_id_number=" .. caller_num)
+    session:execute("set","ringback=%(2000,4000,440.0,480.0)")
     session:execute("bridge","sofia/gateway/" .. gw["default_gateway"] .. "/" .. route["did"])
     send_route(get_route_by_id(route["timeout_destination"]), context)
     session:hangup()
 end
 
-function bridge_outbound(name, num, to)
-    log("bridge outbound")
-    gw = get_default_gateway(context)
+function bridge_outbound(name, num, to, cust_id)
 
-    ext = get_extension(user_name, context)
+    if outroute(cust_id)==false then
+        log("DEFAULT GATEWAY")
+        local gw = get_default_gateway(context)
+        gateway = gw["default_gateway"]
+    end
+
+    local ext = get_extension(user_name, context)
 
     if ext["record_outbound_calls"] == "t" then
         session:execute("record_session", "${base_dir}/htdocs/vm/" .. context ..
@@ -415,18 +464,16 @@ function bridge_outbound(name, num, to)
 
     session:execute("set","continue_on_fail=false")
     session:execute("set","hangup_after_bridge=true")
-    session:execute("set", "ringback=%(2000,4000,440.0,480.0)")
-    session:execute("set", "effective_caller_id_name=" .. name)
-    session:execute("set", "effective_caller_id_number=" .. num)
-    session:execute("set", "origination_caller_id_name=" .. name)
-    session:execute("set", "origination_caller_id_number=" .. num)
-    session:execute("bridge","sofia/gateway/" ..gw["default_gateway"] .."/" .. to)
+    session:execute("set","ringback=%(2000,4000,440.0,480.0)")
+    session:execute("set","effective_caller_id_name=" .. name)
+    session:execute("set","effective_caller_id_number=" .. num)
+    session:execute("bridge","sofia/gateway/" .. gateway .."/" .. to)
     session:hangup()
 end
 
 function bridge_group(route, context)
-    virtual_members = get_virtual_group_members(route, context)
-    group = get_group(route["name"], context)
+    local virtual_members = get_virtual_group_members(route, context)
+    local group = get_group(route["name"], context)
     session:sleep(1000)
     session:setVariable("effective_caller_id_name", "PBX " .. route["name"])
     session:execute("set","call_timeout=" .. group["timeout"])
@@ -435,27 +482,31 @@ function bridge_group(route, context)
         session:execute("set","ignore_early_media=true")
         session:execute("set","continue_on_fail=true")
         session:execute("set","hangup_after_bridge=true")
-        session:execute("set", "ringback=%(2000,4000,440.0,480.0)")
+        session:execute("set","ringback=%(2000,4000,440.0,480.0)")
 
-        db = assert(con:execute(string.format("SELECT * from pbx_group_members inner join pbx_groups " ..
-                "on pbx_groups.id = pbx_group_members.pbx_group_id where pbx_groups.name='%s' and context='%s' " ..
-                "order by pbx_group_members.id", route["name"], context)))
-        row = db:fetch ({}, "a")
+        db = assert(con:execute(string.format("SELECT * "..
+                "FROM pbx_group_members INNER JOIN pbx_groups "..
+                "ON pbx_groups.id = pbx_group_members.pbx_group_id "..
+                "WHERE pbx_groups.name='%s' AND context='%s' "..
+                "ORDER BY pbx_group_members.id", route["name"], context)))
+        local row = db:fetch ({}, "a")
         while row do
             session:execute("set","call_timeout=13")
             session:execute("bridge","user/" .. row.extension .. "@" .. context)
             row = db:fetch (row, "a")
         end
-        db = assert(con:execute(string.format("SELECT * from pbx_group_members "..
-                                              "inner join pbx_groups " ..
-                                              "on pbx_groups.id = pbx_group_members.pbx_group_id "..
-                                              "where pbx_groups.name='%s' "..
-                                              "and context='%s'",
-                                              route["name"], context)))
-        row = db:fetch ({}, "a")
-
+        db = assert(con:execute(string.format("SELECT * "..
+                "FROM pbx_group_members "..
+                "INNER JOIN pbx_groups "..
+                "ON pbx_groups.id = pbx_group_members.pbx_group_id "..
+                "WHERE pbx_groups.name='%s' "..
+                "AND context='%s'", route["name"], context)))
+        local row = db:fetch ({}, "a")
         while row do
-            for ext, gateway in rows(string.format("SELECT did, default_gateway as gateway from pbx_virtual_extensions inner join customers on customers.context=pbx_virtual_extensions.context where extension= '%s' and pbx_virtual_extensions.context = '%s'", row.extension, context)) do
+            for ext, gateway in rows(string.format("SELECT did, default_gateway AS gateway "..
+                    "FROM pbx_virtual_extensions "..
+                    "INNER JOIN customers ON customers.context=pbx_virtual_extensions.context "..
+                    "WHERE extension= '%s' AND pbx_virtual_extensions.context = '%s'", row.extension, context)) do
                 session:execute("set","call_timeout=13")
                 session:execute("bridge","sofia/gateway/".. gateway .."/"..ext)
             end
@@ -477,12 +528,9 @@ function bridge_group(route, context)
 end
 
 function transfer_local(route, context)
-    session:answer()
     session:setAutoHangup(false)
-    session:sleep(1000)
     session:execute("transfer", route['name'] .. " XML" .. " " .. context)
 end
-
 
 function send_route(route, context)
     log(route["name"])
@@ -492,7 +540,6 @@ function send_route(route, context)
         bridge_external(get_virtual_extension(route, context), context)
     elseif route["pbx_route_type_id"] == "3" then
         session:transfer(route["name"], "XML", context)
-        --virtual_mailbox(route, context)
     elseif route["pbx_route_type_id"] == "4" then
         bridge_group(route, context)
     elseif route["pbx_route_type_id"] == "5" then
@@ -509,29 +556,32 @@ function send_route(route, context)
     elseif route["pbx_route_type_id"] == "12" then
         session:transfer(route["name"], "XML", context)
     else
+        log("No route type ID associated with call.")
     end
 end
 
 --[[
-     Set all the incoming variables. Todo: local the variables and pass
-     as parameters to prevent namespace collisions etc.
---]]
+    -- Global Space --
+ ]]
 
-session:setHangupHook("session_hangup_hook")
-context = session:getVariable("context")
+-- get session
+context     = session:getVariable("context")
 is_outbound = session:getVariable("is_outbound")
-is_inbound = session:getVariable("is_inbound")
-user_name = session:getVariable("user_name")
-is_authed = session:getVariable("sip_authorized")
+is_inbound  = session:getVariable("is_inbound")
+user_name   = session:getVariable("user_name")
+is_authed   = session:getVariable("sip_authorized")
+called_num  = session:getVariable("destination_number")
+caller_num  = session:getVariable("caller_id_number")
+caller_name = session:getVariable("caller_id_name")
+profile     = session:getVariable("profile")
+
+-- set session
+session:setHangupHook("session_hangup_hook")
 session:execute("set", "domain=" .. context)
 session:execute("set", "domain_name=" .. context)
 session:execute("set", "user_context=" .. context)
 session:execute("set", "force_transfer_context=" .. context)
 session:execute("set", "force_transfer_dialplan=XML")
-called_num = session:getVariable("destination_number")
-caller_num = session:getVariable("caller_id_number")
-caller_name = session:getVariable("caller_id_name")
-profile = session:getVariable("profile")
 
 log(called_num)
 
@@ -540,9 +590,10 @@ if string.len(called_num) > 10 then
 end
 
 --[[
-    Inbound/Outbound routes
+-- Process Inbound/Outbound
 ]]--
 
+-- IN
 if is_inbound then
     session:execute("set", "call_direction=inbound")
     if string.len(caller_num)> 10 then
@@ -557,18 +608,19 @@ if is_inbound then
     send_route(get_route_by_did(called_num), context)
 end
 
+-- OUT
 if is_outbound and is_authed then
 
     session:execute("set", "call_direction=outbound")
     session:execute("set", "extension=" .. user_name)
 
-    row = get_outbound_caller_id(user_name, context)
-    session:execute("set", "customer_id=" .. row["customer_id"])
-    session:execute("set", "user_id=" .. row["user_id"])
+    local cust = get_outbound_caller_id(user_name, context)
+    session:execute("set", "customer_id=" .. cust["customer_id"])
+    session:execute("set", "user_id=" .. cust["user_id"])
 
-    if string.len(row["ext_number"]) > 6 then
-        bridge_outbound(row["ext_name"], row["ext_number"], called_num)
+    if string.len(cust["ext_number"]) > 6 then
+        bridge_outbound(cust["ext_name"], cust["ext_number"], called_num, cust["customer_id"])
     else
-        bridge_outbound(row["customer_name"], row["tel"], called_num)
+        bridge_outbound(cust["customer_name"], cust["tel"], called_num, cust["customer_id"])
     end
 end
