@@ -573,6 +573,7 @@ class PbxEndpoint(Base):
     include_xml_directory = Column(Boolean, default=False)
     call_timeout = Column(Integer)
     timeout_destination = Column(Integer)
+    calling_rule_id = Column(Integer, default=3)
     record_outbound_calls = Column(Boolean, default=False)
     record_inbound_calls = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
@@ -799,6 +800,27 @@ class PbxChannel(Base):
     call_uuid = Column(Unicode(255))
     sent_callee_name = Column(Unicode(1024))
     sent_callee_num = Column(Unicode(255))
+
+
+class PbxOutboundRoute(Base):
+    __tablename__='pbx_outbound_routes'
+
+    query = Session.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    name = Column(Unicode(32))
+    customer_id = Column(Integer, ForeignKey('customers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    gateway_id = Column(Integer, ForeignKey('pbx_gateways.id', onupdate="CASCADE", ondelete="CASCADE"))
+    pattern = Column(Unicode(64), nullable=False)
+
+
+class PbxCallingRule(Base):
+    __tablename__='pbx_calling_rules'
+
+    query = Session.query_property()
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    name = Column(Unicode(64))
 
 
 class e911Address(Base):

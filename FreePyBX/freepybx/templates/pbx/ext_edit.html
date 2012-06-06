@@ -96,6 +96,7 @@
         dijit.byId("device_type_id").set("value", obj.device_type_id);
         dijit.byId("mac").set("value", obj.mac);
         dijit.byId("include_xml_directory").set("value", obj.include_xml_directory);
+        dijit.byId("calling_rule_id").set("value", obj.calling_rule_id);
     }
 
     function getExtByID() {
@@ -120,6 +121,7 @@
 //]]>
 </script>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="extension_store" url="/pbx/get_endpoints"></div>
+<div dojoType="dojo.data.ItemFileReadStore" jsId="call_rule_store" url="/pbx/calling_rules"></div>
 <div dojoType="dojo.data.ItemFileReadStore" jsId="device_store" url="/pbx/device_store"></div>
 
 <div dojoType="voiceware.PbxForm"
@@ -241,10 +243,14 @@
             <input dojoType="dijit.form.FilteringSelect" required="false" store="destinationsStore" value="" id="timeout_destination" searchAttr="name" placeholder="Overrides Voicemail" name="timeout_destination" />
         </li>
         <li class="even">
+            <label class="fieldlabel">Calling Rule</label>
+            <input dojoType="dijit.form.FilteringSelect" required="false" store="call_rule_store" value="" id="calling_rule_id" searchAttr="name" name="calling_rule_id" />
+        </li>
+        <li class="odd">
             <label class="fieldlabel">Record Inbound Calls</label>
             <input id="record_inbound_calls" name="record_inbound_calls" dojoType="dijit.form.CheckBox" value="true" />
         </li>
-        <li class="odd">
+        <li class="even">
             <label class="fieldlabel">Record Outbound Calls</label>
             <input id="record_outbound_calls" name="record_outbound_calls" dojoType="dijit.form.CheckBox" value="true" />
         </li>

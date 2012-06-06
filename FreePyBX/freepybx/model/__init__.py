@@ -29,9 +29,6 @@ from freepybx.model.meta import Session, Base, metadata
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
     Session.configure(bind=engine)
-
-    """Call me before using any of the tables or classes in the model"""
-    Session.configure(bind=engine)
     Base.query = Session.query_property()
     metadata = Base.metadata
 
@@ -45,12 +42,11 @@ __all__ = ['Customer','User', 'AdminUser', 'Group', 'EmailAccount','Shift','PbxC
            'Base', 'Session', 'PbxAclBlacklist', 'Provider', 'e911Address', 'e911DirectionalType', 'admin_user_groups','admin_group_permissions',
            'e911UnitType', 'e911StreetType', 'CustomerNote', 'Ticket', 'TicketPriority', 'TicketType', 'TicketStatus', 'TicketNote', 'AdminGroup',
            'user_groups', 'group_permissions', 'Permission', 'AdminPermission', 'customer_contexts','condition_actions',
-           'PbxDeviceType', 'PbxDeviceManufacturer', 'BillingServiceType', 'VoipServiceType', 'BillingService',
+           'PbxDeviceType', 'PbxDeviceManufacturer', 'BillingServiceType', 'VoipServiceType', 'BillingService', 'PbxOutboundRoute',
            'VoipService', 'VoipServicePolicy', 'VoipExtensionServiceProfile', 'VoipTrunkServiceProfile', 'VoipPbxServiceProfile',
            'BillingServiceFee', 'BillingServiceFeeType', 'BillingCycleType', 'ProviderBillingProfile', 'VoipServicePlan',
            'ProviderBillingGateway', 'ProviderBillingApiType', 'AuthorizeNetAccount', 'Invoice', 'InvoiceItem', 'Payment',
-           'PaymentType', 'BillingProduct', 'BillingProductType', 'BillingProductFee', 'PbxDidVendor', 'PbxDidPool']
-
+           'PaymentType', 'BillingProduct', 'BillingProductType', 'BillingProductFee', 'PbxDidVendor', 'PbxDidPool', 'PbxCallingRule']
 
 
 user_groups = Table('user_groups', metadata,
@@ -91,8 +87,8 @@ from freepybx.model.pbx import PbxContext, PbxIVR, PbxIVROption, PbxVirtualExten
     PbxCallerIDRoute, PbxBlacklistedNumber, PbxVirtualMailbox, PbxTTS, PbxTODRoute,\
     PbxRecording, PbxDid, PbxProfile, PbxGateway, PbxAclBlacklist, PbxRoute,\
     PbxRouteType, PbxCondition, PbxConditionTmpl, PbxAction, PbxActionTmpl, PbxGroup,\
-    PbxGroupMember, PbxEndpoint, PbxDeviceType, PbxDeviceManufacturer, PbxCdr,\
-    PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog,\
+    PbxGroupMember, PbxEndpoint, PbxDeviceType, PbxDeviceManufacturer, PbxCdr, PbxCallingRule, \
+    PbxDNC, PbxConferenceBridge, PbxFax, PbxRegistration, VoiceMail, PbxDialog, PbxOutboundRoute, \
     PbxChannel, e911Address, e911DirectionalType, e911UnitType, e911StreetType, PbxDidVendor, PbxDidPool
 
 from freepybx.model.call_center import CallCenterAgent, CallCenterAgentLog,\

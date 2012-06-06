@@ -95,7 +95,7 @@ class ESLBrokerNotifier(object):
 
 
     def smain(self):
-        con = ESLconnection("127.0.0.1","8021","ClueCon")
+        con = ESLconnection("127.0.0.1","8888","3v3lyn888")
 
         if con.connected:
             con.events("plain", "all");

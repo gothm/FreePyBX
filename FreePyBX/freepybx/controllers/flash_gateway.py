@@ -177,8 +177,6 @@ class VoiceWareService(object):
         else:
             raise Exception("No session id in db matching the user calling this method.")
 
-
-
         for r in db.execute("SELECT DISTINCT users.first_name, users.last_name, users.id, users.customer_id, "
                             "customers.context AS context, users.portal_extension, "
                             "users.tel, users.mobile, users.username, sip_dialogs.uuid AS uuid "

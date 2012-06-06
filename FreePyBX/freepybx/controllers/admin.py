@@ -50,7 +50,9 @@ import simplejson as json
 import os
 import simplejson as json
 from simplejson import loads, dumps
-import cgitb; cgitb.enable()
+import cgitb;
+
+cgitb.enable()
 import urllib
 
 logged_in = IsLoggedIn()
@@ -135,6 +137,19 @@ class AdminController(BaseController):
         response.headers = [("Content-type", 'application/json'),]
 
         return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def customer_store(self):
+        items=[]
+        for row in Customer.query.all():
+            items.append({'id': row.id, 'name': row.name, 'active': row.active, 'tel': row.tel})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
 
     @authorize(super_user)
     def customer_by_id(self, id, **kw):
@@ -503,6 +518,20 @@ class AdminController(BaseController):
         return response(request.environ, self.start_response)
 
     @authorize(super_user)
+    def gateway_store(self, **kw):
+        items=[]
+        for row in PbxGateway.query.all():
+            profile = PbxProfile.query.filter_by(id=row.pbx_profile_id).first()
+            items.append({'id': row.id,'name': row.name, 'proxy': row.proxy, 'mask': row.mask, 'register': row.register,
+                          'profile': profile.name})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
     def gateway_by_id(self, id, **kw):
         items=[]
         row = PbxGateway.query.filter(PbxGateway.id==id).first()
@@ -618,6 +647,92 @@ class AdminController(BaseController):
             return 'Error: %s' % error
 
         return "Successfully updated Gateway."
+
+    @authorize(super_user)
+    def outbound_routes(self, **kw):
+        items=[]
+        for row in db.query(PbxOutboundRoute.id, PbxOutboundRoute.name, PbxOutboundRoute.customer_id, PbxOutboundRoute.gateway_id, PbxOutboundRoute.pattern,
+                            Customer.name).filter(PbxOutboundRoute.customer_id==Customer.id).all():
+            items.append({'id': row[0],'name': row[1], 'customer_id': row[2],
+                          'gateway_id': row[3], 'pattern': row[4], 'customer_name': row[5],
+                          'gateway': get_gateway(row[3])})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def outroute_by_id(self, id, **kw):
+        items=[]
+        for row in db.query(PbxOutboundRoute.id, PbxOutboundRoute.name, PbxOutboundRoute.customer_id, PbxOutboundRoute.gateway_id, PbxOutboundRoute.pattern,
+            Customer.name).filter(PbxOutboundRoute.customer_id==Customer.id).filter(PbxOutboundRoute.id==id).all():
+            items.append({'id': row[0],'name': row[1], 'customer_id': row[2],
+                          'gateway_id': row[3], 'pattern': row[4], 'customer_name': row[5],
+                          'gateway': get_gateway(row[3])})
+
+        out = dict({'identifier': 'id', 'label': 'name', 'items': items})
+        response = make_response(out)
+        response.headers = [("Content-type", 'application/json'),]
+
+        return response(request.environ, self.start_response)
+
+    @authorize(super_user)
+    def add_outroute(self, **kw):
+        schema = OutboundRouteForm()
+
+        try:
+            form_result = schema.to_python(request.params)
+            por = PbxOutboundRoute()
+
+            por.name = form_result.get('name')
+            por.customer_id = form_result.get('customer_id')
+            por.gateway_id = form_result.get('gateway_id')
+            por.pattern = form_result.get('pattern')
+
+            db.add(por)
+            db.commit(); db.flush(); db.remove()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Error: %s' % error
+
+        return "Successfully added outbound route."
+
+    @authorize(super_user)
+    def edit_outroute(self, **kw):
+        schema = OutboundRouteForm()
+
+        try:
+            form_result = schema.to_python(request.params)
+            por = PbxOutboundRoute.query.filter_by(id=re.get('outroute_id')).first()
+
+            por.name = form_result.get('name')
+            por.customer_id = form_result.get('customer_id')
+            por.gateway_id = form_result.get('gateway_id')
+            por.pattern = form_result.get('pattern')
+
+            db.commit(); db.flush(); db.remove()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Error: %s' % error
+
+        return "Successfully edited outbound route."
+
+    @authorize(super_user)
+    def del_outroute(self, **kw):
+
+        try:
+            PbxOutboundRoute.query.filter_by(id=request.params.get('id')).delete()
+            db.commit(); db.flush(); db.remove()
+
+        except validators.Invalid, error:
+            db.remove()
+            return 'Error: %s' % error
+
+        return "Successfully deleted outbound route."
 
     @authorize(super_user)
     def dids(self):

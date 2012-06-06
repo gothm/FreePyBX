@@ -21,7 +21,6 @@
     except that You may alter any license notices to the extent required to
     remedy known factual inaccuracies.
 -->
-
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -48,27 +47,27 @@
     dojo.require("dojox.grid.enhanced.plugins.Pagination");
     dojo.require("dojox.grid.enhanced.plugins.Filter");
 
-    var gatewayGrid;
-    var gatewayStore = new dojo.data.ItemFileWriteStore({url: '/admin/gateways'});
+    var outrouteGrid;
+    var outrouteStore = new dojo.data.ItemFileWriteStore({url: '/admin/outbound_routes'});
 
     var plugins = {
         pagination: true,
         indirectSelection: false
     };
 
-    gatewayStore._saveCustom = function(saveComplete, saveFailed) {
-        var changeSet = gatewayStore._pending;
+    outrouteStore._saveCustom = function(saveComplete, saveFailed) {
+        var changeSet = outrouteStore._pending;
         var changes = {};
         changes.modified = [];
 
         for (var i in changeSet._modifiedItems) {
             var item = null;
-            if (gatewayStore._itemsByIdentity) {
-                item = gatewayStore._itemsByIdentity[i];
+            if (outrouteStore._itemsByIdentity) {
+                item = outrouteStore._itemsByIdentity[i];
             } else {
-                item = gatewayStore._arrayOfAllItems[i];
+                item = outrouteStore._arrayOfAllItems[i];
             }
-            changes.modified.push(itemToJS(gatewayStore, item));
+            changes.modified.push(itemToJS(outrouteStore, item));
         }
 
         if (changes.modified.length==0) {
@@ -76,7 +75,7 @@
             saveComplete();
             return;
         }
-        update_gw_grid(dojo.toJson(changes, true));
+        update_outroute_grid(dojo.toJson(changes, true));
         console.log(dojo.toJson(changes, true));
         saveComplete();
     };
@@ -119,38 +118,32 @@
         return js;
     };
 
-    gateway_grid = function (data) {
+    outroute_grid = function () {
         var gatewayLayout = [{
-            name: 'Gateway Name',
+            name: 'Route Name',
             field: 'name',
             width: 'auto'
         },{
-            name: 'Proxy',
-            field: 'proxy',
+            name: 'Customer',
+            field: 'customer_name',
             width: 'auto'
         },{
-            name: 'Profile',
-            field: 'profile',
-            editable: 'true',
-            type: dojox.grid.cells.Select
+            name: 'Pattern',
+            field: 'pattern',
+            width: 'auto'
         },{
-            name: 'Auth Register',
-            field: 'register',
-            editable: true,
-            width: 'auto',
-            type: dojox.grid.cells.Bool,
-            formatter: function(value) {
-                console.log(value);
-                return value;
-            }
+            name: 'Gateway',
+            field: 'gateway',
+            width: 'auto'
+
         }];
 
-        gatewayGrid = new dojox.grid.EnhancedGrid({
-            id: 'gatewayGrid',
-            jsid: 'gatewayGrid',
+        outrouteGrid = new dojox.grid.EnhancedGrid({
+            id: 'outrouteGrid',
+            jsid: 'outrouteGrid',
             query: {name: '*'},
             selectionMode: 'single',
-            store: gatewayStore,
+            store: outrouteStore,
             structure: gatewayLayout,
             region: "center",
             autoHeight: true,
@@ -159,19 +152,19 @@
             escapeHTMLInData: false
         },document.createElement('div'));
 
-        dojo.byId("gatewayGridDiv").appendChild(gatewayGrid.domNode);
-        gatewayGrid.startup();
+        dojo.byId("outrouteGridDiv").appendChild(outrouteGrid.domNode);
+        outrouteGrid.startup();
     }
 
-    function editGateway() {
-        var item = gatewayGrid.selection.getSelected();
+    function editOutRoute() {
+        var item = outrouteGrid.selection.getSelected();
         tmpObj = item[0];
-        dijit.byId("adminContent").set("href", "/admin/gateway_edit.html");
+        dijit.byId("customerContent").set("href", "/admin/outroute_edit.html");
     }
 
-    function update_gw_grid(obj) {
+    function update_outroute_grid(obj) {
         dojo.xhrGet({
-            url: "/admin/update_gw_grid?data="+obj,
+            url: "/admin/update_outroute_grid?data="+obj,
             handleAs: "text",
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
@@ -188,15 +181,15 @@
         });
     }
 
-    function delete_gateway() {
-        var del_gw = gatewayGrid.selection.getSelected()[0];
+    function delete_outroute() {
+        var del_or = outrouteGrid.selection.getSelected()[0];
         dojo.xhrGet({
-            url: "/admin/del_gateway?id="+del_gw.id,
+            url: "/admin/del_outroute?id="+del_or.id,
             handleAs: "text",
             load: function(res) {
                 if (res.indexOf("Error") == -1) {
                     new voiceware.notice.Notice({message: res});
-                    dijit.byId("adminContent").set("href", "/admin/gateway_list.html")
+                    dijit.byId("customerContent").set("href", "/admin/outroute_list.html")
                 } else {
                     new voiceware.notice.Error({message: res});
                 }
@@ -210,51 +203,44 @@
     }
 
     dojo.addOnLoad(function() {
-        dojo.xhrGet({
-            url:"/admin/gateways",
-            handleAs:"json",
-            load: function(data) {
-                gateway_grid(data);
-            }
+        outroute_grid();
     });
-
-});
 
 //]]>
 </script>
+
 <div style="border: 1px solid #c0c0c0; ">
     <div dojoType="dijit.Toolbar">
         <button dojoType="dijit.form.Button" iconClass="plusIcon">
-            Add Gateway
+            Add Outbound Route
             <script type="dojo/method" event="onClick">
-                dijit.byId("adminContent").set("href", "/admin/gateway_add.html")
+                dijit.byId("customerContent").set("href", "/admin/outroute_add.html")
             </script>
         </button>
         <button dojoType="dijit.form.Button" iconClass="editIcon">
-            Edit gateway
+            Edit Route
             <script type="dojo/method" event="onClick">
-                if (gatewayGrid.selection.getSelected()[0] == undefined) {
-                alert("Please select a gateway to edit!");
-                return false;
+                if (outrouteGrid.selection.getSelected()[0] == undefined) {
+                    alert("Please select a gateway to edit!");
+                    return false;
                 }
-                editGateway();
+                editOutRoute();
             </script>
         </button>
         <button dojoType="dijit.form.Button" iconClass="dijitIconSave">
             Save
             <script type="dojo/method" event="onClick">
-                gatewayStore.save();
+                outrouteStore.save();
             </script>
-        </button>        
+        </button>
         <button dojoType="dijit.form.Button" iconClass="dijitIconDelete">
             &nbsp;Delete
             <script type="dojo/method" event="onClick">
-                delete_gateway();
+                delete_outroute();
             </script>
         </button>
     </div>
-
-    <div id="gatewayGridDiv" style="width:100%;height:100%"></div>
+    <div id="outrouteGridDiv"></div>
 </div>
 </html>
 

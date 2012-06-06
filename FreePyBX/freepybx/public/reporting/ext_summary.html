@@ -62,7 +62,7 @@
     }
 
     var plugins = {
-        pagination: true,
+        pagination: {defaultPageSize: 25},
         filter: true,
         indirectSelection: false,
         exporter: true
@@ -90,39 +90,39 @@
         var cdrByExtLayout = [{
             name: 'Extension',
             field: 'extension',
-            width: '10%'
+            width: 'auto'
         },{
             name: 'User',
             field: 'agent',
-            width: '15%'
+            width: 'auto'
         },{
             name: 'From',
             field: 'from',
-            width: '15%'
+            width: 'auto'
         },{
             name: 'To',
             field: 'to',
-            width: '15%'
+            width: 'auto'
         },{
             name: 'Incoming',
             field: 'call_count_in',
-            width: '10%'
+            width: 'auto'
         },{
             name: 'Outgoing',
             field: 'call_count_out',
-            width: '10%'
+            width: 'auto'
         },{
             name: 'Time Incoming',
             field: 'time_on_call_in',
-            width: '10%'
+            width: 'auto'
         },{
             name: 'Time Outgoing',
             field: 'time_on_call_out',
-            width: '10%'
+            width: 'auto'
         },{
             name: 'Details',
             field: 'extension',
-            width: '5%',
+            width: 'auto',
             formatter: function(dat)
             {
                 var ret = "...";
@@ -146,11 +146,10 @@
             store: cdrByExtStore,
             structure: cdrByExtLayout,
             region: "center",
-            style: "width: 100%; height: 100%;",
             plugins: plugins,
             columnReordering: true,
             escapeHTMLInData: false,
-            autoHeight: true,
+            autoHeight: true
         },document.createElement('div'));
         dojo.byId("cdrByExtGridDiv").appendChild(cdrByExt.domNode);
         cdrByExt.startup();
@@ -163,7 +162,7 @@
 
 </script>
 
-<div dojoType="dojox.widget.Portlet" title="Call Reports By Extension">
+<div dojoType="dojox.widget.Portlet" title="Call Reports By Extension" style="overflow-y: auto;">
     <div data-dojo-type="dojox.widget.PortletSettings">
         <table>
             <tr>
@@ -186,8 +185,6 @@
                 </td>
             </tr>
         </table>
-
-
     </div>
-    <div id="cdrByExtGridDiv" width="100%" height="100%"></div>
+    <div id="cdrByExtGridDiv"></div>
 </div>

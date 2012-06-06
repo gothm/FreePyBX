@@ -43,7 +43,7 @@ function get_conference_pin(min, max, attempts, timeout, pin_number)
 end
 
 env = assert(luasql.postgres())
-db_connection = assert(env:connect("dbname=pbx user=pbxuser password=secretpass1 host=127.0.0.1"))
+db_connection = assert(env:connect("dbname=pbx user=vwci password=3v3lyn1988 host=108.60.221.12"))
 
 session:answer()
 session:setHangupHook("session_hangup_hook")
