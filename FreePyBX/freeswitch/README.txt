@@ -1,4 +1,3 @@
-
     This Source Code Form is subject to the terms of the Mozilla Public 
     License, v. 2.0. If a copy of the MPL was not distributed with this 
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -8,7 +7,7 @@
     License for the specific language governing rights and limitations
     under the License.
 
-    The Original Code is PythonPBX/VoiceWARE.
+    The Original Code is FreePyBX/VoiceWARE.
 
     The Initial Developer of the Original Code is Noel Morgan, 
     Copyright (c) 2011-2012 VoiceWARE Communications, Inc. All Rights Reserved.
